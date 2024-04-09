@@ -30,18 +30,19 @@ Route::get('/logout',[AuthLoginController::class, 'logout'])->name('logout');
 // })->name('logout');
 
 Auth::routes();
-// Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
-//     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
-// });
-// Route::middleware(['auth', 'user-access:admin'])->group(function () {
-//     Route::get('/admin/dashboard', [HomeController::class, 'admin'])->name('admin.dashboard');
-// });
-// Route::middleware(['auth', 'user-access:direksi'])->group(function () {
-//     Route::get('/direksi/dashboard', [HomeController::class, 'direksi'])->name('direksi.dashboard');
-// });
-// Route::middleware(['auth', 'user-access:unit'])->group(function () {
-//     Route::get('/unit/dashboard', [HomeController::class, 'unit'])->name('unit.dashboard');
-// });
+Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
+    // Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
+    Route::get('/user', function () {return view('super_admin.user');});
+});
+Route::middleware(['auth', 'user-access:admin'])->group(function () {
+    // Route::get('/admin/dashboard', [HomeController::class, 'admin'])->name('admin.dashboard');
+});
+Route::middleware(['auth', 'user-access:direksi'])->group(function () {
+    // Route::get('/direksi/dashboard', [HomeController::class, 'direksi'])->name('direksi.dashboard');
+});
+Route::middleware(['auth', 'user-access:unit'])->group(function () {
+    // Route::get('/unit/dashboard', [HomeController::class, 'unit'])->name('unit.dashboard');
+});
 
 // Route::middleware(['auth'])->group(function () {
 //     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');

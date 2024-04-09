@@ -1274,17 +1274,17 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v10.48.4",
-            "version_normalized": "10.48.4.0",
+            "version": "v10.48.5",
+            "version_normalized": "10.48.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "7e0701bf59cb76a51f7c1f7bea51c0c0c29c0b72"
+                "reference": "a8b682e1371338848637f638aedaef2f7607d36f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/7e0701bf59cb76a51f7c1f7bea51c0c0c29c0b72",
-                "reference": "7e0701bf59cb76a51f7c1f7bea51c0c0c29c0b72",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/a8b682e1371338848637f638aedaef2f7607d36f",
+                "reference": "a8b682e1371338848637f638aedaef2f7607d36f",
                 "shasum": ""
             },
             "require": {
@@ -1435,7 +1435,7 @@
                 "symfony/postmark-mailer": "Required to enable support for the Postmark mail transport (^6.2).",
                 "symfony/psr-http-message-bridge": "Required to use PSR-7 bridging features (^2.0)."
             },
-            "time": "2024-03-21T13:36:36+00:00",
+            "time": "2024-04-09T14:48:50+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1484,17 +1484,17 @@
         },
         {
             "name": "laravel/pint",
-            "version": "v1.14.0",
-            "version_normalized": "1.14.0.0",
+            "version": "v1.15.1",
+            "version_normalized": "1.15.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/pint.git",
-                "reference": "6b127276e3f263f7bb17d5077e9e0269e61b2a0e"
+                "reference": "5f288b5e79938cc72f5c298d384e639de87507c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/pint/zipball/6b127276e3f263f7bb17d5077e9e0269e61b2a0e",
-                "reference": "6b127276e3f263f7bb17d5077e9e0269e61b2a0e",
+                "url": "https://api.github.com/repos/laravel/pint/zipball/5f288b5e79938cc72f5c298d384e639de87507c6",
+                "reference": "5f288b5e79938cc72f5c298d384e639de87507c6",
                 "shasum": ""
             },
             "require": {
@@ -1505,15 +1505,15 @@
                 "php": "^8.1.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.49.0",
-                "illuminate/view": "^10.43.0",
-                "larastan/larastan": "^2.8.1",
+                "friendsofphp/php-cs-fixer": "^3.52.1",
+                "illuminate/view": "^10.48.4",
+                "larastan/larastan": "^2.9.2",
                 "laravel-zero/framework": "^10.3.0",
-                "mockery/mockery": "^1.6.7",
+                "mockery/mockery": "^1.6.11",
                 "nunomaduro/termwind": "^1.15.1",
-                "pestphp/pest": "^2.33.6"
+                "pestphp/pest": "^2.34.5"
             },
-            "time": "2024-02-20T17:38:05+00:00",
+            "time": "2024-04-02T14:28:47+00:00",
             "bin": [
                 "builds/pint"
             ],
@@ -1553,17 +1553,17 @@
         },
         {
             "name": "laravel/prompts",
-            "version": "v0.1.16",
-            "version_normalized": "0.1.16.0",
+            "version": "v0.1.18",
+            "version_normalized": "0.1.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/prompts.git",
-                "reference": "ca6872ab6aec3ab61db3a61f83a6caf764ec7781"
+                "reference": "3b5e6b03f1f1175574b5a32331d99c9819da9848"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/prompts/zipball/ca6872ab6aec3ab61db3a61f83a6caf764ec7781",
-                "reference": "ca6872ab6aec3ab61db3a61f83a6caf764ec7781",
+                "url": "https://api.github.com/repos/laravel/prompts/zipball/3b5e6b03f1f1175574b5a32331d99c9819da9848",
+                "reference": "3b5e6b03f1f1175574b5a32331d99c9819da9848",
                 "shasum": ""
             },
             "require": {
@@ -1585,7 +1585,7 @@
             "suggest": {
                 "ext-pcntl": "Required for the spinner to be animated."
             },
-            "time": "2024-02-21T19:25:27+00:00",
+            "time": "2024-04-04T17:41:50+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1607,7 +1607,7 @@
             ],
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
-                "source": "https://github.com/laravel/prompts/tree/v0.1.16"
+                "source": "https://github.com/laravel/prompts/tree/v0.1.18"
             },
             "install-path": "../laravel/prompts"
         },
@@ -2140,17 +2140,17 @@
         },
         {
             "name": "league/flysystem",
-            "version": "3.25.1",
-            "version_normalized": "3.25.1.0",
+            "version": "3.27.0",
+            "version_normalized": "3.27.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "abbd664eb4381102c559d358420989f835208f18"
+                "reference": "4729745b1ab737908c7d055148c9a6b3e959832f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/abbd664eb4381102c559d358420989f835208f18",
-                "reference": "abbd664eb4381102c559d358420989f835208f18",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/4729745b1ab737908c7d055148c9a6b3e959832f",
+                "reference": "4729745b1ab737908c7d055148c9a6b3e959832f",
                 "shasum": ""
             },
             "require": {
@@ -2183,7 +2183,7 @@
                 "phpunit/phpunit": "^9.5.11|^10.0",
                 "sabre/dav": "^4.6.0"
             },
-            "time": "2024-03-16T12:53:19+00:00",
+            "time": "2024-04-07T19:17:50+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -2217,7 +2217,7 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.25.1"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.27.0"
             },
             "funding": [
                 {
@@ -2292,6 +2292,79 @@
                 }
             ],
             "install-path": "../league/flysystem-local"
+        },
+        {
+            "name": "league/fractal",
+            "version": "0.20.1",
+            "version_normalized": "0.20.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/fractal.git",
+                "reference": "8b9d39b67624db9195c06f9c1ffd0355151eaf62"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/fractal/zipball/8b9d39b67624db9195c06f9c1ffd0355151eaf62",
+                "reference": "8b9d39b67624db9195c06f9c1ffd0355151eaf62",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "doctrine/orm": "^2.5",
+                "illuminate/contracts": "~5.0",
+                "mockery/mockery": "^1.3",
+                "pagerfanta/pagerfanta": "~1.0.0",
+                "phpstan/phpstan": "^1.4",
+                "phpunit/phpunit": "^9.5",
+                "squizlabs/php_codesniffer": "~3.4",
+                "vimeo/psalm": "^4.22",
+                "zendframework/zend-paginator": "~2.3"
+            },
+            "suggest": {
+                "illuminate/pagination": "The Illuminate Pagination component.",
+                "pagerfanta/pagerfanta": "Pagerfanta Paginator",
+                "zendframework/zend-paginator": "Zend Framework Paginator"
+            },
+            "time": "2022-04-11T12:47:17+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.20.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "League\\Fractal\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Phil Sturgeon",
+                    "email": "me@philsturgeon.uk",
+                    "homepage": "http://philsturgeon.uk/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Handle the output of complex data structures ready for API output.",
+            "homepage": "http://fractal.thephpleague.com/",
+            "keywords": [
+                "api",
+                "json",
+                "league",
+                "rest"
+            ],
+            "support": {
+                "issues": "https://github.com/thephpleague/fractal/issues",
+                "source": "https://github.com/thephpleague/fractal/tree/0.20.1"
+            },
+            "install-path": "../league/fractal"
         },
         {
             "name": "league/mime-type-detection",
@@ -3657,17 +3730,17 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.5.15",
-            "version_normalized": "10.5.15.0",
+            "version": "10.5.17",
+            "version_normalized": "10.5.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "86376e05e8745ed81d88232ff92fee868247b07b"
+                "reference": "c1f736a473d21957ead7e94fcc029f571895abf5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/86376e05e8745ed81d88232ff92fee868247b07b",
-                "reference": "86376e05e8745ed81d88232ff92fee868247b07b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c1f736a473d21957ead7e94fcc029f571895abf5",
+                "reference": "c1f736a473d21957ead7e94fcc029f571895abf5",
                 "shasum": ""
             },
             "require": {
@@ -3701,7 +3774,7 @@
             "suggest": {
                 "ext-soap": "To be able to generate mocks based on WSDL files"
             },
-            "time": "2024-03-22T04:17:47+00:00",
+            "time": "2024-04-05T04:39:01+00:00",
             "bin": [
                 "phpunit"
             ],
@@ -3741,7 +3814,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.15"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.5.17"
             },
             "funding": [
                 {
@@ -4197,17 +4270,17 @@
         },
         {
             "name": "psy/psysh",
-            "version": "v0.12.2",
-            "version_normalized": "0.12.2.0",
+            "version": "v0.12.3",
+            "version_normalized": "0.12.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bobthecow/psysh.git",
-                "reference": "9185c66c2165bbf4d71de78a69dccf4974f9538d"
+                "reference": "b6b6cce7d3ee8fbf31843edce5e8f5a72eff4a73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/9185c66c2165bbf4d71de78a69dccf4974f9538d",
-                "reference": "9185c66c2165bbf4d71de78a69dccf4974f9538d",
+                "url": "https://api.github.com/repos/bobthecow/psysh/zipball/b6b6cce7d3ee8fbf31843edce5e8f5a72eff4a73",
+                "reference": "b6b6cce7d3ee8fbf31843edce5e8f5a72eff4a73",
                 "shasum": ""
             },
             "require": {
@@ -4229,7 +4302,7 @@
                 "ext-pdo-sqlite": "The doc command requires SQLite to work.",
                 "ext-posix": "If you have PCNTL, you'll want the POSIX extension as well."
             },
-            "time": "2024-03-17T01:53:00+00:00",
+            "time": "2024-04-02T15:57:53+00:00",
             "bin": [
                 "bin/psysh"
             ],
@@ -4273,7 +4346,7 @@
             ],
             "support": {
                 "issues": "https://github.com/bobthecow/psysh/issues",
-                "source": "https://github.com/bobthecow/psysh/tree/v0.12.2"
+                "source": "https://github.com/bobthecow/psysh/tree/v0.12.3"
             },
             "install-path": "../psy/psysh"
         },
@@ -4901,17 +4974,17 @@
         },
         {
             "name": "sebastian/environment",
-            "version": "6.0.1",
-            "version_normalized": "6.0.1.0",
+            "version": "6.1.0",
+            "version_normalized": "6.1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "43c751b41d74f96cbbd4e07b7aec9675651e2951"
+                "reference": "8074dbcd93529b357029f5cc5058fd3e43666984"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/43c751b41d74f96cbbd4e07b7aec9675651e2951",
-                "reference": "43c751b41d74f96cbbd4e07b7aec9675651e2951",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/8074dbcd93529b357029f5cc5058fd3e43666984",
+                "reference": "8074dbcd93529b357029f5cc5058fd3e43666984",
                 "shasum": ""
             },
             "require": {
@@ -4923,11 +4996,11 @@
             "suggest": {
                 "ext-posix": "*"
             },
-            "time": "2023-04-11T05:39:26+00:00",
+            "time": "2024-03-23T08:47:14+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "6.0-dev"
+                    "dev-main": "6.1-dev"
                 }
             },
             "installation-source": "dist",
@@ -4956,7 +5029,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/environment/issues",
                 "security": "https://github.com/sebastianbergmann/environment/security/policy",
-                "source": "https://github.com/sebastianbergmann/environment/tree/6.0.1"
+                "source": "https://github.com/sebastianbergmann/environment/tree/6.1.0"
             },
             "funding": [
                 {
@@ -5611,17 +5684,17 @@
         },
         {
             "name": "spatie/ignition",
-            "version": "1.12.0",
-            "version_normalized": "1.12.0.0",
+            "version": "1.13.1",
+            "version_normalized": "1.13.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/ignition.git",
-                "reference": "5b6f801c605a593106b623e45ca41496a6e7d56d"
+                "reference": "889bf1dfa59e161590f677728b47bf4a6893983b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/ignition/zipball/5b6f801c605a593106b623e45ca41496a6e7d56d",
-                "reference": "5b6f801c605a593106b623e45ca41496a6e7d56d",
+                "url": "https://api.github.com/repos/spatie/ignition/zipball/889bf1dfa59e161590f677728b47bf4a6893983b",
+                "reference": "889bf1dfa59e161590f677728b47bf4a6893983b",
                 "shasum": ""
             },
             "require": {
@@ -5649,7 +5722,7 @@
                 "openai-php/client": "Require get solutions from OpenAI",
                 "simple-cache-implementation": "To cache solutions from OpenAI"
             },
-            "time": "2024-01-03T15:49:39+00:00",
+            "time": "2024-03-29T14:03:47+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -5697,17 +5770,17 @@
         },
         {
             "name": "spatie/laravel-ignition",
-            "version": "2.4.2",
-            "version_normalized": "2.4.2.0",
+            "version": "2.5.1",
+            "version_normalized": "2.5.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-ignition.git",
-                "reference": "351504f4570e32908839fc5a2dc53bf77d02f85e"
+                "reference": "0c864b3cbd66ce67a2096c5f743e07ce8f1d6ab9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-ignition/zipball/351504f4570e32908839fc5a2dc53bf77d02f85e",
-                "reference": "351504f4570e32908839fc5a2dc53bf77d02f85e",
+                "url": "https://api.github.com/repos/spatie/laravel-ignition/zipball/0c864b3cbd66ce67a2096c5f743e07ce8f1d6ab9",
+                "reference": "0c864b3cbd66ce67a2096c5f743e07ce8f1d6ab9",
                 "shasum": ""
             },
             "require": {
@@ -5717,7 +5790,7 @@
                 "illuminate/support": "^10.0|^11.0",
                 "php": "^8.1",
                 "spatie/flare-client-php": "^1.3.5",
-                "spatie/ignition": "^1.9",
+                "spatie/ignition": "^1.13",
                 "symfony/console": "^6.2.3|^7.0",
                 "symfony/var-dumper": "^6.2.3|^7.0"
             },
@@ -5736,7 +5809,7 @@
                 "openai-php/client": "Require get solutions from OpenAI",
                 "psr/simple-cache-implementation": "Needed to cache solutions from OpenAI"
             },
-            "time": "2024-02-09T16:08:40+00:00",
+            "time": "2024-04-02T06:30:22+00:00",
             "type": "library",
             "extra": {
                 "laravel": {
@@ -5792,17 +5865,17 @@
         },
         {
             "name": "symfony/console",
-            "version": "v6.4.4",
-            "version_normalized": "6.4.4.0",
+            "version": "v6.4.6",
+            "version_normalized": "6.4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "0d9e4eb5ad413075624378f474c4167ea202de78"
+                "reference": "a2708a5da5c87d1d0d52937bdeac625df659e11f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/0d9e4eb5ad413075624378f474c4167ea202de78",
-                "reference": "0d9e4eb5ad413075624378f474c4167ea202de78",
+                "url": "https://api.github.com/repos/symfony/console/zipball/a2708a5da5c87d1d0d52937bdeac625df659e11f",
+                "reference": "a2708a5da5c87d1d0d52937bdeac625df659e11f",
                 "shasum": ""
             },
             "require": {
@@ -5835,7 +5908,7 @@
                 "symfony/stopwatch": "^5.4|^6.0|^7.0",
                 "symfony/var-dumper": "^5.4|^6.0|^7.0"
             },
-            "time": "2024-02-22T20:27:10+00:00",
+            "time": "2024-03-29T19:07:53+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -5869,7 +5942,7 @@
                 "terminal"
             ],
             "support": {
-                "source": "https://github.com/symfony/console/tree/v6.4.4"
+                "source": "https://github.com/symfony/console/tree/v6.4.6"
             },
             "funding": [
                 {
@@ -6027,17 +6100,17 @@
         },
         {
             "name": "symfony/error-handler",
-            "version": "v6.4.4",
-            "version_normalized": "6.4.4.0",
+            "version": "v6.4.6",
+            "version_normalized": "6.4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/error-handler.git",
-                "reference": "c725219bdf2afc59423c32793d5019d2a904e13a"
+                "reference": "64db1c1802e3a4557e37ba33031ac39f452ac5d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/error-handler/zipball/c725219bdf2afc59423c32793d5019d2a904e13a",
-                "reference": "c725219bdf2afc59423c32793d5019d2a904e13a",
+                "url": "https://api.github.com/repos/symfony/error-handler/zipball/64db1c1802e3a4557e37ba33031ac39f452ac5d4",
+                "reference": "64db1c1802e3a4557e37ba33031ac39f452ac5d4",
                 "shasum": ""
             },
             "require": {
@@ -6054,7 +6127,7 @@
                 "symfony/http-kernel": "^6.4|^7.0",
                 "symfony/serializer": "^5.4|^6.0|^7.0"
             },
-            "time": "2024-02-22T20:27:10+00:00",
+            "time": "2024-03-19T11:56:30+00:00",
             "bin": [
                 "Resources/bin/patch-type-declarations"
             ],
@@ -6085,7 +6158,7 @@
             "description": "Provides tools to manage errors and ease debugging PHP code",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/error-handler/tree/v6.4.4"
+                "source": "https://github.com/symfony/error-handler/tree/v6.4.6"
             },
             "funding": [
                 {
@@ -6188,24 +6261,24 @@
         },
         {
             "name": "symfony/event-dispatcher-contracts",
-            "version": "v3.4.0",
-            "version_normalized": "3.4.0.0",
+            "version": "v3.4.2",
+            "version_normalized": "3.4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/event-dispatcher-contracts.git",
-                "reference": "a76aed96a42d2b521153fb382d418e30d18b59df"
+                "reference": "4e64b49bf370ade88e567de29465762e316e4224"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/event-dispatcher-contracts/zipball/a76aed96a42d2b521153fb382d418e30d18b59df",
-                "reference": "a76aed96a42d2b521153fb382d418e30d18b59df",
+                "url": "https://api.github.com/repos/symfony/event-dispatcher-contracts/zipball/4e64b49bf370ade88e567de29465762e316e4224",
+                "reference": "4e64b49bf370ade88e567de29465762e316e4224",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1",
                 "psr/event-dispatcher": "^1"
             },
-            "time": "2023-05-23T14:45:45+00:00",
+            "time": "2024-01-23T14:51:35+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -6247,7 +6320,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/event-dispatcher-contracts/tree/v3.4.0"
+                "source": "https://github.com/symfony/event-dispatcher-contracts/tree/v3.4.2"
             },
             "funding": [
                 {
@@ -6414,17 +6487,17 @@
         },
         {
             "name": "symfony/http-kernel",
-            "version": "v6.4.5",
-            "version_normalized": "6.4.5.0",
+            "version": "v6.4.6",
+            "version_normalized": "6.4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-kernel.git",
-                "reference": "f6947cb939d8efee137797382cb4db1af653ef75"
+                "reference": "060038863743fd0cd982be06acecccf246d35653"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/f6947cb939d8efee137797382cb4db1af653ef75",
-                "reference": "f6947cb939d8efee137797382cb4db1af653ef75",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/060038863743fd0cd982be06acecccf246d35653",
+                "reference": "060038863743fd0cd982be06acecccf246d35653",
                 "shasum": ""
             },
             "require": {
@@ -6482,7 +6555,7 @@
                 "symfony/var-exporter": "^6.2|^7.0",
                 "twig/twig": "^2.13|^3.0.4"
             },
-            "time": "2024-03-04T21:00:47+00:00",
+            "time": "2024-04-03T06:09:15+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -6510,7 +6583,7 @@
             "description": "Provides a structured process for converting a Request into a Response",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-kernel/tree/v6.4.5"
+                "source": "https://github.com/symfony/http-kernel/tree/v6.4.6"
             },
             "funding": [
                 {
@@ -6530,17 +6603,17 @@
         },
         {
             "name": "symfony/mailer",
-            "version": "v6.4.4",
-            "version_normalized": "6.4.4.0",
+            "version": "v6.4.6",
+            "version_normalized": "6.4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/mailer.git",
-                "reference": "791c5d31a8204cf3db0c66faab70282307f4376b"
+                "reference": "677f34a6f4b4559e08acf73ae0aec460479e5859"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/mailer/zipball/791c5d31a8204cf3db0c66faab70282307f4376b",
-                "reference": "791c5d31a8204cf3db0c66faab70282307f4376b",
+                "url": "https://api.github.com/repos/symfony/mailer/zipball/677f34a6f4b4559e08acf73ae0aec460479e5859",
+                "reference": "677f34a6f4b4559e08acf73ae0aec460479e5859",
                 "shasum": ""
             },
             "require": {
@@ -6565,7 +6638,7 @@
                 "symfony/messenger": "^6.2|^7.0",
                 "symfony/twig-bridge": "^6.2|^7.0"
             },
-            "time": "2024-02-03T21:33:47+00:00",
+            "time": "2024-03-27T21:14:17+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -6593,7 +6666,7 @@
             "description": "Helps sending emails",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/mailer/tree/v6.4.4"
+                "source": "https://github.com/symfony/mailer/tree/v6.4.6"
             },
             "funding": [
                 {
@@ -6613,17 +6686,17 @@
         },
         {
             "name": "symfony/mime",
-            "version": "v6.4.3",
-            "version_normalized": "6.4.3.0",
+            "version": "v6.4.6",
+            "version_normalized": "6.4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/mime.git",
-                "reference": "5017e0a9398c77090b7694be46f20eb796262a34"
+                "reference": "14762b86918823cb42e3558cdcca62e58b5227fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/mime/zipball/5017e0a9398c77090b7694be46f20eb796262a34",
-                "reference": "5017e0a9398c77090b7694be46f20eb796262a34",
+                "url": "https://api.github.com/repos/symfony/mime/zipball/14762b86918823cb42e3558cdcca62e58b5227fe",
+                "reference": "14762b86918823cb42e3558cdcca62e58b5227fe",
                 "shasum": ""
             },
             "require": {
@@ -6644,11 +6717,12 @@
                 "league/html-to-markdown": "^5.0",
                 "phpdocumentor/reflection-docblock": "^3.0|^4.0|^5.0",
                 "symfony/dependency-injection": "^5.4|^6.0|^7.0",
+                "symfony/process": "^5.4|^6.4|^7.0",
                 "symfony/property-access": "^5.4|^6.0|^7.0",
                 "symfony/property-info": "^5.4|^6.0|^7.0",
                 "symfony/serializer": "^6.3.2|^7.0"
             },
-            "time": "2024-01-30T08:32:12+00:00",
+            "time": "2024-03-21T19:36:20+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -6680,7 +6754,7 @@
                 "mime-type"
             ],
             "support": {
-                "source": "https://github.com/symfony/mime/tree/v6.4.3"
+                "source": "https://github.com/symfony/mime/tree/v6.4.6"
             },
             "funding": [
                 {
@@ -7502,17 +7576,17 @@
         },
         {
             "name": "symfony/routing",
-            "version": "v6.4.5",
-            "version_normalized": "6.4.5.0",
+            "version": "v6.4.6",
+            "version_normalized": "6.4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/routing.git",
-                "reference": "7fe30068e207d9c31c0138501ab40358eb2d49a4"
+                "reference": "f2591fd1f8c6e3734656b5d6b3829e8bf81f507c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/routing/zipball/7fe30068e207d9c31c0138501ab40358eb2d49a4",
-                "reference": "7fe30068e207d9c31c0138501ab40358eb2d49a4",
+                "url": "https://api.github.com/repos/symfony/routing/zipball/f2591fd1f8c6e3734656b5d6b3829e8bf81f507c",
+                "reference": "f2591fd1f8c6e3734656b5d6b3829e8bf81f507c",
                 "shasum": ""
             },
             "require": {
@@ -7534,7 +7608,7 @@
                 "symfony/http-foundation": "^5.4|^6.0|^7.0",
                 "symfony/yaml": "^5.4|^6.0|^7.0"
             },
-            "time": "2024-02-27T12:33:30+00:00",
+            "time": "2024-03-28T13:28:49+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -7568,7 +7642,7 @@
                 "url"
             ],
             "support": {
-                "source": "https://github.com/symfony/routing/tree/v6.4.5"
+                "source": "https://github.com/symfony/routing/tree/v6.4.6"
             },
             "funding": [
                 {
@@ -7588,17 +7662,17 @@
         },
         {
             "name": "symfony/service-contracts",
-            "version": "v3.4.1",
-            "version_normalized": "3.4.1.0",
+            "version": "v3.4.2",
+            "version_normalized": "3.4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "fe07cbc8d837f60caf7018068e350cc5163681a0"
+                "reference": "11bbf19a0fb7b36345861e85c5768844c552906e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/fe07cbc8d837f60caf7018068e350cc5163681a0",
-                "reference": "fe07cbc8d837f60caf7018068e350cc5163681a0",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/11bbf19a0fb7b36345861e85c5768844c552906e",
+                "reference": "11bbf19a0fb7b36345861e85c5768844c552906e",
                 "shasum": ""
             },
             "require": {
@@ -7608,7 +7682,7 @@
             "conflict": {
                 "ext-psr": "<1.1|>=2"
             },
-            "time": "2023-12-26T14:02:43+00:00",
+            "time": "2023-12-19T21:51:00+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -7653,7 +7727,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/service-contracts/tree/v3.4.1"
+                "source": "https://github.com/symfony/service-contracts/tree/v3.4.2"
             },
             "funding": [
                 {
@@ -7860,23 +7934,23 @@
         },
         {
             "name": "symfony/translation-contracts",
-            "version": "v3.4.1",
-            "version_normalized": "3.4.1.0",
+            "version": "v3.4.2",
+            "version_normalized": "3.4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation-contracts.git",
-                "reference": "06450585bf65e978026bda220cdebca3f867fde7"
+                "reference": "43810bdb2ddb5400e5c5e778e27b210a0ca83b6b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation-contracts/zipball/06450585bf65e978026bda220cdebca3f867fde7",
-                "reference": "06450585bf65e978026bda220cdebca3f867fde7",
+                "url": "https://api.github.com/repos/symfony/translation-contracts/zipball/43810bdb2ddb5400e5c5e778e27b210a0ca83b6b",
+                "reference": "43810bdb2ddb5400e5c5e778e27b210a0ca83b6b",
                 "shasum": ""
             },
             "require": {
                 "php": ">=8.1"
             },
-            "time": "2023-12-26T14:02:43+00:00",
+            "time": "2024-01-23T14:51:35+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -7921,7 +7995,7 @@
                 "standards"
             ],
             "support": {
-                "source": "https://github.com/symfony/translation-contracts/tree/v3.4.1"
+                "source": "https://github.com/symfony/translation-contracts/tree/v3.4.2"
             },
             "funding": [
                 {
@@ -8018,17 +8092,17 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v6.4.4",
-            "version_normalized": "6.4.4.0",
+            "version": "v6.4.6",
+            "version_normalized": "6.4.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "b439823f04c98b84d4366c79507e9da6230944b1"
+                "reference": "95bd2706a97fb875185b51ecaa6112ec184233d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/b439823f04c98b84d4366c79507e9da6230944b1",
-                "reference": "b439823f04c98b84d4366c79507e9da6230944b1",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/95bd2706a97fb875185b51ecaa6112ec184233d4",
+                "reference": "95bd2706a97fb875185b51ecaa6112ec184233d4",
                 "shasum": ""
             },
             "require": {
@@ -8048,7 +8122,7 @@
                 "symfony/uid": "^5.4|^6.0|^7.0",
                 "twig/twig": "^2.13|^3.0.4"
             },
-            "time": "2024-02-15T11:23:52+00:00",
+            "time": "2024-03-19T11:56:30+00:00",
             "bin": [
                 "Resources/bin/var-dump-server"
             ],
@@ -8086,7 +8160,7 @@
                 "dump"
             ],
             "support": {
-                "source": "https://github.com/symfony/var-dumper/tree/v6.4.4"
+                "source": "https://github.com/symfony/var-dumper/tree/v6.4.6"
             },
             "funding": [
                 {
@@ -8511,6 +8585,464 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "install-path": "../webmozart/assert"
+        },
+        {
+            "name": "yajra/laravel-datatables",
+            "version": "v10.0.0",
+            "version_normalized": "10.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yajra/datatables.git",
+                "reference": "5a65f1b611a53a07530915619869ec87dcb823ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yajra/datatables/zipball/5a65f1b611a53a07530915619869ec87dcb823ad",
+                "reference": "5a65f1b611a53a07530915619869ec87dcb823ad",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1",
+                "yajra/laravel-datatables-buttons": "^10",
+                "yajra/laravel-datatables-editor": "1.*",
+                "yajra/laravel-datatables-fractal": "^10",
+                "yajra/laravel-datatables-html": "^10",
+                "yajra/laravel-datatables-oracle": "^10"
+            },
+            "time": "2023-02-07T09:44:57+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "10.0-dev"
+                }
+            },
+            "installation-source": "dist",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arjay Angeles",
+                    "email": "aqangeles@gmail.com"
+                }
+            ],
+            "description": "Laravel DataTables Complete Package.",
+            "keywords": [
+                "datatables",
+                "jquery",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/yajra/datatables/issues",
+                "source": "https://github.com/yajra/datatables/tree/v10.0.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/yajra",
+                    "type": "github"
+                }
+            ],
+            "install-path": "../yajra/laravel-datatables"
+        },
+        {
+            "name": "yajra/laravel-datatables-buttons",
+            "version": "v10.0.9",
+            "version_normalized": "10.0.9.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yajra/laravel-datatables-buttons.git",
+                "reference": "dc93c0ec8bae12005d7e591beebbe053f0abda7f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables-buttons/zipball/dc93c0ec8bae12005d7e591beebbe053f0abda7f",
+                "reference": "dc93c0ec8bae12005d7e591beebbe053f0abda7f",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^10",
+                "php": "^8.1",
+                "yajra/laravel-datatables-html": "^10",
+                "yajra/laravel-datatables-oracle": "^10"
+            },
+            "require-dev": {
+                "barryvdh/laravel-snappy": "^1.0.1",
+                "larastan/larastan": "^2.4",
+                "maatwebsite/excel": "^3.1.46",
+                "orchestra/testbench": "^8",
+                "rap2hpoutre/fast-excel": "^5.1"
+            },
+            "suggest": {
+                "barryvdh/laravel-snappy": "Allows exporting of dataTable to PDF using the print view.",
+                "dompdf/dompdf": "Allows exporting of dataTable to PDF using the DomPDF.",
+                "maatwebsite/excel": "Exporting of dataTables (excel, csv and PDF) using maatwebsite package.",
+                "rap2hpoutre/fast-excel": "Faster exporting of dataTables using fast-excel package.",
+                "yajra/laravel-datatables-export": "Exporting of dataTables (excel, csv and PDF) via livewire and queue worker."
+            },
+            "time": "2024-02-27T06:52:35+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "10.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Yajra\\DataTables\\ButtonsServiceProvider"
+                    ]
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Yajra\\DataTables\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arjay Angeles",
+                    "email": "aqangeles@gmail.com"
+                }
+            ],
+            "description": "Laravel DataTables Buttons Plugin.",
+            "keywords": [
+                "buttons",
+                "datatables",
+                "jquery",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/yajra/laravel-datatables-buttons/issues",
+                "source": "https://github.com/yajra/laravel-datatables-buttons/tree/v10.0.9"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/yajra",
+                    "type": "github"
+                }
+            ],
+            "install-path": "../yajra/laravel-datatables-buttons"
+        },
+        {
+            "name": "yajra/laravel-datatables-editor",
+            "version": "v1.25.4",
+            "version_normalized": "1.25.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yajra/laravel-datatables-editor.git",
+                "reference": "23962356700d6b31f49bb119665b13e87303e13f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables-editor/zipball/23962356700d6b31f49bb119665b13e87303e13f",
+                "reference": "23962356700d6b31f49bb119665b13e87303e13f",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "*",
+                "illuminate/database": "*",
+                "illuminate/http": "*",
+                "illuminate/validation": "*",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "~3.5"
+            },
+            "time": "2023-02-21T06:57:59+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Yajra\\DataTables\\EditorServiceProvider"
+                    ]
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Yajra\\DataTables\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arjay Angeles",
+                    "email": "aqangeles@gmail.com"
+                }
+            ],
+            "description": "Laravel DataTables Editor plugin for Laravel 5.5+.",
+            "keywords": [
+                "JS",
+                "datatables",
+                "editor",
+                "html",
+                "jquery",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/yajra/laravel-datatables-editor/issues",
+                "source": "https://github.com/yajra/laravel-datatables-editor/tree/v1.25.4"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/yajra",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/yajra",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/yajra",
+                    "type": "patreon"
+                }
+            ],
+            "install-path": "../yajra/laravel-datatables-editor"
+        },
+        {
+            "name": "yajra/laravel-datatables-fractal",
+            "version": "v10.0.0",
+            "version_normalized": "10.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yajra/laravel-datatables-fractal.git",
+                "reference": "765198d1f2b3f0a7c0c00f08ee41ba11be4ab1e2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables-fractal/zipball/765198d1f2b3f0a7c0c00f08ee41ba11be4ab1e2",
+                "reference": "765198d1f2b3f0a7c0c00f08ee41ba11be4ab1e2",
+                "shasum": ""
+            },
+            "require": {
+                "league/fractal": "^0.20.1",
+                "php": "^8.1",
+                "yajra/laravel-datatables-oracle": "^10.0"
+            },
+            "require-dev": {
+                "nunomaduro/larastan": "^2.4",
+                "orchestra/testbench": "^7.21"
+            },
+            "time": "2023-02-07T03:46:04+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "10.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Yajra\\DataTables\\FractalServiceProvider"
+                    ]
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Yajra\\DataTables\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arjay Angeles",
+                    "email": "aqangeles@gmail.com"
+                }
+            ],
+            "description": "Laravel DataTables Fractal Plugin.",
+            "keywords": [
+                "api",
+                "datatables",
+                "fractal",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/yajra/laravel-datatables-fractal/issues",
+                "source": "https://github.com/yajra/laravel-datatables-fractal/tree/v10.0.0"
+            },
+            "install-path": "../yajra/laravel-datatables-fractal"
+        },
+        {
+            "name": "yajra/laravel-datatables-html",
+            "version": "v10.12.0",
+            "version_normalized": "10.12.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yajra/laravel-datatables-html.git",
+                "reference": "1c0fc1ff2026457ff29ab1a6a3433a44d59b251d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables-html/zipball/1c0fc1ff2026457ff29ab1a6a3433a44d59b251d",
+                "reference": "1c0fc1ff2026457ff29ab1a6a3433a44d59b251d",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^8.1",
+                "yajra/laravel-datatables-oracle": "^10.0"
+            },
+            "require-dev": {
+                "nunomaduro/larastan": "^2.4",
+                "orchestra/testbench": "^7.21"
+            },
+            "time": "2023-12-15T04:41:00+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "10.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Yajra\\DataTables\\HtmlServiceProvider"
+                    ]
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Yajra\\DataTables\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arjay Angeles",
+                    "email": "aqangeles@gmail.com"
+                }
+            ],
+            "description": "Laravel DataTables HTML builder plugin for Laravel 5.4+.",
+            "keywords": [
+                "JS",
+                "datatables",
+                "html",
+                "jquery",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/yajra/laravel-datatables-html/issues",
+                "source": "https://github.com/yajra/laravel-datatables-html/tree/v10.12.0"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.me/yajra",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/yajra",
+                    "type": "github"
+                },
+                {
+                    "url": "https://www.patreon.com/yajra",
+                    "type": "patreon"
+                }
+            ],
+            "install-path": "../yajra/laravel-datatables-html"
+        },
+        {
+            "name": "yajra/laravel-datatables-oracle",
+            "version": "v10.11.4",
+            "version_normalized": "10.11.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yajra/laravel-datatables.git",
+                "reference": "a11dc9cf5ec7f7dc68ad0d5959c5e7aec0af29a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yajra/laravel-datatables/zipball/a11dc9cf5ec7f7dc68ad0d5959c5e7aec0af29a5",
+                "reference": "a11dc9cf5ec7f7dc68ad0d5959c5e7aec0af29a5",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^9|^10",
+                "illuminate/filesystem": "^9|^10",
+                "illuminate/http": "^9|^10",
+                "illuminate/support": "^9|^10",
+                "illuminate/view": "^9|^10",
+                "php": "^8.0.2"
+            },
+            "require-dev": {
+                "algolia/algoliasearch-client-php": "^3.4",
+                "larastan/larastan": "^2.4",
+                "laravel/scout": "^10.5",
+                "meilisearch/meilisearch-php": "^1.4",
+                "orchestra/testbench": "^8",
+                "yajra/laravel-datatables-html": "^9.3.4|^10"
+            },
+            "suggest": {
+                "yajra/laravel-datatables-buttons": "Plugin for server-side exporting of dataTables.",
+                "yajra/laravel-datatables-editor": "Plugin to use DataTables Editor (requires a license).",
+                "yajra/laravel-datatables-export": "Plugin for server-side exporting using livewire and queue worker.",
+                "yajra/laravel-datatables-fractal": "Plugin for server-side response using Fractal.",
+                "yajra/laravel-datatables-html": "Plugin for server-side HTML builder of dataTables."
+            },
+            "time": "2024-02-28T05:00:23+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "10.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Yajra\\DataTables\\DataTablesServiceProvider"
+                    ],
+                    "aliases": {
+                        "DataTables": "Yajra\\DataTables\\Facades\\DataTables"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "src/helper.php"
+                ],
+                "psr-4": {
+                    "Yajra\\DataTables\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Arjay Angeles",
+                    "email": "aqangeles@gmail.com"
+                }
+            ],
+            "description": "jQuery DataTables API for Laravel 4|5|6|7|8|9|10",
+            "keywords": [
+                "datatables",
+                "jquery",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/yajra/laravel-datatables/issues",
+                "source": "https://github.com/yajra/laravel-datatables/tree/v10.11.4"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/yajra",
+                    "type": "github"
+                }
+            ],
+            "install-path": "../yajra/laravel-datatables-oracle"
         }
     ],
     "dev": true,
