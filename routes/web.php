@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController as AuthLoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -31,8 +32,9 @@ Route::get('/logout',[AuthLoginController::class, 'logout'])->name('logout');
 
 Auth::routes();
 Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
-    // Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
     Route::get('/user', function () {return view('super_admin.user');});
+    Route::post('/tambah-user', [UserController::class, 'create'])->name('superadmin.tambah_user');
+
 });
 Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // Route::get('/admin/dashboard', [HomeController::class, 'admin'])->name('admin.dashboard');

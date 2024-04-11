@@ -12,6 +12,7 @@ class Unit extends Model
 
     protected $fillable = [
         'nama_unit',
+        'user_id',
     ];
     public function user(){
         return $this->belongsTo('App\Models\User');
