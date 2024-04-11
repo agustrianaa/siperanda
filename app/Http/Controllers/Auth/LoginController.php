@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
 
 use App\Http\Controllers\Controller;
 // use GuzzleHttp\Psr7\Request;
@@ -54,7 +55,8 @@ class LoginController extends Controller
 
 
         if (auth()->attempt(array('email' => $input['email'], 'password' => $input['password']))) {
-            // alert()->toast('Welcome')->position('top-end');
+            Alert::success('Login success', 'Welcome back!')->persistent(true, true);
+            // alert()->toast('Welcome', 'success')->position('top-end');
             return redirect()->route('dashboard');
             // if (auth()->user()->role == 'super_admin') {
             //     return redirect()->route('super_admin.dashboard');
@@ -66,7 +68,8 @@ class LoginController extends Controller
             //     return redirect()->route('unit.dashboard');
             // }
         } else {
-            return redirect()->route('login');
+            return redirect()->route('login')
+            ->withErrors('Email atau Password Salah');
         }
     }
 }
