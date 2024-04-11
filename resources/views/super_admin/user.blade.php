@@ -22,9 +22,9 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Name</th>
+                        <!-- <th>Name</th> -->
                         <th>Email</th>
-                        <th>Address</th>
+                        <th>role</th>
                         <th>Created at</th>
                         <th>Action</th>
                     </tr>
@@ -66,7 +66,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Password</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="password" name="password" placeholder="Enter Address" required="">
+                                <input type="text" class="form-control" id="password" name="password" placeholder="Enter role" required="">
                             </div>
                         </div>
                         <div class="col-sm-offset-2 col-sm-10"><br />
@@ -90,7 +90,30 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        $('#UserForm').submit(function(e){
+
+        $('#user').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ url('/user') }}",
+        columns: [
+            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+            // { data: 'name', name: 'name' },
+            { data: 'email', name: 'email' },
+            { data: 'role', name: 'role' },
+            { data: 'created_at', name: 'created_at' },
+            { data: 'action', name: 'action', orderable: false},
+        ],
+        order: [[0, 'desc']]
+    });
+    });
+
+    function add() {
+        $('#UserForm').trigger("reset");
+        $('#UserModal').html("Add User");
+        $('#user-modal').modal('show');
+        $('#id').val('');
+    }
+    $('#UserForm').submit(function(e){
         e.preventDefault();
         var formData = new FormData();
         formData.append('name', $('#name').val()); // Mengambil nilai nama
@@ -114,15 +137,6 @@
         }
         });
     });
-
-    });
-
-    function add() {
-        $('#UserForm').trigger("reset");
-        $('#UserModal').html("Add User");
-        $('#user-modal').modal('show');
-        $('#id').val('');
-    }
 
 
 

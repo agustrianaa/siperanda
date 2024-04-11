@@ -32,7 +32,7 @@ Route::get('/logout',[AuthLoginController::class, 'logout'])->name('logout');
 
 Auth::routes();
 Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
-    Route::get('/user', function () {return view('super_admin.user');});
+    Route::get('/user',  [UserController::class, 'index'])->name('superadmin.tambah_user');
     Route::post('/tambah-user', [UserController::class, 'create'])->name('superadmin.tambah_user');
 
 });
