@@ -52,21 +52,9 @@ class LoginController extends Controller
             'email' => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'min:8'],
         ]);
-
-
         if (auth()->attempt(array('email' => $input['email'], 'password' => $input['password']))) {
-            Alert::success('Login success', 'Welcome back!')->persistent(true, true);
-            // alert()->toast('Welcome', 'success')->position('top-end');
+            // alert()->toast('Hello '. '<b>'.Auth::user()->email .'</b>' .', selamat datang kembali!', 'success')->position('top-end');
             return redirect()->route('dashboard');
-            // if (auth()->user()->role == 'super_admin') {
-            //     return redirect()->route('super_admin.dashboard');
-            // } else if (auth()->user()->role == 'admin') {
-            //     return redirect()->route('admin.dashboard');
-            // } else if (auth()->user()->role == 'direksi') {
-            //     return redirect()->route('direksi.dashboard');
-            // } else if (auth()->user()->role == 'unit') {
-            //     return redirect()->route('unit.dashboard');
-            // }
         } else {
             return redirect()->route('login')
             ->withErrors('Email atau Password Salah');

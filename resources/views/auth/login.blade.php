@@ -7,6 +7,7 @@
     <title>SIPERANDA</title>
     <link rel="shortcut icon" type="image/png" href="../assets/images/logos/polindra.png" />
     <link rel="stylesheet" href="../assets/css/styles.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>

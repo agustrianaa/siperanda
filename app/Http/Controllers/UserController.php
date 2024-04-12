@@ -89,58 +89,58 @@ class UserController extends Controller
             // $user->delete();
         }
         return response()->json($user)
-        ->with('success', 'Email dan password pengguna berhasil ditambah.');
+            ->with('success', 'Email dan password pengguna berhasil ditambah.');
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email|unique:users,email,' . $request->input('id'),
-    ]);
+    {
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . $request->input('id'),
+        ]);
 
-    // Simpan atau perbarui data pengguna
-    $user = User::updateOrCreate(
-        ['id' => $request->id],
-        [
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]
-    );
+        // Simpan atau perbarui data pengguna
+        $user = User::updateOrCreate(
+            ['id' => $request->id],
+            [
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => $request->role,
+            ]
+        );
 
-    if ($user) {
-        // Simpan atau perbarui data terkait sesuai dengan peran pengguna
-        $userId = $user->id;
-        if ($user->role == 'super_admin') {
-            SuperAdmin::updateOrCreate(
-                ['user_id' => $userId],
-                ['name' => $request->name],
-            );
-        } else if ($user->role == 'admin') {
-            Admin::updateOrCreate(
-                ['user_id' => $userId],
-                ['name' => $request->name]
-            );
-        } else if ($user->role == 'direksi') {
-            Direksi::updateOrCreate(
-                ['user_id' => $userId],
-                ['name' => $request->name]
-            );
-        } else if ($user->role == 'unit') {
-            Unit::updateOrCreate(
-                ['user_id' => $userId],
-                ['nama_unit' => $request->name]
-            );
+        if ($user) {
+            // Simpan atau perbarui data terkait sesuai dengan peran pengguna
+            $userId = $user->id;
+            if ($user->role == 'super_admin') {
+                SuperAdmin::updateOrCreate(
+                    ['user_id' => $userId],
+                    ['name' => $request->name],
+                );
+            } else if ($user->role == 'admin') {
+                Admin::updateOrCreate(
+                    ['user_id' => $userId],
+                    ['name' => $request->name]
+                );
+            } else if ($user->role == 'direksi') {
+                Direksi::updateOrCreate(
+                    ['user_id' => $userId],
+                    ['name' => $request->name]
+                );
+            } else if ($user->role == 'unit') {
+                Unit::updateOrCreate(
+                    ['user_id' => $userId],
+                    ['nama_unit' => $request->name]
+                );
+            }
+
+            return response()->json(['success' => 'Data pengguna berhasil disimpan.']);
+        } else {
+            return response()->json(['error' => 'Gagal menyimpan data pengguna.']);
         }
-
-        return response()->json(['success' => 'Data pengguna berhasil disimpan.']);
-    } else {
-        return response()->json(['error' => 'Gagal menyimpan data pengguna.']);
     }
-}
 
 
 
@@ -192,14 +192,13 @@ class UserController extends Controller
         //     } elseif ($user->role == 'unit') {
         //         Unit::where('user_id', $id)->delete();
         //     }
-            // Hapus pengguna itu sendiri
-            $user->delete();
-    //         return response()->json(['message' => 'User and associated data deleted successfully']);
-    //     } else {
-    //         return response()->json(['message' => 'User not found'], 404);
-    //     }
-    // }
+        // Hapus pengguna itu sendiri
+        $user->delete();
+        //         return response()->json(['message' => 'User and associated data deleted successfully']);
+        //     } else {
+        //         return response()->json(['message' => 'User not found'], 404);
+        //     }
+        // }
         return Response()->json($user);
     }
-
 }

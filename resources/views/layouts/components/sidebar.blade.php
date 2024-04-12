@@ -1,7 +1,8 @@
 <!-- Sidebar Start -->
 <style>
     .custom-navbar {
-        background-color: #7AA2E3; /* Ganti dengan warna yang diinginkan */
+        background-color: #7AA2E3;
+        /* Ganti dengan warna yang diinginkan */
     }
 </style>
 
@@ -28,7 +29,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{url("/home")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-layout-dashboard"></i>
+                            <i class="ti ti-home"></i>
                         </span>
                         <span class="hide-menu">Dashboard</span>
                     </a>
@@ -40,7 +41,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{url("/user")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-users"></i>
                         </span>
                         <span class="hide-menu">User</span>
                     </a>
@@ -48,7 +49,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="./ui-typography.html" aria-expanded="false">
                         <span>
-                            <i class="ti ti-typography"></i>
+                            <i class="ti ti-report-analytics"></i>
                         </span>
                         <span class="hide-menu">Monitoring</span>
                     </a>
