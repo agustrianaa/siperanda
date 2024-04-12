@@ -37,10 +37,11 @@ class UserController extends Controller
                     ->get()
             )
                 ->addIndexColumn()
-                ->addColumn('action', function($row){
+                ->addColumn('action', function ($row) {
                     $id = $row->id; // Ambil ID dari baris data
-                $action =  '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">Edit</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
-                return $action;
+                    $action =  '<a href="javascript:void(0)" onClick="editUser(' . $id . ')" class="edit btn btn-success btn-sm"><i class="fas fa-edit"></i></a>';
+                    $action .= '<a href="javascript:void(0)" onClick="hapusUser(' . $id . ')" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                    return $action;
                 })
                 ->rawColumns(['action'])
 
@@ -87,15 +88,61 @@ class UserController extends Controller
             // $user = User::findOrFail($user->id);
             // $user->delete();
         }
+        return response()->json($user)
+        ->with('success', 'Email dan password pengguna berhasil ditambah.');
     }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        //
+{
+    $request->validate([
+        'email' => 'required|email|unique:users,email,' . $request->input('id'),
+    ]);
+
+    // Simpan atau perbarui data pengguna
+    $user = User::updateOrCreate(
+        ['id' => $request->id],
+        [
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+        ]
+    );
+
+    if ($user) {
+        // Simpan atau perbarui data terkait sesuai dengan peran pengguna
+        $userId = $user->id;
+        if ($user->role == 'super_admin') {
+            SuperAdmin::updateOrCreate(
+                ['user_id' => $userId],
+                ['name' => $request->name],
+            );
+        } else if ($user->role == 'admin') {
+            Admin::updateOrCreate(
+                ['user_id' => $userId],
+                ['name' => $request->name]
+            );
+        } else if ($user->role == 'direksi') {
+            Direksi::updateOrCreate(
+                ['user_id' => $userId],
+                ['name' => $request->name]
+            );
+        } else if ($user->role == 'unit') {
+            Unit::updateOrCreate(
+                ['user_id' => $userId],
+                ['nama_unit' => $request->name]
+            );
+        }
+
+        return response()->json(['success' => 'Data pengguna berhasil disimpan.']);
+    } else {
+        return response()->json(['error' => 'Gagal menyimpan data pengguna.']);
     }
+}
+
+
 
     /**
      * Display the specified resource.
@@ -108,9 +155,13 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request)
     {
-        //
+        $id = array('id' => $request->id);
+        $user  = User::where($id)->first();
+        // $user = User::find($id);
+
+        return Response()->json($user);
     }
 
     /**
@@ -124,8 +175,31 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
-        //
+        $id = $request->id;
+        // $user = User::where('id', $request->id)->delete();
+        $user = User::findOrFail($id);
+
+        // Hapus data terkait berdasarkan peran (role) pengguna
+        // if ($user) {
+        //     if ($user->role == 'super_admin') {
+        //         SuperAdmin::where('user_id', $id)->delete();
+        //     } elseif ($user->role == 'admin') {
+        //         Admin::where('user_id', $id)->delete();
+        //     } elseif ($user->role == 'direksi') {
+        //         Direksi::where('user_id', $id)->delete();
+        //     } elseif ($user->role == 'unit') {
+        //         Unit::where('user_id', $id)->delete();
+        //     }
+            // Hapus pengguna itu sendiri
+            $user->delete();
+    //         return response()->json(['message' => 'User and associated data deleted successfully']);
+    //     } else {
+    //         return response()->json(['message' => 'User not found'], 404);
+    //     }
+    // }
+        return Response()->json($user);
     }
+
 }

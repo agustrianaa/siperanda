@@ -4,10 +4,11 @@
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script> -->
 
+
 <div class="container-fluid">
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title fw-semibold mb-4">Sample Page</h5>
+            <!-- <h5 class="card-title fw-semibold mb-4">Sample Page</h5> -->
             <!-- <p class="mb-0">This is a sample page </p> -->
             <div class="row">
                 <div class="pull-right mb-2">
@@ -62,11 +63,11 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Password</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="password" name="password" placeholder="Enter role" required="">
+                                <input type="text" class="form-control" id="password" name="password" placeholder="Enter Password" required="">
                             </div>
                         </div>
                         <div class="col-sm-offset-2 col-sm-10"><br />
-                            <button type="submit" class="btn btn-primary" id="btn-save" >Save changes</button>
+                            <button type="submit" class="btn btn-primary" id="btn-save">Save changes</button>
                         </div>
                     </form>
                 </div>
@@ -88,19 +89,38 @@
         });
 
         $('#user').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ url('/user') }}",
-        columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex' },
-            // { data: 'name', name: 'name' },
-            { data: 'email', name: 'email' },
-            { data: 'role', name: 'role' },
-            { data: 'created_at', name: 'created_at' },
-            { data: 'action', name: 'action', orderable: false},
-        ],
-        order: [[0, 'desc']]
-    });
+            processing: true,
+            serverSide: true,
+            ajax: "{{ url('/user') }}",
+            columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    width: '5%',
+                    className: 'text-center',
+                },
+                // { data: 'name', name: 'name' },
+                {
+                    data: 'email',
+                    name: 'email'
+                },
+                {
+                    data: 'role',
+                    name: 'role'
+                },
+                {
+                    data: 'created_at',
+                    name: 'created_at'
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false
+                },
+            ],
+            order: [
+                [0, 'desc']
+            ]
+        });
     });
 
     function add() {
@@ -109,33 +129,78 @@
         $('#user-modal').modal('show');
         $('#id').val('');
     }
-    $('#UserForm').submit(function(e){
+
+    function editUser(id) {
+        $.ajax({
+            type: "POST",
+            url: "{{ route('superadmin.edit_user')}}",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(res) {
+                $('#UserModal').html("Edit User");
+                $('#user-modal').modal('show');
+                $('#id').val(res.id);
+                $('#name').val(res.name);
+                $('#email').val(res.email);
+                $('#role').val(res.role);
+                $('#password').val(res.password);
+            }
+        });
+    }
+
+    function hapusUser(id) {
+        if (confirm("Delete Record?") == true) {
+            var id = id;
+            // ajax
+            $.ajax({
+                type: "POST",
+                url: "{{ route('superadmin.hapus_user')}}",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(res) {
+                    var oTable = $('#user').dataTable();
+                    oTable.fnDraw(false);
+                    Swal.fire(
+                        'Terhapus!',
+                        'Data berhasil dihapus.',
+                        'success'
+                    );
+
+                }
+            });
+        }
+    }
+
+    $('#UserForm').submit(function(e) {
         e.preventDefault();
-        var formData = new FormData();
-        formData.append('name', $('#name').val()); // Mengambil nilai nama
-        formData.append('email', $('#email').val()); // Mengambil nilai email
-        formData.append('role', $('#role').val()); // Mengambil nilai role
-        formData.append('password', $('#password').val()); // Mengambil nilai password
+        var formData = new FormData(this);
         $.ajax({
             type: 'POST',
             url: "{{ route('superadmin.tambah_user')}}",
             data: formData,
-            // cache: false,
+            cache: false,
             contentType: false,
             processData: false,
             success: (data) => {
                 $("#user-modal").modal('hide');
+                var oTable = $('#user').dataTable();
+                oTable.fnDraw(false);
                 $("#btn-save").html('Submit');
-            $("#btn-save"). attr("disabled", false);
+                $("#btn-save").attr("disabled", false);
+                Swal.fire(
+                        'Success!',
+                        'Data berhasil ditambahkan/diubah.',
+                        'success'
+                    );
             },
-            error: function(data){
-            console.log(data);
-        }
+            error: function(data) {
+                console.log(data);
+            }
         });
     });
-
-
-
-
 </script>
 @endsection
