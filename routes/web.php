@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController as AuthLoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\Perencanaan\UsulanController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -40,7 +41,7 @@ Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
 
 });
 Route::middleware(['auth', 'user-access:admin'])->group(function () {
-
+    Route::get('/usulan',  [UsulanController::class, 'index'])->name('admin.usulan');
 });
 Route::middleware(['auth', 'user-access:direksi'])->group(function () {
     // Route::get('/direksi/dashboard', [HomeController::class, 'direksi'])->name('direksi.dashboard');

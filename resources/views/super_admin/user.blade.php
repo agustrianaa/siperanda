@@ -170,7 +170,6 @@
                         'Data berhasil dihapus.',
                         'success'
                     );
-
                 }
             });
         }
