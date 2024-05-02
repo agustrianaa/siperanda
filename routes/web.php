@@ -1,9 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\MonitoringController as AdminMonitoringController;
 use App\Http\Controllers\Auth\LoginController as AuthLoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\Perencanaan\UsulanController;
+use App\Http\Controllers\Admin\UsulanController as AdminUsulanController;
+use App\Http\Controllers\Direksi\MonitoringController as DireksiMonitoringController;
+use App\Http\Controllers\Unit\UsulanController as UnitUsulanController;
+use App\Http\Controllers\Unit\MonitoringController as UnitMonitoringController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -41,12 +45,16 @@ Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
 
 });
 Route::middleware(['auth', 'user-access:admin'])->group(function () {
-    Route::get('/usulan',  [UsulanController::class, 'index'])->name('admin.usulan');
+    Route::get('/admin/usulan',  [AdminUsulanController::class, 'index'])->name('admin.usulan');
+    Route::get('/realisasi',  [AdminUsulanController::class, 'realisasi'])->name('admin.realisasi');
+    Route::get('/admin/monitoring',  [AdminMonitoringController::class, 'index'])->name('admin.monitoring');
 });
 Route::middleware(['auth', 'user-access:direksi'])->group(function () {
-    // Route::get('/direksi/dashboard', [HomeController::class, 'direksi'])->name('direksi.dashboard');
+    Route::get('/direksi/monitoring', [DireksiMonitoringController::class, 'index'])->name('direksi.monitoring');
 });
 Route::middleware(['auth', 'user-access:unit'])->group(function () {
-    // Route::get('/unit/dashboard', [HomeController::class, 'unit'])->name('unit.dashboard');
+    Route::get('/unit/usulan', [UnitUsulanController::class, 'index'])->name('unit.usulan');
+    Route::get('/unit/rpd', [UnitUsulanController::class, 'rpd'])->name('unit.rpd');
+    Route::get('/unit/monitoring', [UnitMonitoringController::class, 'index'])->name('unit.monitoring');
 });
 

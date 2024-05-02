@@ -13,7 +13,7 @@
             <!-- <p class="mb-0">This is a sample page </p> -->
             <div class="row">
                 <div class="pull-right mb-2">
-                    <a class="btn btn-success" onClick="add()" href="javascript:void(0)">Create User</a>
+                    <a class="btn btn-secondary m-1" onClick="add()" href="javascript:void(0)">Create User</a>
                 </div>
             </div>
             <table class="table table-bordered" id="user">
