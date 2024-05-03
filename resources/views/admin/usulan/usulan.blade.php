@@ -14,10 +14,12 @@
                 <table class="table table-bordered" id="usulan">
                     <thead>
                         <tr>
-                            <th>No</th>
-                            <th>Email</th>
-                            <th>role</th>
-                            <th>Created at</th>
+                            <th width="5px">No</th>
+                            <th>Kode</th>
+                            <th>Program/Kegiatan/KRO/RO/Komponen/Subkomp/Detil</th>
+                            <th>Volume</th>
+                            <th>Satuan</th>
+                            <th>Harga Satuan</th>
                             <th>Action</th>
                         </tr>
                     </thead>

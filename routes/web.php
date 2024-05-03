@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\Admin\MonitoringController as AdminMonitoringController;
 use App\Http\Controllers\Auth\LoginController as AuthLoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\Admin\KategoriController as AdminKategoriController;
+use App\Http\Controllers\Admin\MonitoringController as AdminMonitoringController;
 use App\Http\Controllers\Admin\UsulanController as AdminUsulanController;
 use App\Http\Controllers\Direksi\MonitoringController as DireksiMonitoringController;
 use App\Http\Controllers\Unit\UsulanController as UnitUsulanController;
@@ -45,9 +46,11 @@ Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
 
 });
 Route::middleware(['auth', 'user-access:admin'])->group(function () {
+    Route::get('/admin/kategori',  [AdminKategoriController::class, 'index'])->name('admin.kategori');
     Route::get('/admin/usulan',  [AdminUsulanController::class, 'index'])->name('admin.usulan');
     Route::get('/realisasi',  [AdminUsulanController::class, 'realisasi'])->name('admin.realisasi');
     Route::get('/admin/monitoring',  [AdminMonitoringController::class, 'index'])->name('admin.monitoring');
+
 });
 Route::middleware(['auth', 'user-access:direksi'])->group(function () {
     Route::get('/direksi/monitoring', [DireksiMonitoringController::class, 'index'])->name('direksi.monitoring');

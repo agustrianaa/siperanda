@@ -7,9 +7,9 @@
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-4">Usulan</h5>
                 <div class="row">
-                <div class="col">
-                    Tahun Anggaran
-                </div>
+                    <div class="col">
+                        Tahun Anggaran
+                    </div>
                     <div class="col-auto">
                         <a class="btn btn-secondary" onclick="tambahUsulan()" href="javascript:void(0)"><i class="ti ti-plus"></i> Pengajuan</a>
                     </div>
@@ -41,7 +41,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Employee</h5>
+                    <h5 class="modal-title">Tambahkan Usulan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -57,7 +57,7 @@
                         <div class="form-group">
                             <label for="usulan">Struktur Anggaran</label>
                             <select class="form-control" name="usulan" id="usulan">
-                            <option value="" disabled selected>- Pilih Struktur -</option>
+                                <option value="" disabled selected>- Pilih Struktur -</option>
                                 <option value="Program">Program</option>
                                 <option value="Kegiatan">Kegiatan</option>
                                 <option value="KRO">KRO</option>
@@ -95,7 +95,7 @@
         });
     });
 
-    function tambahUsulan(){
+    function tambahUsulan() {
         $('#UsulanForm').trigger("resset");
         $('#UsulanModal').html("Tambahkan Usulan");
         $('#usulan-modal').modal('show');
