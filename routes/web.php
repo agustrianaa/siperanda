@@ -4,6 +4,8 @@ use App\Http\Controllers\Auth\LoginController as AuthLoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Admin\KategoriController as AdminKategoriController;
+use App\Http\Controllers\Admin\KodeController as AdminKodeController;
+use App\Http\Controllers\Admin\SatuanController as AdminSatuanController;
 use App\Http\Controllers\Admin\MonitoringController as AdminMonitoringController;
 use App\Http\Controllers\Admin\UsulanController as AdminUsulanController;
 use App\Http\Controllers\Direksi\MonitoringController as DireksiMonitoringController;
@@ -46,7 +48,14 @@ Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
 
 });
 Route::middleware(['auth', 'user-access:admin'])->group(function () {
+    // CRUD kategori
     Route::get('/admin/kategori',  [AdminKategoriController::class, 'index'])->name('admin.kategori');
+    Route::post('/admin/tambah-kategori', [AdminKategoriController::class, 'store'])->name('admin.tambah_kategori');
+    // CRUD kode
+    Route::get('/admin/kode',  [AdminKodeController::class, 'index'])->name('admin.kode');
+    // CRUD satuan
+    Route::get('/admin/satuan',  [AdminSatuanController::class, 'index'])->name('admin.satuan');
+    // Usulan di admin
     Route::get('/admin/usulan',  [AdminUsulanController::class, 'index'])->name('admin.usulan');
     Route::get('/realisasi',  [AdminUsulanController::class, 'realisasi'])->name('admin.realisasi');
     Route::get('/admin/monitoring',  [AdminMonitoringController::class, 'index'])->name('admin.monitoring');
