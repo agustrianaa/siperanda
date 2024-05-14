@@ -35,7 +35,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambahkan Kategori</h5>
+                    <h5 class="modal-title">Kategori</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -102,11 +102,61 @@
     });
 
     function tambahkategori() {
-        $('#kategoriForm').trigger("resset");
-        $('#kategoriModal').html("Tambahkan kategori");
+        $('#kategoriForm').trigger("reset");
+        $('#kategori-modal .modal-title').html("Tambahkan kategori");
         $('#kategori-modal').modal('show');
         $('#id').val('');
     }
+
+    function editKategori(id){
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.edit_kategori')}}",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(res) {
+                $('#kategori-modal .modal-title').html("Edit Kategori");
+                $('#kategori-modal').modal('show');
+                $('#id').val(res.id);
+                $('#nama_kategori').val(res.nama_kategori);
+            }
+        });
+    }
+
+    function hapusKategori(id){
+    Swal.fire({
+        title: 'Delete Record?',
+        text: "Anda yakin ingin menghapus data ini?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Ajax request
+            $.ajax({
+                type: "POST",
+                url: "{{ route('admin.hapus_kategori')}}",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(res) {
+                    var oTable = $('#kategori').DataTable();
+                oTable.ajax.reload();
+                    Swal.fire(
+                        'Terhapus!',
+                        'Data berhasil dihapus.',
+                        'success'
+                    );
+                }
+            });
+        }
+    });
+}
 
     $('#kategoriForm').submit(function(e) {
         e.preventDefault();
@@ -120,15 +170,15 @@
             processData: false,
             success: (data) => {
                 $("#kategori-modal").modal('hide');
-                var oTable = $('#kategori').dataTable();
-                oTable.fnDraw(false);
+                var oTable = $('#kategori').DataTable();
+                oTable.ajax.reload();
                 $("#btn-save").html('Submit');
                 $("#btn-save").attr("disabled", false);
-                Swal.fire(
-                    'Success!',
-                    'Data berhasil ditambahkan/diubah.',
-                    'success'
-                );
+                Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.success
+            });
             },
             error: function(data) {
                 console.log(data);

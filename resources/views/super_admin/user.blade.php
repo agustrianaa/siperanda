@@ -182,8 +182,8 @@
             processData: false,
             success: (data) => {
                 $("#user-modal").modal('hide');
-                var oTable = $('#user').dataTable();
-                oTable.fnDraw(false);
+                var oTable = $('#user').DataTable();
+                oTable.ajax.reload();
                 $("#btn-save").html('Submit');
                 $("#btn-save").attr("disabled", false);
                 Swal.fire(

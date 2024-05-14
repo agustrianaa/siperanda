@@ -17,11 +17,14 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <table class="table table-bordered" id="kode">
+                    <table class="table table-bordered" id="tabelKode">
                         <thead>
                             <tr>
                                 <th width="5px">No</th>
-                                <th>Nama kode</th>
+                                <th>No Kode</th>
+                                <th>Kode Parent</th>
+                                <th>Kategori</th>
+                                <th>Uraian</th>
                                 <th width="15%">Action</th>
                             </tr>
                         </thead>
@@ -45,14 +48,23 @@
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Kode</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nama_kode" name="nama_kode" placeholder="Masukkan kode" maxlength="50" required="">
+                                <input type="text" class="form-control" id="kode" name="kode" placeholder="Masukkan kode" maxlength="50" required="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-4 control-label">Kode Parent</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="kode_parent" name="kode_parent" placeholder="Masukkan kode" maxlength="50" required="">
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Kategori</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="nama_kategori" name="nama_kategori" placeholder="Pilih Kategori" maxlength="50" required="">
-                            </div>
+                            <select name="kategori_id" id="kategori_id" class="form-select">
+                                <option disabled selected>- Pilih Kategori - </option>
+                                @foreach($kategori as $kategori )
+                                    <option value="{{ $kategori->id}}">{{ $kategori->nama_kategori}}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Uraian</label>
@@ -82,13 +94,103 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        $('#tabelKode').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{route('admin.kode')}}",
+            columns: [{
+                    data: null,
+                    name: 'DT_RowIndex',
+                    className: 'text-center',
+                    searchable: false,
+                    orderable: false,
+                    render: function(data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                {
+                    data: 'kode',
+                    name: 'kode',
+                },
+                {
+                data: 'kode_parent',
+                    name: 'kode_parent',
+                },
+                {
+                    data: 'nama_kategori',
+                    name: 'nama_kategori',
+                },
+                {
+                    data: 'uraian',
+                    name: 'uraian',
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    className: 'text-center',
+                    orderable: false,
+                }
+            ],
+            order: [
+                [0, 'desc']
+            ]
+        });
     });
 
     function tambahkode() {
         $('#kodeForm').trigger("resset");
-        $('#kodeModal').html("Tambahkan kode");
+        $('#kode-modal .modal-title').html("Tambahkan Kode");
         $('#kode-modal').modal('show');
         $('#id').val('');
     }
+
+    function editKode(id){
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.edit_kode')}}",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(res) {
+                console.log(res);
+                $('#kode-modal .modal-title').html("Edit Kode");
+                $('#kode-modal').modal('show');
+                $('#id').val(res.id);
+                $('#kode').val(res.kode);
+                $('#kode_parent').val(res.kode_parent);
+                $('#uraian').val(res.uraian);
+                $('#kategori_id').val(res.kategori_id).change();
+            }
+        });
+    }
+
+    $('#kodeForm').submit(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.simpan_kode')}}",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: (data) => {
+                $("#kode-modal").modal('hide');
+                var oTable = $('#tabelKode').DataTable();
+                oTable.ajax.reload();
+                $("#btn-save").html('Submit');
+                $("#btn-save").attr("disabled", false);
+                Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.success
+            });
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        })
+    });
 </script>
 @endsection

@@ -113,7 +113,7 @@
                         <span>
                             <i class="ti ti-article"></i>
                         </span>
-                        <span class="hide-menu">Kode</span>
+                        <span class="hide-menu">Kode Komponen</span>
                     </a>
                 </li>
                 <li class="sidebar-item">

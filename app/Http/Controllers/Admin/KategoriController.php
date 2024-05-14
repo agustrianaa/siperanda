@@ -36,6 +36,21 @@ class KategoriController extends Controller
             'nama_kategori'=> $request-> nama_kategori
         ]
     );
-    return response()->json(['success' => 'Kategori berhasil disimpan']);
+    return Response()->json($kategori);
+    }
+
+    public function edit(Request $request)
+    {
+        $id = array('id' => $request->id);
+        $kategori  = Kategori::where($id)->first();
+
+        return Response()->json($kategori);
+    }
+
+    public function destroy(Request $request)
+    {
+        $kategori = Kategori::where('id',$request->id)->delete();
+
+        return Response()->json($kategori);
     }
 }

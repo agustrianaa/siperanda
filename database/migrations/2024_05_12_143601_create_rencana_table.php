@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('komponen', function (Blueprint $table) {
+        Schema::create('rencana', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('unit_id')->references('id')->on('unit')->onDelete('cascade');
+            $table->date('tahun');
+            $table->decimal('jumlah', 10,2);
+            $table->decimal('anggaran', 10,2);
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('komponen');
+        Schema::dropIfExists('rencana');
     }
 };

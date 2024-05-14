@@ -51,10 +51,17 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // CRUD kategori
     Route::get('/admin/kategori',  [AdminKategoriController::class, 'index'])->name('admin.kategori');
     Route::post('/admin/tambah-kategori', [AdminKategoriController::class, 'store'])->name('admin.tambah_kategori');
+    Route::post('/admin/edit-kategori', [AdminKategoriController::class, 'edit'])->name('admin.edit_kategori');
+    Route::post('/admin/hapus-kategori', [AdminKategoriController::class, 'destroy'])->name('admin.hapus_kategori');
     // CRUD kode
     Route::get('/admin/kode',  [AdminKodeController::class, 'index'])->name('admin.kode');
+    Route::post('/admin/edit-kode', [AdminKodeController::class, 'edit'])->name('admin.edit_kode');
+    Route::post('/admin/simpan-kode', [AdminKodeController::class, 'store'])->name('admin.simpan_kode');
     // CRUD satuan
     Route::get('/admin/satuan',  [AdminSatuanController::class, 'index'])->name('admin.satuan');
+    Route::post('/admin/tambah-satuan', [AdminSatuanController::class, 'store'])->name('admin.tambah_satuan');
+    Route::post('/admin/edit-satuan', [AdminSatuanController::class, 'edit'])->name('admin.edit_satuan');
+    Route::post('/admin/hapus-satuan', [AdminSatuanController::class, 'destroy'])->name('admin.hapus_satuan');
     // Usulan di admin
     Route::get('/admin/usulan',  [AdminUsulanController::class, 'index'])->name('admin.usulan');
     Route::get('/realisasi',  [AdminUsulanController::class, 'realisasi'])->name('admin.realisasi');

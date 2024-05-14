@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('kode_komponen', function (Blueprint $table) {
             $table->id();
+            $table->string('kode');
+            $table->string('kode_parent');
+            $table->foreignId('kategori_id')->references('id')->on('kategori')->onDelete('cascade');
+            $table->string('uraian');
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('plans');
+        Schema::dropIfExists('kode_komponen');
     }
 };

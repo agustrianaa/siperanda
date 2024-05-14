@@ -61,7 +61,7 @@ class UserSeeder extends Seeder
         ]);
         if ($user) {
             Unit::create([
-                'nama_unit' => 'Teknik Informatika',
+                'name' => 'Teknik Informatika',
                 'user_id' => $user->id,
             ]);
         }
