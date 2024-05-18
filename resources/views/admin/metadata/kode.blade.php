@@ -138,7 +138,7 @@
     });
 
     function tambahkode() {
-        $('#kodeForm').trigger("resset");
+        $('#kodeForm').trigger("reset");
         $('#kode-modal .modal-title').html("Tambahkan Kode");
         $('#kode-modal').modal('show');
         $('#id').val('');

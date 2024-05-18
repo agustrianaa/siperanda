@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('realisasi', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('rencana_id')->references('id')->on('rencana')->onDelete('cascade');
-            $table->date('skedul');
-            $table->date('realisasi');
+            $table->foreignId('rencana_id')->references('id')->on('rencana')->onDelete('cascade')->nullable();
+            $table->date('skedul')->nullable();
+            $table->date('realisasi')->nullable();
             $table->timestamps();
         });
     }

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('unit_id')->references('id')->on('unit')->onDelete('cascade');
             $table->date('tahun');
-            $table->decimal('jumlah', 10,2);
-            $table->decimal('anggaran', 10,2);
+            $table->decimal('jumlah', 10,2)->nullable();
+            $table->decimal('anggaran', 10,2)->nullable();
             $table->timestamps();
         });
     }

@@ -3,178 +3,135 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title fw-semibold mb-4">Usulan</h5>
-                <!-- <div class="row"> -->
-                    <!-- <div class="col-lg-2"> -->
+        <h3 class="card-title fw-semibold mb-4">Usulan</h3>
+        <div class="row">
+            <div class="row mb-3">
+                <div class="col"></div>
+                <div class="col-auto">
                     <a class="btn btn-secondary m-1" onclick="tambahUsulan()" href="javascript:void(0)"><i class="ti ti-plus"></i> Usulan</a>
-                    <!-- </div> -->
-                    <!-- <div class="col-lg-2"> -->
-                    <a class="btn btn-secondary m-1" onclick="tambahProgram()" href="javascript:void(0)"><i class="ti ti-plus"></i> Program</a>
-                    <!-- </div> -->
-                    <!-- <div class="col-lg-2"> -->
-                        <a class="btn btn-secondary m-1" onclick="tambahKegiatan()" href="javascript:void(0)"><i class="ti ti-plus"></i> Kegiatan</a>
-                    <!-- </div> -->
-                    <!-- <div class="col"> -->
-                        <a class="btn btn-secondary m-1" onclick="tambahKRO()" href="javascript:void(0)"><i class="ti ti-plus"></i> KRO</a>
-                    <!-- </div> -->
-                    <!-- <div class="col"> -->
-                        <a class="btn btn-secondary m-1" onclick="tambahRO()" href="javascript:void(0)"><i class="ti ti-plus"></i> RO</a>
-                    <!-- </div> -->
-                    <!-- <div class="col"> -->
-                    <a class="btn btn-secondary m-1" onclick="tambahKomponen()" href="javascript:void(0)"><i class="ti ti-plus"></i> Komponen</a>
-                    <!-- </div> -->
-                    <!-- <div class="col"> -->
-                    <a class="btn btn-secondary m-1" onclick="tambahSubKomp()" href="javascript:void(0)"><i class="ti ti-plus"></i> SubKomp</a>
-                    <!-- </div> -->
-                    <!-- <div class="col"> -->
-                        <a class="btn btn-secondary m-1" onclick="tambahDetil()" href="javascript:void(0)"><i class="ti ti-plus"></i> Detil</a>
-                    <!-- </div> -->
-                <!-- </div> -->
-                <!-- <p class="mb-0">This is a sample page </p> -->
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <table class="table table-bordered" id="usulan">
-                    <thead>
-                        <tr>
-                            <th width="5px">No</th>
-                            <th>Kode</th>
-                            <th>Program/Kegiatan/KRO/RO/Komponen/Subkomp/Detil</th>
-                            <th width="7px">Volume</th>
-                            <th width="7px">Satuan</th>
-                            <th width="10%">Harga</th>
-                            <th width="15%">Jumlah</th>
-                            <th width="7px">Action</th>
-                        </tr>
-                    </thead>
-                </table>
+                </div>
+                <div class="col-auto">
+                    <a class="btn btn-success m-1" onclick="tambahRencana()" href="javascript:void(0)"><i class="ti ti-plus"></i> Rencana</a>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- modal Usulan-->
-    <div class="modal fade" id="usulan-modal" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambahkan Usulan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="javascript:void(0)" id="usulanForm" name="usulanForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="id" id="id">
-                        <input type="hidden" name="usulan_id" id="id">
-                        <div class="form-group">
-                            <label for="name" class="col-sm-2 control-label">Name</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Name" maxlength="50" required="">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="usulan">Struktur Anggaran</label>
-                            <select class="form-control" name="usulan" id="usulan">
-                                <option value="" disabled selected>- Pilih Struktur -</option>
-                                <option value="Program">Program</option>
-                                <option value="Kegiatan">Kegiatan</option>
-                                <option value="KRO">KRO</option>
-                                <option value="RO">RO</option>
-                                <option value="Komponen">Komponen</option>
-                                <option value="Sub Komponen">Sub Komponen</option>
-                                <option value="Detil">Detil</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Role</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="role" name="role" placeholder="Enter Role" maxlength="50" required="">
-                            </div>
-                        </div>
-                        <div class="col-sm-offset-2 col-sm-10"><br />
-                            <button type="submit" class="btn btn-primary" id="btn-save">Save changes</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer"></div>
-            </div>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered" id="usulan">
+                <thead>
+                    <tr>
+                        <th width="3px">No</th>
+                        <th>Kode</th>
+                        <th width="30%">Uraian</th>
+                        <th>Volume</th>
+                        <th>Satuan</th>
+                        <th>Harga</th>
+                        <th width="15%">Jumlah</th>
+                        <th width="15%">Action</th>
+                    </tr>
+                </thead>
+            </table>
         </div>
     </div>
-    <!-- end bootstrap modal usulan -->
-
-    <!-- modal Program-->
-    <div class="modal fade" id="program-modal" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambahkan Program</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="javascript:void(0)" id="programForm" name="programForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="id" id="id">
-                        <div class="form-group">
-                            <label for="program">Pilihan Program</label>
-                            <select class="form-control" name="program" id="program">
-                                <option value="" disabled selected>- Pilih Program -</option>
-                                <option value="Program">Dari database</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Jumlah Biaya</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="biaya" name="biaya" placeholder="Masukkan Jumlah Biaya" maxlength="50" required="">
-                            </div>
-                        </div>
-                        <div class="col-sm-offset-2 col-sm-10"><br />
-                            <button type="submit" class="btn btn-primary" id="btn-save">Save changes</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer"></div>
-            </div>
-        </div>
-    </div>
-    <!-- end bootstrap modal Program -->
-
-    <!-- modal Kegiatan-->
-    <div class="modal fade" id="kegiatan-modal" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambahkan Kegiatan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="javascript:void(0)" id="kegiatanForm" name="kegiatanForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="id" id="id">
-                        <div class="form-group">
-                            <label for="kegiatan">Pilihan Kegiatan</label>
-                            <select class="form-control" name="kegiatan" id="kegiatan">
-                                <option value="" disabled selected>- Pilih Program -</option>
-                                <option value="Program">Dari database</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label">Jumlah Biaya</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="biaya" name="biaya" placeholder="Masukkan Jumlah Biaya" maxlength="50" required="">
-                            </div>
-                        </div>
-                        <div class="col-sm-offset-2 col-sm-10"><br />
-                            <button type="submit" class="btn btn-primary" id="btn-save">Save changes</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer"></div>
-            </div>
-        </div>
-    </div>
-    <!-- end bootstrap modal Kegiatan -->
-
 </div>
 
+<!-- modal Usulan-->
+<div class="modal fade" id="usulan-modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tambahkan Usulan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="javascript:void(0)" id="rencanaForm" name="rencanaForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="id" id="id">
+                    <input type="hidden" name="rencana_id" id="rencana_id">
+                    <div class="form-group">
+                        <label for="tahun">Tahun</label>
+                        <select name="tahun" id="tahun" class="form-control">
+                            <option disabled selected>-Pilih Tahun-</option>
+                            @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
+                                @endfor
+                        </select>
+                        @if ($errors->has('year'))
+                        <span class="text-danger">{{$errors->first('year')}}</span>
+                        @endif
+                    </div>
+                    <div class="col-sm-offset-2 col-sm-10"><br />
+                        <btype="submit" class="btn btn-primary" id="btn-save">Save changes</btype=>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer"></div>
+        </div>
+    </div>
+</div>
+<!-- end bootstrap modal usulan -->
+
+<!-- modal -->
+<div class="modal fade" id="usulanLain-modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tambahkan Rencana</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="javascript:void(0)" id="rencana2Form" name="rencana2Form" class="form-horizontal" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="id" id="id">
+                    <input type="hidden" id="rencana_id" name="rencana_id" value="1">
+                    <div class="form-group">
+                        <label for="name" class="col-sm-4 control-label">Kode</label>
+                        <div class="col-sm-12">
+                        <input type="text" class="form-control" id="kode" name="kode" placeholder="Masukkan kode" maxlength="50" required="">
+        <input type="hidden" id="kode_komponen_id" name="kode_komponen_id">
+        <div id="kode-results" name="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;"></div>
+                        </div>
+                    </div>
+                    <!-- <div class="form-group" id="search-results" style="display:none;">
+                        <label for="kode-results" class="col-sm-4 control-label">Hasil Pencarian</label>
+                        <div class="col-sm-12">
+                            <select class="form-control" id="kode-results" name="kode-results"> -->
+                    <!-- Hasil pencarian akan dimasukkan di sini oleh jQuery -->
+                    <!-- </select>
+                        </div>
+                    </div> -->
+                    <div class="form-group">
+                        <label for="name" class="col-sm-4 control-label">Volume</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="volume" name="volume" placeholder="Masukkan volume" maxlength="50" required="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="col-sm-4 control-label">Satuan</label>
+                        <select name="satuan_id" id="satuan_id" class="form-control">
+                            <option disabled selected>-Pilih Satuan-</option>
+                            @foreach ($satuan as $item )
+                            <option value="{{$item->id}}">{{$item->satuan}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="name" class="col-sm-4 control-label">Harga</label>
+                        <div class="col-sm-12">
+                            <input type="text" class="form-control" id="harga" name="harga" placeholder="Masukkan Harga" maxlength="50" required="">
+                        </div>
+                    </div>
+                    <div class="col-sm-8 offset-sm-8"><br />
+                        <button type="button" class="btn btn-danger mr-2" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- end bootstrap model -->
 <script type="text/javascript">
     $(document).ready(function() {
         $.ajaxSetup({
@@ -182,27 +139,175 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        $('#usulan').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{route('unit.usulan')}}",
+            columns: [{
+                    data: null,
+                    name: 'DT_RowIndex',
+                    className: 'text-center',
+                    searchable: false,
+                    orderable: false,
+                    render: function(data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                {
+                    data: 'kode',
+                    name: 'kode',
+                },
+                {
+                    data: 'uraian',
+                    name: 'uraian',
+                },
+                {
+                    data: 'volume',
+                    name: 'volume',
+                },
+                {
+                    data: 'satuan',
+                    name: 'satuan',
+                },
+                {
+                    data: 'harga',
+                    name: 'harga',
+                },
+                {
+                    data: 'jumlah',
+                    name: 'jumlah',
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    className: 'text-center',
+                    orderable: false,
+                }
+            ],
+            order: [
+                [0, 'desc']
+            ]
+        });
+
+        $('#kode').on('input', function() {
+        let kode = $(this).val();
+        if (kode.length > 0) {
+            $.ajax({
+                url: '/unit/search/code',
+                method: 'GET',
+                data: {
+                    kode: kode
+                },
+                success: function(data) {
+                    console.log('Data received:', data); // Log response dari server
+                    let results = $('#kode-results');
+                    results.empty();
+                    if (data.length > 0) {
+                        $.each(data, function(index, item) {
+                            results.append(`<div class="dropdown-item" data-id="${item.id}" data-kode="${item.kode}" data-uraian="${item.uraian}">${item.kode} - ${item.uraian}</div>`);
+                        });
+                        results.show();
+                    } else {
+                        results.hide();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('Error:', error); // Log error jika terjadi
+                }
+            });
+        } else {
+            $('#kode-results').hide();
+        }
     });
 
+    // Handle click on search results
+    $(document).on('click', '#kode-results .dropdown-item', function() {
+        let selectedId = $(this).data('id');
+        let selectedKode = $(this).data('kode');
+        let selectedUraian = $(this).data('uraian');
+        $('#kode').val(`${selectedKode} - ${selectedUraian}`);
+        $('#kode_komponen_id').val(selectedId);
+        $('#kode-results').hide();
+    });
+
+    // Hide results when clicking outside
+    $(document).on('click', function(event) {
+        if (!$(event.target).closest('#kode').length && !$(event.target).closest('#kode-results').length) {
+            $('#kode-results').hide();
+        }
+    });
+});
+
     function tambahUsulan() {
-        $('#UsulanForm').trigger("resset");
+        $('#rencanaForm').trigger("reset");
         $('#UsulanModal').html("Tambahkan Usulan");
         $('#usulan-modal').modal('show');
         $('#id').val('');
     }
 
-    function tambahProgram() {
-        $('#ProgramForm').trigger("resset");
-        $('#ProgramModal').html("Tambahkan Program");
-        $('#program-modal').modal('show');
+    function tambahRencana() {
+        $('#rencana2Form').trigger("reset");
+        $('#usulanLain-modal').modal('show');
         $('#id').val('');
     }
 
-    function tambahKegiatan() {
-        $('#KegiatanForm').trigger("resset");
-        $('#KegiatanModal').html("Tambahkan Kegiatan");
-        $('#kegiatan-modal').modal('show');
-        $('#id').val('');
+    function tambahRencanaLain() {
+        $('#usulanLain-modal').modal('show');
     }
+
+    $('#rencanaForm').submit(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            type: "POST",
+            url: "{{ route('unit.simpan_rencana')}}",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: (data) => {
+                $("#usulan-modal").modal('hide');
+                var oTable = $('#usulan').DataTable();
+                oTable.ajax.reload();
+                $("#btn-save").html('Submit');
+                $("#btn-save").attr("disabled", false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.success
+                });
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        })
+    });
+    $('#rencana2Form').submit(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            type: "POST",
+            url: "{{ route('unit.simpan_rencana2')}}",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: (data) => {
+                $("#usulanLain-modal").modal('hide');
+                var oTable = $('#usulan').DataTable();
+                oTable.ajax.reload();
+                $("#btn-simpan").html('Submit');
+                $("#btn-simpan").attr("disabled", false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.success
+                });
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        })
+    });
 </script>
 @endsection

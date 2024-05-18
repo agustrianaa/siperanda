@@ -103,7 +103,7 @@
     });
 
     function tambahSatuan() {
-        $('#satuanForm').trigger("resset");
+        $('#satuanForm').trigger("reset");
         $('#satuan-modal .modal-title').html("Tambahkan satuan");
         $('#satuan-modal').modal('show');
         $('#id').val('');
@@ -172,7 +172,7 @@
             processData: false,
             success: (data) => {
                 $("#satuan-modal").modal('hide');
-                var oTable = $('#satuan').DataTable();
+                var oTable = $('#tabelSatuan').DataTable();
                 oTable.ajax.reload();
                 $("#btn-save").html('Submit');
                 $("#btn-save").attr("disabled", false);

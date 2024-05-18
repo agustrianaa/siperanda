@@ -72,8 +72,15 @@ Route::middleware(['auth', 'user-access:direksi'])->group(function () {
     Route::get('/direksi/monitoring', [DireksiMonitoringController::class, 'index'])->name('direksi.monitoring');
 });
 Route::middleware(['auth', 'user-access:unit'])->group(function () {
+    // CRUD rencana
     Route::get('/unit/usulan', [UnitUsulanController::class, 'index'])->name('unit.usulan');
+    Route::post('/unit/simpan-rencana', [UnitUsulanController::class, 'store'])->name('unit.simpan_rencana');
+    Route::post('/unit/simpan-rencana2', [UnitUsulanController::class, 'store2'])->name('unit.simpan_rencana2');
+    Route::get('/unit/search/code', [UnitUsulanController::class, 'searchByCode'])->name('unit.search_code');
+    // CRUD RPD
     Route::get('/unit/rpd', [UnitUsulanController::class, 'rpd'])->name('unit.rpd');
+
+    // MONITORING RPD
     Route::get('/unit/monitoring', [UnitMonitoringController::class, 'index'])->name('unit.monitoring');
 });
 
