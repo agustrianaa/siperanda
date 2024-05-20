@@ -82,22 +82,15 @@
                 <form action="javascript:void(0)" id="rencana2Form" name="rencana2Form" class="form-horizontal" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="id" id="id">
                     <input type="hidden" id="rencana_id" name="rencana_id" value="1">
+                    <input type="hidden" name="noparent_id" id="noparent_id">
                     <div class="form-group">
                         <label for="name" class="col-sm-4 control-label">Kode</label>
                         <div class="col-sm-12">
-                        <input type="text" class="form-control" id="kode" name="kode" placeholder="Masukkan kode" maxlength="50" required="">
-        <input type="hidden" id="kode_komponen_id" name="kode_komponen_id">
-        <div id="kode-results" name="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;"></div>
+                            <input type="text" class="form-control" id="kode" name="kode" placeholder="Masukkan kode" maxlength="50" required="">
+                            <input type="hidden" id="kode_komponen_id" name="kode_komponen_id">
+                            <div id="kode-results" name="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;"></div>
                         </div>
                     </div>
-                    <!-- <div class="form-group" id="search-results" style="display:none;">
-                        <label for="kode-results" class="col-sm-4 control-label">Hasil Pencarian</label>
-                        <div class="col-sm-12">
-                            <select class="form-control" id="kode-results" name="kode-results"> -->
-                    <!-- Hasil pencarian akan dimasukkan di sini oleh jQuery -->
-                    <!-- </select>
-                        </div>
-                    </div> -->
                     <div class="form-group">
                         <label for="name" class="col-sm-4 control-label">Volume</label>
                         <div class="col-sm-12">
@@ -144,14 +137,10 @@
             serverSide: true,
             ajax: "{{route('unit.usulan')}}",
             columns: [{
-                    data: null,
-                    name: 'DT_RowIndex',
+                    data: 'number',
+                    name: 'number',
                     className: 'text-center',
-                    searchable: false,
-                    orderable: false,
-                    render: function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
+
                 },
                 {
                     data: 'kode',
@@ -190,68 +179,74 @@
         });
 
         $('#kode').on('input', function() {
-        let kode = $(this).val();
-        if (kode.length > 0) {
-            $.ajax({
-                url: '/unit/search/code',
-                method: 'GET',
-                data: {
-                    kode: kode
-                },
-                success: function(data) {
-                    console.log('Data received:', data); // Log response dari server
-                    let results = $('#kode-results');
-                    results.empty();
-                    if (data.length > 0) {
-                        $.each(data, function(index, item) {
-                            results.append(`<div class="dropdown-item" data-id="${item.id}" data-kode="${item.kode}" data-uraian="${item.uraian}">${item.kode} - ${item.uraian}</div>`);
-                        });
-                        results.show();
-                    } else {
-                        results.hide();
+            let kode = $(this).val();
+            if (kode.length > 0) {
+                $.ajax({
+                    url: '/unit/search/code',
+                    method: 'GET',
+                    data: {
+                        kode: kode
+                    },
+                    success: function(data) {
+                        console.log('Data received:', data); // Log response dari server
+                        let results = $('#kode-results');
+                        results.empty();
+                        if (data.length > 0) {
+                            $.each(data, function(index, item) {
+                                results.append(`<div class="dropdown-item" data-id="${item.id}" data-kode="${item.kode}" data-uraian="${item.uraian}">${item.kode} - ${item.uraian}</div>`);
+                            });
+                            results.show();
+                        } else {
+                            results.hide();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error:', error); // Log error jika terjadi
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.log('Error:', error); // Log error jika terjadi
-                }
-            });
-        } else {
+                });
+            } else {
+                $('#kode-results').hide();
+            }
+        });
+
+        // Handle click on search results
+        $(document).on('click', '#kode-results .dropdown-item', function() {
+            let selectedId = $(this).data('id');
+            let selectedKode = $(this).data('kode');
+            let selectedUraian = $(this).data('uraian');
+            $('#kode').val(`${selectedKode} - ${selectedUraian}`);
+            $('#kode_komponen_id').val(selectedId);
             $('#kode-results').hide();
-        }
+        });
+
+        // Hide results when clicking outside
+        $(document).on('click', function(event) {
+            if (!$(event.target).closest('#kode').length && !$(event.target).closest('#kode-results').length) {
+                $('#kode-results').hide();
+            }
+        });
     });
 
-    // Handle click on search results
-    $(document).on('click', '#kode-results .dropdown-item', function() {
-        let selectedId = $(this).data('id');
-        let selectedKode = $(this).data('kode');
-        let selectedUraian = $(this).data('uraian');
-        $('#kode').val(`${selectedKode} - ${selectedUraian}`);
-        $('#kode_komponen_id').val(selectedId);
-        $('#kode-results').hide();
-    });
-
-    // Hide results when clicking outside
-    $(document).on('click', function(event) {
-        if (!$(event.target).closest('#kode').length && !$(event.target).closest('#kode-results').length) {
-            $('#kode-results').hide();
-        }
-    });
-});
-
+    // untuk menambahkan TAHUN
     function tambahUsulan() {
         $('#rencanaForm').trigger("reset");
         $('#UsulanModal').html("Tambahkan Usulan");
         $('#usulan-modal').modal('show');
         $('#id').val('');
+
     }
 
+    // untuk menambahkan detail usulan
     function tambahRencana() {
         $('#rencana2Form').trigger("reset");
         $('#usulanLain-modal').modal('show');
+        $('#parent_id').val('');
         $('#id').val('');
     }
 
-    function tambahRencanaLain() {
+    function tambahRencanaLain(parentId) {
+        $('#rencana2Form').trigger("reset");
+        $('#noparent_id').val(parentId);
         $('#usulanLain-modal').modal('show');
     }
 

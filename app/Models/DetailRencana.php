@@ -12,6 +12,7 @@ class DetailRencana extends Model
 
     protected $fillable = [
         'rencana_id',
+        'noparent_id',
         'kode_komponen_id',
         'satuan_id',
         'volume',

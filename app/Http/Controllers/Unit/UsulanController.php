@@ -13,32 +13,39 @@ use Illuminate\Support\Facades\Log;
 class UsulanController extends Controller
 {
     public function index()
-    {
-        $satuan = Satuan::all();
-        if (request()->ajax()) {
-            $kodeKomponen = DetailRencana::select(
-                'detail_rencana.*',
-                'rencana.*',
-                'kode_komponen.*',
-                'satuan.*'
-            )
-                ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
-                ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
-                ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-                ->get();
-            return datatables()->of($kodeKomponen)
-                ->addColumn('action', function ($row) {
-                    $id = $row->id; // Ambil ID dari baris data
-                    $action =  '<a href="javascript:void(0)" onClick="tambahRencanaLain(' . $id . ')" class="add btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
-                    $action .=  '<a href="javascript:void(0)" onClick="editUsulan(' . $id . ')" class="edit btn btn-success btn-sm"><i class="fas fa-edit"></i></a>';
-                    $action .= '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
-                    return $action;
-                })
-                ->rawColumns(['action'])
-                ->make(true);
-        }
-        return view('unit.rencana.usulan', compact('satuan'));
+{
+    $satuan = Satuan::all();
+    if (request()->ajax()) {
+        $usulan = DetailRencana::select(
+            'detail_rencana.*',
+            'detail_rencana.id as detail_rencana_id',
+            'rencana.*',
+            'kode_komponen.*',
+            'satuan.*'
+        )
+        ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
+        ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+        ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
+        ->get();
+
+        // Membangun data hierarki dengan nomor urut
+        $usulanData = $this->buildHierarchy($usulan);
+        // error_log(print_r($usulanData, true));
+
+        return datatables()->of($usulanData)
+            ->addColumn('action', function ($row) {
+                // $id = $row->id;
+                $id = $row->detail_rencana_id;
+                $action =  '<a href="javascript:void(0)" onClick="tambahRencanaLain(' . $id . ')" class="add btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
+                $action .=  '<a href="javascript:void(0)" onClick="editUsulan(' . $id . ')" class="edit btn btn-success btn-sm"><i class="fas fa-edit"></i></a>';
+                $action .= '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                return $action;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
+    return view('unit.rencana.usulan', compact('satuan'));
+}
 
     public function rpd()
     {
@@ -93,6 +100,7 @@ class UsulanController extends Controller
         $rencanaId = $request->input('rencana_id');
         $kodeKomponenId = $request->input('kode_komponen_id');
         $satuanId = $request->input('satuan_id');
+        $noparentId = $request->input('noparent_id');
 
         $rencana = DetailRencana::updateOrCreate(
             [
@@ -101,6 +109,7 @@ class UsulanController extends Controller
             ],
             [
                 'rencana_id' => $rencanaId,
+                'noparent_id' => $noparentId,
                 'kode_komponen_id' => $kodeKomponenId,
                 'satuan_id' => $satuanId,
                 'volume' => $request->input('volume'),
@@ -110,7 +119,8 @@ class UsulanController extends Controller
         return Response()->json($rencana);
     }
 
-    public function searchByCode(Request $request){
+    public function searchByCode(Request $request)
+    {
         Log::info('searchByCode called');
         $kode = $request->input('kode');
         Log::info('Kode: ' . $kode);
@@ -120,4 +130,22 @@ class UsulanController extends Controller
 
         return response()->json($results);
     }
+
+    private function buildHierarchy($usulan, $parentId = null, $prefix = '')
+{
+    $result = [];
+    $index = 1;
+
+    foreach ($usulan as $item) {
+        if ($item->noparent_id == $parentId) {
+            $item->number = $prefix ? "{$prefix}.{$index}" : (string)$index;
+            $result[] = $item;
+            $children = $this->buildHierarchy($usulan, $item->detail_rencana_id, $item->number);
+            $result = array_merge($result, $children);
+            $index++;
+        }
+    }
+
+    return $result;
+}
 }
