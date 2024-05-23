@@ -14,8 +14,8 @@ class KodeController extends Controller
         $kategori = Kategori::all();
         if (request()->ajax()) {
             $kodeKomponen = KodeKomponen::select('kode_komponen.*', 'kategori.nama_kategori')
-            ->join('kategori', 'kode_komponen.kategori_id', '=', 'kategori.id')
-            ->get();
+                ->join('kategori', 'kode_komponen.kategori_id', '=', 'kategori.id')
+                ->get();
             return datatables()->of($kodeKomponen)
                 ->addColumn('action', function ($row) {
                     $id = $row->id; // Ambil ID dari baris data
@@ -39,17 +39,18 @@ class KodeController extends Controller
 
     public function store(Request $request)
     {
-        $kodeId = $request -> id;
+        $kodeId = $request->id;
 
-        $kategori = KodeKomponen::updateOrCreate([
-            'id' => $kodeId,
-        ],
-        [
-            'kode'=> $request-> kode,
-            'kode_parent' => $request -> kode_parent,
-            'kategori_id' => $request -> kategori_id,
-            'uraian' => $request -> uraian,
-        ]
-    );
-}
+        $kategori = KodeKomponen::updateOrCreate(
+            [
+                'id' => $kodeId,
+            ],
+            [
+                'kode' => $request->kode,
+                'kode_parent' => $request->kode_parent,
+                'kategori_id' => $request->kategori_id,
+                'uraian' => $request->uraian,
+            ]
+        );
+    }
 }

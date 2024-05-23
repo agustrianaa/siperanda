@@ -11,8 +11,12 @@ class Realisasi extends Model
     protected $table = 'realisasi';
 
     protected $fillable = [
-        'rencana_id',
+        'detail_rencana_id',
         'skedul',
         'realisasi'
     ];
+
+    public function detailRencana(){
+        return $this->belongsTo(DetailRencana::class, 'detail_rencana_id');
+    }
 }

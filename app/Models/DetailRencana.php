@@ -19,4 +19,15 @@ class DetailRencana extends Model
         'harga',
         'note',
     ];
+
+    public function kodeKomponen()
+    {
+        return $this->belongsTo(KodeKomponen::class, 'kode_komponen_id');
+    }
+
+    // Definisikan relasi ke model Satuan
+    public function satuan()
+    {
+        return $this->belongsTo(Satuan::class, 'satuan_id');
+    }
 }

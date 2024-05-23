@@ -20,7 +20,7 @@
                     <table class="table table-bordered" id="tabelKode">
                         <thead>
                             <tr>
-                                <th width="5px">No</th>
+                                <!-- <th width="5px">No</th> -->
                                 <th>No Kode</th>
                                 <th>Kode Parent</th>
                                 <th>Kategori</th>
@@ -54,7 +54,7 @@
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Kode Parent</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="kode_parent" name="kode_parent" placeholder="Masukkan kode" maxlength="50" required="">
+                                <input type="text" class="form-control" id="kode_parent" name="kode_parent" placeholder="Masukkan kode" maxlength="50" >
                             </div>
                         </div>
                         <div class="form-group">
@@ -98,16 +98,7 @@
             processing: true,
             serverSide: true,
             ajax: "{{route('admin.kode')}}",
-            columns: [{
-                    data: null,
-                    name: 'DT_RowIndex',
-                    className: 'text-center',
-                    searchable: false,
-                    orderable: false,
-                    render: function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
-                },
+            columns: [
                 {
                     data: 'kode',
                     name: 'kode',

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('kode_komponen', function (Blueprint $table) {
             $table->id();
             $table->string('kode');
-            $table->string('kode_parent');
+            $table->string('kode_parent')->nullable();
             $table->foreignId('kategori_id')->references('id')->on('kategori')->onDelete('cascade');
             $table->string('uraian');
             $table->timestamps();

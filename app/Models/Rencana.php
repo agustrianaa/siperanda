@@ -16,4 +16,8 @@ class Rencana extends Model
         'jumlah',
         'anggaran',
     ];
+
+    public function unit(){
+        return $this->belongsTo(Unit::class);
+    }
 }

@@ -17,8 +17,21 @@ class KodeKomponen extends Model
         'uraian',
     ];
 
+    public function detailRencana()
+    {
+        return $this->hasMany(DetailRencana::class, 'kode_komponen_id');
+    }
     public function kategori()
     {
         return $this->belongsTo(Kategori::class);
+    }
+    public function parent()
+    {
+        return $this->belongsTo(KodeKomponen::class, 'kode_parent', 'kode');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(KodeKomponen::class, 'kode_parent', 'kode');
     }
 }

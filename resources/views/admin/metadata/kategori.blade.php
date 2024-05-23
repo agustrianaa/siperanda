@@ -127,7 +127,7 @@
 
     function hapusKategori(id){
     Swal.fire({
-        title: 'Delete Record?',
+    title: 'Delete Record?',
         text: "Anda yakin ingin menghapus data ini?",
         icon: 'warning',
         showCancelButton: true,

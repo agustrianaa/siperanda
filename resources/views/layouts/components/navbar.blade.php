@@ -8,11 +8,15 @@
                     <i class="ti ti-menu-2"></i>
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link nav-icon-hover" href="javascript:void(0)">
+            <li class="nav-item align-items-center" >
+                <!-- <a class="nav-link nav-icon-hover" href="javascript:void(0)">
                     <i class="ti ti-bell-ringing"></i>
                     <div class="notification bg-primary rounded-circle"></div>
-                </a>
+                    Usulan
+                </a> -->
+                <span class="logo d-flex align-items-center">
+                    @yield('page-title')
+                </span>
             </li>
         </ul>
         <div class="navbar-collapse justify-content-end px-0" id="navbarNav">

@@ -1,11 +1,13 @@
 @extends('template')
+@section('page-title')
+  <h4 class="fw-semibold">Rencana Penarikan Dana</h4>
+@endsection
 @section('content')
 
 <div class="container-fluid">
     <div class="row">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title fw-semibold mb-4">Rencana Penarikan Dana</h5>
                 <div class="row">
                     <table class="table table-bordered" id="RPD">
                         <thead>
@@ -24,53 +26,33 @@
         </div>
     </div>
 
-    <!-- modal -->
-    <div class="modal fade" id="realisasi-modal" aria-hidden="true">
+    <!-- modal untuk rencana penarikan dana -->
+    <div class="modal fade" id="rpd-modal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambahkan Realisasi</h5>
+                    <h5 class="modal-title">Rencana Penarikan Dana</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="javascript:void(0)" id="realisasiForm" name="realisasiForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" name="id" id="id">
+                    <form action="javascript:void(0)" id="rpdForm" name="rpdForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
                         <div class="form-group">
-                            <label for="name" class="col-sm-4 control-label">Kode</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="kode" name="kode" placeholder="Masukkan kode" maxlength="50" required="">
-                            </div>
+                        <label for="name" class="col-sm-4 control-label">Skedul</label>
+                        <div class="col-sm-12">
+                            <input type="date" class="form-control" id="skedul" name="skedul" placeholder="Masukkan Harga" maxlength="50" required="">
                         </div>
-                        <div class="form-group">
-                            <label for="name" class="col-sm-4 control-label">Volume</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="volume" name="volume" placeholder="Masukkan Uraian" maxlength="50" required="">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="name" class="col-sm-4 control-label">Satuan</label>
-                            <select name="satuan_id" id="satuan_id" class="form-control">
-                                <option disabled selected>-Pilih Satuan dr db-</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="name" class="col-sm-4 control-label">Harga</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="harga" name="harga" placeholder="Masukkan Uraian" maxlength="50" required="">
-                            </div>
-                        </div>
+                    </div>
                         <div class="col-sm-8 offset-sm-8"><br />
                             <button type="button" class="btn btn-danger mr-2" data-bs-dismiss="modal">Tutup</button>
                             <button type="submit" class="btn btn-primary" id="btn-save">Simpan</button>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                </div>
+                <div class="modal-footer"></div>
             </div>
         </div>
     </div>
-    <!-- end bootstrap model -->
+
 </div>
 
 <script type="text/javascript">
@@ -119,8 +101,38 @@
         });
     });
 
-    function tambahRPD(){
-        $('#realisasi-modal').modal('show');
+    function tambahRPD(id) {
+        console.log('Menjalankan fungsi tambahRPD() dengan id:', id);
+        $('#rpdForm').trigger("reset");
+        $('#rpd-modal').modal('show');
     }
+
+    $('#rpdForm').submit(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            type: "POST",
+            url: "{{ route('unit.simpan_skedul')}}",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: (data) => {
+                $("#rpd-modal").modal('hide');
+                var oTable = $('#RPD').DataTable();
+                oTable.ajax.reload();
+                $("#btn-save").html('Submit');
+                $("#btn-save").attr("disabled", false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.success
+                });
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        })
+    });
 </script>
 @endsection

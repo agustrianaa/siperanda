@@ -33,7 +33,7 @@ class UsulanController extends Controller
         }
         return view('admin.usulan.usulan');
     }
-    public function realisasi(){
+    public function rpd(){
         if (request()->ajax()) {
             $kodeKomponen = DetailRencana::select(
                 'detail_rencana.*',
@@ -56,6 +56,6 @@ class UsulanController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
-        return view('admin.usulan.realisasi');
+        return view('admin.usulan.rpd');
     }
 }

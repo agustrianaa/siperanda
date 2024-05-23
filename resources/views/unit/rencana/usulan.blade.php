@@ -1,9 +1,11 @@
 @extends('template')
+@section('page-title')
+<h4 class="fw-semibold">Usulan</h4>
+@endsection
 @section('content')
 
 <div class="container-fluid">
     <div class="row">
-        <h3 class="card-title fw-semibold mb-4">Usulan</h3>
         <div class="row">
             <div class="row mb-3">
                 <div class="col"></div>
@@ -41,13 +43,13 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Tambahkan Usulan</h5>
+                <h5 class="modal-title">Tambahkan Tahun Usulan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form action="javascript:void(0)" id="rencanaForm" name="rencanaForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="id" id="id">
-                    <input type="hidden" name="rencana_id" id="rencana_id">
+                    <input type="hidden" name="unit_id" id="unit_id" value="{{ Auth::user()->unit->id }}">
                     <div class="form-group">
                         <label for="tahun">Tahun</label>
                         <select name="tahun" id="tahun" class="form-control">
@@ -60,7 +62,7 @@
                         @endif
                     </div>
                     <div class="col-sm-offset-2 col-sm-10"><br />
-                        <btype="submit" class="btn btn-primary" id="btn-save">Save changes</btype=>
+                        <button type="submit" class="btn btn-primary" id="btn-save">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -83,6 +85,7 @@
                     <input type="hidden" name="id" id="id">
                     <input type="hidden" id="rencana_id" name="rencana_id" value="1">
                     <input type="hidden" name="noparent_id" id="noparent_id">
+                    <input type="hidden" name="detail_rencana_id" id="detail_rencana_id">
                     <div class="form-group">
                         <label for="name" class="col-sm-4 control-label">Kode</label>
                         <div class="col-sm-12">
@@ -140,11 +143,12 @@
                     data: 'number',
                     name: 'number',
                     className: 'text-center',
+                    orderable: false,
 
                 },
                 {
-                    data: 'kode',
-                    name: 'kode',
+                    data: 'allkode',
+                    name: 'allkode',
                 },
                 {
                     data: 'uraian',
@@ -179,21 +183,21 @@
         });
 
         $('#kode').on('input', function() {
-            let kode = $(this).val();
-            if (kode.length > 0) {
+            let searchValue = $(this).val();
+            if (searchValue.length > 0) {
                 $.ajax({
                     url: '/unit/search/code',
                     method: 'GET',
                     data: {
-                        kode: kode
+                        search: searchValue
                     },
                     success: function(data) {
-                        console.log('Data received:', data); // Log response dari server
+                        console.log('Data received:', data);
                         let results = $('#kode-results');
                         results.empty();
                         if (data.length > 0) {
                             $.each(data, function(index, item) {
-                                results.append(`<div class="dropdown-item" data-id="${item.id}" data-kode="${item.kode}" data-uraian="${item.uraian}">${item.kode} - ${item.uraian}</div>`);
+                                results.append(`<div class="dropdown-item" data-id="${item.id}" data-kode="${item.kode}" data-uraian="${item.uraian || ''}">${item.kode}.${item.kode_parent|| ''} - ${item.uraian || 'Uraian Kosong'}</div>`);
                             });
                             results.show();
                         } else {
@@ -201,13 +205,14 @@
                         }
                     },
                     error: function(xhr, status, error) {
-                        console.log('Error:', error); // Log error jika terjadi
+                        console.log('Error:', error);
                     }
                 });
             } else {
                 $('#kode-results').hide();
             }
         });
+
 
         // Handle click on search results
         $(document).on('click', '#kode-results .dropdown-item', function() {
@@ -244,18 +249,81 @@
         $('#id').val('');
     }
 
+    // untuk menambahkan detail usulan yang sesuai dengan usulan pertama
+    // let currentKode = '';
+    // if (currentKode === '') {
+    // Ambil nilai kode dari input jika pertama kali
+    //     currentKode = $('#kode').val();
+    // }
+    // $('#kode').val(currentKode);
+
     function tambahRencanaLain(parentId) {
         $('#rencana2Form').trigger("reset");
         $('#noparent_id').val(parentId);
         $('#usulanLain-modal').modal('show');
     }
 
+    function editUsulan(id) {
+        $.ajax({
+            type: "POST",
+            url: "{{ route('unit.edit_usulan')}}",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(res) {
+                $('#usulanLain-modal .modal-title').html("Edit Usulan");
+            $('#usulanLain-modal').modal('show');
+            $('#id').val(res.id);
+            $('#kode').val(res.kode_uraian);  // Mengisi input dengan gabungan kode dan uraian
+            $('#kode_komponen_id').val(res.kode_komponen_id); // Isi input tersembunyi
+            $('#volume').val(res.volume);
+            $('#satuan_id').val(res.satuan_id); // Pilih satuan yang sesuai di dropdown
+            $('#harga').val(res.harga);
+            }
+        });
+    }
+
+    function hapusUsulan(id){
+        Swal.fire({
+        title: 'Delete Record?',
+        text: "Anda yakin ingin menghapus data ini?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Ajax request
+            $.ajax({
+                type: "POST",
+                url: "{{ route('unit.hapus_usulan')}}",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(res) {
+                    var oTable = $('#usulan').DataTable();
+                oTable.ajax.reload();
+                    Swal.fire(
+                        'Terhapus!',
+                        'Data berhasil dihapus.',
+                        'success'
+                    );
+                }
+            });
+        }
+    });
+    }
+
+    // menyimpan data rencana
     $('#rencanaForm').submit(function(e) {
         e.preventDefault();
         var formData = new FormData(this);
         $.ajax({
             type: "POST",
-            url: "{{ route('unit.simpan_rencana')}}",
+            url: "{{ route('unit.simpan_tahun')}}",
             data: formData,
             cache: false,
             contentType: false,
@@ -277,32 +345,42 @@
             }
         })
     });
-    $('#rencana2Form').submit(function(e) {
-        e.preventDefault();
-        var formData = new FormData(this);
-        $.ajax({
-            type: "POST",
-            url: "{{ route('unit.simpan_rencana2')}}",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: (data) => {
-                $("#usulanLain-modal").modal('hide');
-                var oTable = $('#usulan').DataTable();
-                oTable.ajax.reload();
-                $("#btn-simpan").html('Submit');
-                $("#btn-simpan").attr("disabled", false);
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: data.success
-                });
-            },
-            error: function(data) {
-                console.log(data);
-            }
-        })
+
+    // Menyimpan detail rencana
+$('#rencana2Form').submit(function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+    var id = $('#id').val();
+    var url = id ? "/unit/update-usulan/" + id : "{{ route('unit.simpan_rencana2') }}"; // URL untuk update jika ID ada, atau create jika ID tidak ada
+    var method = id ? "POST" : "POST"; // Menggunakan POST untuk metode spoofing PUT atau PATCH
+    if (id) {
+        formData.append('_method', 'PUT'); // Menambahkan spoofing metode PUT jika ID ada
+    }
+
+    $.ajax({
+        type: method,
+        url: url,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        success: (data) => {
+            $("#usulanLain-modal").modal('hide');
+            var oTable = $('#usulan').DataTable();
+            oTable.ajax.reload();
+            $("#btn-simpan").html('Submit');
+            $("#btn-simpan").attr("disabled", false);
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: data.success
+            });
+        },
+        error: function(data) {
+            console.log(data);
+        }
     });
+});
+
 </script>
 @endsection

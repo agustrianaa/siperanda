@@ -11,10 +11,14 @@ class Unit extends Model
     protected $table = 'unit';
 
     protected $fillable = [
-        'nama_unit',
+        'name',
         'user_id',
     ];
     public function user(){
         return $this->belongsTo('App\Models\User');
+    }
+
+    public function rencana(){
+        return $this->hasMany(Rencana::class);
     }
 }

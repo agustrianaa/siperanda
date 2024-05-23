@@ -33,8 +33,7 @@
             <div class="container-fluid">
                 <!-- CONTENT -->
                 @yield('content')
-
-
+                
             </div>
         </div>
     </div>

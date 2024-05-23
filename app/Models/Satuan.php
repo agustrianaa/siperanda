@@ -14,4 +14,9 @@ class Satuan extends Model
     protected $fillable = [
         'satuan',
     ];
+
+    public function detailRencana()
+    {
+        return $this->hasMany(DetailRencana::class, 'satuan_id');
+    }
 }

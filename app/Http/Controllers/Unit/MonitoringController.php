@@ -23,7 +23,7 @@ class MonitoringController extends Controller
             return datatables()->of($kodeKomponen)
                 ->addColumn('action', function ($row) {
                     $id = $row->id; // Ambil ID dari baris data
-                    $action =  '<a href="javascript:void(0)" onClick="info(' . $id . ')" class="add btn btn-danger btn-sm">Belum di verfikasi</i></a>';
+                    $action =  '<div class="add btn btn-danger btn-sm disabled">Belum di verfikasi</i></div>';
                     return $action;
                 })
                 ->rawColumns(['action'])
