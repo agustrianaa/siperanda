@@ -15,32 +15,33 @@ use Illuminate\Support\Facades\Log;
 class UsulanController extends Controller
 {
     public function index(Request $request)
-{
-    $user = Auth::user();
-    $satuan = Satuan::all();
+    {
+        $user = Auth::user();
+        $satuan = Satuan::all();
 
-    if ($request->ajax()) {
-        $unit = $user->unit;
+        if ($request->ajax()) {
+            $unit = $user->unit;
 
-        // Pastikan unit ditemukan
-        if (!$unit) {
-            return response()->json(['data' => []]);
-        }
+            // Pastikan unit ditemukan
+            if (!$unit) {
+                return response()->json(['data' => []]);
+            }
 
-        // Sesuaikan query untuk hanya mengambil data terkait dengan unit pengguna
-        $usulan = DetailRencana::select(
-            'detail_rencana.*',
-            'detail_rencana.id as detail_rencana_id',
-            'rencana.*',
-            'kode_komponen.*',
-            'satuan.*',
-            KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
-        )
-            ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
-            ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
-            ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-            ->where('rencana.unit_id', $unit->id) // Tambahkan kondisi ini
-            ->get();
+            // Sesuaikan query untuk hanya mengambil data terkait dengan unit pengguna
+            $usulan = DetailRencana::select(
+                'detail_rencana.*',
+                'detail_rencana.id as detail_rencana_id',
+                'rencana.*',
+                'rencana.tahun as tahun',
+                'kode_komponen.*',
+                'satuan.*',
+                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
+            )
+                ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
+                ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+                ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
+                ->where('rencana.unit_id', $unit->id) // Tambahkan kondisi ini
+                ->get();
 
             // Menghitung nilai 'jumlah' dan menyimpannya ke dalam tabel 'rencana'
             foreach ($usulan as $detail) {
@@ -59,24 +60,24 @@ class UsulanController extends Controller
                 }
             }
 
-        // Membangun data hierarki dengan nomor urut
-        $usulanData = $this->buildHierarchy($usulan);
+            // Membangun data hierarki dengan nomor urut
+            $usulanData = $this->buildHierarchy($usulan);
 
-        return datatables()->of($usulanData)
-            ->addColumn('action', function ($row) {
-                $id = $row->detail_rencana_id;
-                $id2 = $row->rencana_id;
-                $action = '<a href="javascript:void(0)" onClick="tambahRencanaLain(' . $id . ')" class="add btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
-                $action .= '<a href="javascript:void(0)" onClick="editUsulan(' . $id . ')" class="edit btn btn-success btn-sm"><i class="fas fa-edit"></i></a>';
-                $action .= '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
-                return $action;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+            return datatables()->of($usulanData)
+                ->addColumn('action', function ($row) {
+                    $id = $row->detail_rencana_id;
+                    $id2 = $row->rencana_id;
+                    $action = '<a href="javascript:void(0)" onClick="tambahRencanaLain(' . $id . ')" class="add btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
+                    $action .= '<a href="javascript:void(0)" onClick="editUsulan(' . $id . ')" class="edit btn btn-success btn-sm"><i class="fas fa-edit"></i></a>';
+                    $action .= '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                    return $action;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('unit.rencana.usulan', compact('satuan'));
     }
-
-    return view('unit.rencana.usulan', compact('satuan'));
-}
 
 
 
@@ -109,8 +110,18 @@ class UsulanController extends Controller
         $kodeKomponenId = $request->input('kode_komponen_id');
         $satuanId = $request->input('satuan_id');
         $noparentId = $request->input('noparent_id');
+        $user = Auth::user();
+        $unitId = $user->unit->id;
 
-        $rencana = DetailRencana::updateOrCreate(
+        $rencana1 = Rencana::create(
+            [
+                'tahun' => $request->input('tahun') . '-01-01',
+                'unit_id' => $unitId, // Sertakan unit_id
+            ]
+        );
+
+        $rencanaId = $rencana1->id;
+        $rencana2 = DetailRencana::updateOrCreate(
             [
                 'id' => $detailRencanaId,
 
@@ -125,15 +136,15 @@ class UsulanController extends Controller
             ]
         );
 
-        $detailId = $rencana->id;
+        $detailId = $rencana2->id;
         Log::info('DetailRencana ID: ' . $detailId);
-        $rpd = Realisasi::updateOrCreate(
+        $rpd = Realisasi::create(
             [
                 'detail_rencana_id' => $detailId,
             ]
         );
         Log::info('Created Realisasi ID: ' . $rpd->id);
-        return Response()->json($rencana,);
+        return Response()->json($rencana2,);
     }
 
     public function searchByCode(Request $request)
@@ -171,46 +182,62 @@ class UsulanController extends Controller
 
     public function edit(Request $request)
 {
-    $id = array('id' => $request->id);
-    $kategori  = DetailRencana::with('kodeKomponen')->where($id)->first();
+    $id = $request->id;
+
+    // Ambil data DetailRencana dengan ID yang sesuai
+    $detailRencana = DetailRencana::with('kodeKomponen')->findOrFail($id);
+
+    // Ambil data Rencana yang sesuai dengan DetailRencana
+    $rencana = Rencana::findOrFail($detailRencana->rencana_id);
 
     // Gabungkan kode dan uraian untuk dikirim ke view
-    $kategori->kode_uraian = $kategori->kodeKomponen->kode . ' - ' . $kategori->kodeKomponen->uraian;
+    $detailRencana->kode_uraian = $detailRencana->kodeKomponen->kode . '.' . $detailRencana->kodeKomponen->kode_parent . ' - ' . $detailRencana->kodeKomponen->uraian;
+    $detailRencana->tahun = $rencana->tahun;
 
-    return response()->json($kategori);
-}
-public function update(Request $request, $id)
-{
-    $kategori = DetailRencana::findOrFail($id);
-    $kategori->kode_komponen_id = $request->kode_komponen_id;
-    $kategori->volume = $request->volume;
-    $kategori->satuan_id = $request->satuan_id;
-    $kategori->harga = $request->harga;
-    $kategori->save();
-
-    return response()->json(['success' => 'Data berhasil diperbarui.']);
+    // Kembalikan respons JSON dengan data DetailRencana yang diedit
+    return response()->json($detailRencana);
 }
 
-public function destroy(Request $request)
-{
-    // Temukan detail rencana berdasarkan ID
-    $detailRencana = DetailRencana::findOrFail($request->id);
 
-    // Simpan ID rencana yang terkait
-    $rencanaId = $detailRencana->rencana_id;
+    public function update(Request $request, $id)
+    {
+        $detailRencana = DetailRencana::findOrFail($id);
+    $rencana = $detailRencana->rencana;
 
-    // Hapus detail rencana
-    $detailRencana->delete();
-
-    // Cek jika tidak ada detail rencana lain yang terkait dengan rencana ini
-$remainingDetails = DetailRencana::where('rencana_id', $rencanaId)->count();
-
-    if ($remainingDetails == 0) {
-        // Hapus rencana jika tidak ada detail rencana lain yang terkait
-        Rencana::findOrFail($rencanaId)->delete();
+    if ($rencana) {
+        $rencana->tahun = $request->input('tahun') . '-01-01';
+        $rencana->save();
     }
 
-    return response()->json(['success' => 'Detail rencana (dan rencana terkait jika tidak ada detail rencana lain) berhasil dihapus.']);
-}
+    // Update DetailRencana
+    $detailRencana->kode_komponen_id = $request->kode_komponen_id;
+    $detailRencana->volume = $request->volume;
+    $detailRencana->satuan_id = $request->satuan_id;
+    $detailRencana->harga = $request->harga;
+    $detailRencana->save();
 
+    return response()->json(['success' => 'Data berhasil diperbarui.']);
+    }
+
+    public function destroy(Request $request)
+    {
+        // Temukan detail rencana berdasarkan ID
+        $detailRencana = DetailRencana::findOrFail($request->id);
+
+        // Simpan ID rencana yang terkait
+        $rencanaId = $detailRencana->rencana_id;
+
+        // Hapus detail rencana
+        $detailRencana->delete();
+
+        // Cek jika tidak ada detail rencana lain yang terkait dengan rencana ini
+        $remainingDetails = DetailRencana::where('rencana_id', $rencanaId)->count();
+
+        if ($remainingDetails == 0) {
+            // Hapus rencana jika tidak ada detail rencana lain yang terkait
+            Rencana::findOrFail($rencanaId)->delete();
+        }
+
+        return response()->json(['success' => 'Detail rencana (dan rencana terkait jika tidak ada detail rencana lain) berhasil dihapus.']);
+    }
 }

@@ -30,4 +30,9 @@ class DetailRencana extends Model
     {
         return $this->belongsTo(Satuan::class, 'satuan_id');
     }
+
+    public function rencana()
+    {
+        return $this->belongsTo(Rencana::class);
+    }
 }

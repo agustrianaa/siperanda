@@ -48,8 +48,9 @@ Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
     Route::post('/tambah-user', [UserController::class, 'store'])->name('superadmin.tambah_user');
     Route::post('/edit-user', [UserController::class, 'edit'])->name('superadmin.edit_user');
     Route::post('/hapus-user', [UserController::class, 'destroy'])->name('superadmin.hapus_user');
-
 });
+
+
 Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // CRUD kategori
     Route::get('/admin/kategori',  [AdminKategoriController::class, 'index'])->name('admin.kategori');
@@ -67,13 +68,17 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::post('/admin/hapus-satuan', [AdminSatuanController::class, 'destroy'])->name('admin.hapus_satuan');
     // Usulan di admin
     Route::get('/admin/usulan',  [AdminUsulanController::class, 'index'])->name('admin.usulan');
-    Route::get('/realisasi',  [AdminUsulanController::class, 'rpd'])->name('admin.realisasi');
+    Route::get('admin/realisasi',  [AdminUsulanController::class, 'rpd'])->name('admin.realisasi');
+    Route::post('/admin/simpan-validasi', [AdminUsulanController::class, 'storevalidasi'])->name('admin.simpan_validasiRPD');
     Route::get('/admin/monitoring',  [AdminMonitoringController::class, 'index'])->name('admin.monitoring');
-
 });
+
+
 Route::middleware(['auth', 'user-access:direksi'])->group(function () {
     Route::get('/direksi/monitoring', [DireksiMonitoringController::class, 'index'])->name('direksi.monitoring');
 });
+
+
 Route::middleware(['auth', 'user-access:unit'])->group(function () {
     // CRUD rencana
     Route::get('/unit/usulan', [UnitUsulanController::class, 'index'])->name('unit.usulan');
@@ -86,7 +91,6 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     // CRUD RPD
     Route::get('/unit/rpd', [UnitRencanaPenarikanDanaController::class, 'index'])->name('unit.rpd');
     Route::post('/unit/simpan-skedul', [UnitRencanaPenarikanDanaController::class, 'store'])->name('unit.simpan_skedul');
-
     // MONITORING RPD
     Route::get('/unit/monitoring', [UnitMonitoringController::class, 'index'])->name('unit.monitoring');
 });

@@ -14,6 +14,7 @@
                                 <th>Kode</th>
                                 <th>Program/Kegiatan/KRO/RO/Komponen/Subkomp/Detil</th>
                                 <th>Jumlah</th>
+                                <th>Skedul</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -24,50 +25,120 @@
     </div>
 </div>
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $('#tabelRPD').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{route('admin.realisasi')}}",
-            columns: [{
-                    data: null,
-                    name: 'DT_RowIndex',
-                    className: 'text-center',
-                    searchable: false,
-                    orderable: false,
-                    render: function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
-                },
-                {
-                    data: 'kode',
-                    name: 'kode',
-                },
-                {
-                    data: 'uraian',
-                    name: 'uraian',
-                },
-                {
-                    data: 'jumlah',
-                    name: 'jumlah',
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    className: 'text-center',
-                    orderable: false,
+<!-- MODAL -->
+<div class="modal" tabindex="-1" id="validasi-modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Validasi Usulan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="javascript:void(0)" id="validasiForm" name="validasiForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
+                    <!-- <input type="hidden" name="id" id="id"> -->
+                    <div class="form-group">
+                        <!-- <label for="name" class="col-sm-4 control-label">Validasi</label> -->
+                        <select name="realisasi" id="realisasi" class="form-select" aria-label="Default select example" required="Wajib Dipilih">
+                            <option selected disabled>- Pilih Validasi -</option>
+                            <option value="disetujui">Disetujui</option>
+                            <option value="pending">Pending</option>
+                            <option value="tidakdisetujui">Tidak Disetujui</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-8 offset-sm-8"><br />
+                        <button type="button" class="btn btn-danger mr-2" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary" id="btn-save">Simpan</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+    <!-- END MODAL -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
-            ],
-            order: [
-                [0, 'desc']
-            ]
+            });
+            $('#tabelRPD').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{route('admin.realisasi')}}",
+                columns: [{
+                        data: null,
+                        name: 'DT_RowIndex',
+                        className: 'text-center',
+                        searchable: false,
+                        orderable: false,
+                        render: function(data, type, row, meta) {
+                            return meta.row + 1;
+                        }
+                    },
+                    {
+                        data: 'kode',
+                        name: 'kode',
+                    },
+                    {
+                        data: 'uraian',
+                        name: 'uraian',
+                    },
+                    {
+                        data: 'skedul',
+                        name: 'skedul',
+                    },
+                    {
+                        data: 'jumlah',
+                        name: 'jumlah',
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        className: 'text-center',
+                        orderable: false,
+                    }
+                ],
+                order: [
+                    [0, 'desc']
+                ]
+            });
         });
-    });
-</script>
-@endsection
+
+        function validasiUsulan(id) {
+            $('#validasi-modal').modal('show');
+            console.log('ID sent for validation:', id);
+
+            $('#validasiForm').off('submit').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                formData.append('id', id); // Tambahkan ID ke formData
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('admin.simpan_validasiRPD') }}",
+                    data: formData,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: (data) => {
+                        $('#validasi-modal').modal('hide');
+                        var oTable = $('#tabelRPD').DataTable();
+                        oTable.ajax.reload();
+                        $("#btn-save").html('Submit');
+                        $("#btn-save").attr("disabled", false);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: data.success
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        }
+    </script>
+    @endsection

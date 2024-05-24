@@ -39,7 +39,7 @@
 </div>
 
 <!-- modal Usulan-->
-<div class="modal fade" id="usulan-modal" aria-hidden="true">
+<!-- <div class="modal fade" id="usulan-modal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -69,7 +69,7 @@
             <div class="modal-footer"></div>
         </div>
     </div>
-</div>
+</div> -->
 <!-- end bootstrap modal usulan -->
 
 <!-- modal -->
@@ -83,9 +83,20 @@
             <div class="modal-body">
                 <form action="javascript:void(0)" id="rencana2Form" name="rencana2Form" class="form-horizontal" method="POST" enctype="multipart/form-data">
                     <input type="hidden" name="id" id="id">
-                    <input type="hidden" id="rencana_id" name="rencana_id" value="1">
+                    <input type="hidden" id="rencana_id" name="rencana_id">
                     <input type="hidden" name="noparent_id" id="noparent_id">
                     <input type="hidden" name="detail_rencana_id" id="detail_rencana_id">
+                    <div class="form-group">
+                        <label for="tahun">Tahun</label>
+                        <select name="tahun" id="tahun" class="form-control">
+                            <option disabled selected>-Pilih Tahun-</option>
+                            @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
+                                @endfor
+                        </select>
+                        @if ($errors->has('year'))
+                        <span class="text-danger">{{$errors->first('year')}}</span>
+                        @endif
+                    </div>
                     <div class="form-group">
                         <label for="name" class="col-sm-4 control-label">Kode</label>
                         <div class="col-sm-12">
@@ -264,6 +275,7 @@
     }
 
     function editUsulan(id) {
+        console.log(id);
         $.ajax({
             type: "POST",
             url: "{{ route('unit.edit_usulan')}}",
@@ -273,48 +285,50 @@
             dataType: 'json',
             success: function(res) {
                 $('#usulanLain-modal .modal-title').html("Edit Usulan");
-            $('#usulanLain-modal').modal('show');
-            $('#id').val(res.id);
-            $('#kode').val(res.kode_uraian);  // Mengisi input dengan gabungan kode dan uraian
-            $('#kode_komponen_id').val(res.kode_komponen_id); // Isi input tersembunyi
-            $('#volume').val(res.volume);
-            $('#satuan_id').val(res.satuan_id); // Pilih satuan yang sesuai di dropdown
-            $('#harga').val(res.harga);
+                $('#usulanLain-modal').modal('show');
+                $('#id').val(res.id);
+                $('#tahun').val(res.tahun.split('-')[0]);
+                console.log(tahun);
+                $('#kode').val(res.kode_uraian); // Mengisi input dengan gabungan kode dan uraian
+                $('#kode_komponen_id').val(res.kode_komponen_id); // Isi input tersembunyi
+                $('#volume').val(res.volume);
+                $('#satuan_id').val(res.satuan_id); // Pilih satuan yang sesuai di dropdown
+                $('#harga').val(res.harga);
             }
         });
     }
 
-    function hapusUsulan(id){
+    function hapusUsulan(id) {
         Swal.fire({
-        title: 'Delete Record?',
-        text: "Anda yakin ingin menghapus data ini?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Ajax request
-            $.ajax({
-                type: "POST",
-                url: "{{ route('unit.hapus_usulan')}}",
-                data: {
-                    id: id
-                },
-                dataType: 'json',
-                success: function(res) {
-                    var oTable = $('#usulan').DataTable();
-                oTable.ajax.reload();
-                    Swal.fire(
-                        'Terhapus!',
-                        'Data berhasil dihapus.',
-                        'success'
-                    );
-                }
-            });
-        }
-    });
+            title: 'Delete Record?',
+            text: "Anda yakin ingin menghapus data ini?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Ajax request
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('unit.hapus_usulan')}}",
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(res) {
+                        var oTable = $('#usulan').DataTable();
+                        oTable.ajax.reload();
+                        Swal.fire(
+                            'Terhapus!',
+                            'Data berhasil dihapus.',
+                            'success'
+                        );
+                    }
+                });
+            }
+        });
     }
 
     // menyimpan data rencana
@@ -347,40 +361,39 @@
     });
 
     // Menyimpan detail rencana
-$('#rencana2Form').submit(function(e) {
-    e.preventDefault();
-    var formData = new FormData(this);
-    var id = $('#id').val();
-    var url = id ? "/unit/update-usulan/" + id : "{{ route('unit.simpan_rencana2') }}"; // URL untuk update jika ID ada, atau create jika ID tidak ada
-    var method = id ? "POST" : "POST"; // Menggunakan POST untuk metode spoofing PUT atau PATCH
-    if (id) {
-        formData.append('_method', 'PUT'); // Menambahkan spoofing metode PUT jika ID ada
-    }
-
-    $.ajax({
-        type: method,
-        url: url,
-        data: formData,
-        cache: false,
-        contentType: false,
-        processData: false,
-        success: (data) => {
-            $("#usulanLain-modal").modal('hide');
-            var oTable = $('#usulan').DataTable();
-            oTable.ajax.reload();
-            $("#btn-simpan").html('Submit');
-            $("#btn-simpan").attr("disabled", false);
-            Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: data.success
-            });
-        },
-        error: function(data) {
-            console.log(data);
+    $('#rencana2Form').submit(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        var id = $('#id').val();
+        var url = id ? "/unit/update-usulan/" + id : "{{ route('unit.simpan_rencana2') }}"; // URL untuk update jika ID ada, atau create jika ID tidak ada
+        var method = id ? "POST" : "POST"; // Menggunakan POST untuk metode spoofing PUT atau PATCH
+        if (id) {
+            formData.append('_method', 'PUT'); // Menambahkan spoofing metode PUT jika ID ada
         }
-    });
-});
 
+        $.ajax({
+            type: method,
+            url: url,
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: (data) => {
+                $("#usulanLain-modal").modal('hide');
+                var oTable = $('#usulan').DataTable();
+                oTable.ajax.reload();
+                $("#btn-simpan").html('Submit');
+                $("#btn-simpan").attr("disabled", false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.success
+                });
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        });
+    });
 </script>
 @endsection

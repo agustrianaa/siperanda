@@ -35,7 +35,7 @@ class RencanaPenarikanDanaController extends Controller
                 ->addColumn('action', function ($row) {
                     $id = $row->id;
                     if ($row->skedul){
-                        $action = '<a href="javascript:void(0)" class="info btn btn-danger btn-sm disabled">Pending</a>';
+                        $action = '<div class="info btn btn-danger btn-sm disabled">Pending</div>';
                     } else {// Ambil ID dari baris data
                     $action = '<a href="javascript:void(0)" onClick="tambahRPD(' . $id . ')" class="tambah btn btn-success btn-sm">Tambah RPD</a>';
                     } return $action;
