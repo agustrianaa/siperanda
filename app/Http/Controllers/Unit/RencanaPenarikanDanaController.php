@@ -16,7 +16,14 @@ class RencanaPenarikanDanaController extends Controller
      */
     public function index()
     {
+        $user = Auth::user();
         if (request()->ajax()) {
+            $unit = $user->unit;
+
+            // Pastikan unit ditemukan
+            if (!$unit) {
+                return response()->json(['data' => []]);
+            }
             $realisasi = Realisasi::select(
                 'realisasi.*', // Kolom dari tabel realisasi
                 'detail_rencana.*', // Kolom dari tabel detail_rencana
@@ -29,6 +36,8 @@ class RencanaPenarikanDanaController extends Controller
             ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
             ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
             ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
+            ->where('rencana.unit_id', $unit->id)
+            ->whereNull('realisasi.realisasi')
             ->get();
 
             return datatables()->of($realisasi)

@@ -22,6 +22,7 @@ class UsulanController extends Controller
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
                 ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
+                ->whereNull('realisasi.realisasi')
                 ->get();
             return datatables()->of($rencana)
                 ->addColumn('action', function ($row) {
@@ -48,10 +49,11 @@ class UsulanController extends Controller
                 'kode_komponen.*',
                 'satuan.*',
             )
-                ->join('detail_rencana', 'realisasi.detail_rencana_id', '=', 'detail_rencana.id')
+            ->join('detail_rencana', 'realisasi.detail_rencana_id', '=', 'detail_rencana.id')
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
                 ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
+                ->whereNull('realisasi.realisasi')
                 ->get();
                 return datatables()->of($rencana)
                 ->addColumn('action', function ($row) {

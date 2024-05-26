@@ -88,7 +88,7 @@
                     <input type="hidden" name="detail_rencana_id" id="detail_rencana_id">
                     <div class="form-group">
                         <label for="tahun">Tahun</label>
-                        <select name="tahun" id="tahun" class="form-control">
+                        <select name="tahun" id="tahun" class="form-control" required="Pilih Tahun">
                             <option disabled selected>-Pilih Tahun-</option>
                             @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
                                 @endfor

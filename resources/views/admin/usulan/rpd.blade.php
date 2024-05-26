@@ -86,12 +86,12 @@
                         name: 'uraian',
                     },
                     {
-                        data: 'skedul',
-                        name: 'skedul',
-                    },
-                    {
                         data: 'jumlah',
                         name: 'jumlah',
+                    },
+                    {
+                        data: 'skedul',
+                        name: 'skedul',
                     },
                     {
                         data: 'action',
