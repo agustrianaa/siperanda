@@ -27,7 +27,7 @@
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{url("/home")}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('superadmin.dashboard')}}" aria-expanded="false">
                         <span>
                             <i class="ti ti-home"></i>
                         </span>
@@ -60,7 +60,7 @@
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{url("/home")}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('admin.dashboard')}}" aria-expanded="false">
                         <span>
                             <i class="ti ti-layout-dashboard"></i>
                         </span>
@@ -138,7 +138,7 @@
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{url("/home")}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('direksi.dashboard')}}" aria-expanded="false">
                         <span>
                             <i class="ti ti-layout-dashboard"></i>
                         </span>
@@ -171,7 +171,7 @@
                     <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{url("/home")}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('unit.dashboard')}}" aria-expanded="false">
                         <span>
                             <i class="ti ti-layout-dashboard"></i>
                         </span>

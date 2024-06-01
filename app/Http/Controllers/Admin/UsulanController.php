@@ -17,11 +17,13 @@ class UsulanController extends Controller
                 'detail_rencana.*',
                 'rencana.*',
                 'kode_komponen.*',
+                'realisasi.*',
                 'satuan.*',
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
                 ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
+                ->join('realisasi', 'realisasi.detail_rencana_id', '=', 'detail_rencana.id')
                 ->whereNull('realisasi.realisasi')
                 ->get();
             return datatables()->of($rencana)

@@ -34,16 +34,13 @@ Route::get('/', function () {
 Route::get('/login',[AuthLoginController::class, 'index'])->name('login')->middleware('guest');
 Route::post('/login',[AuthLoginController::class, 'postlogin'])->name('login');
 Route::get('/logout',[AuthLoginController::class, 'logout'])->name('logout');
-// Route::post('/logout', function () {
-//     Auth::logout();
-//     return redirect('/');
-// })->name('logout');
 
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
 
 
 Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
+    Route::get('/superadmin/dashboard', [HomeController::class, 'superadminHome'])->name('superadmin.dashboard');
     Route::get('/user',  [UserController::class, 'index'])->name('superadmin.tambah_user');
     Route::post('/tambah-user', [UserController::class, 'store'])->name('superadmin.tambah_user');
     Route::post('/edit-user', [UserController::class, 'edit'])->name('superadmin.edit_user');
@@ -52,6 +49,7 @@ Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
 
 
 Route::middleware(['auth', 'user-access:admin'])->group(function () {
+    Route::get('/admin/dashboard', [HomeController::class, 'adminHome'])->name('admin.dashboard');
     // CRUD kategori
     Route::get('/admin/kategori',  [AdminKategoriController::class, 'index'])->name('admin.kategori');
     Route::post('/admin/tambah-kategori', [AdminKategoriController::class, 'store'])->name('admin.tambah_kategori');
@@ -75,11 +73,13 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
 
 Route::middleware(['auth', 'user-access:direksi'])->group(function () {
+    Route::get('/direksi/dashboard', [HomeController::class, 'direksinHome'])->name('direksi.dashboard');
     Route::get('/direksi/monitoring', [DireksiMonitoringController::class, 'index'])->name('direksi.monitoring');
 });
 
 
 Route::middleware(['auth', 'user-access:unit'])->group(function () {
+    Route::get('/unit/dashboard', [HomeController::class, 'unitHome'])->name('unit.dashboard');
     // CRUD rencana
     Route::get('/unit/usulan', [UnitUsulanController::class, 'index'])->name('unit.usulan');
     Route::post('/unit/simpan-rencana', [UnitUsulanController::class, 'store'])->name('unit.simpan_tahun');

@@ -15,7 +15,7 @@ class UserAccess
      */
     public function handle(Request $request, Closure $next, $userType): Response
     {
-        if(auth()->user()->role == $userType){
+        if(auth()->check() && auth()->user()->role == $userType){
             return $next($request);
         }
         return response()->json(['Tidak dapat mengakses halaman ini']);

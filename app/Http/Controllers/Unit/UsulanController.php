@@ -34,13 +34,16 @@ class UsulanController extends Controller
                 'rencana.*',
                 'rencana.tahun as tahun',
                 'kode_komponen.*',
+                'realisasi.*',
                 'satuan.*',
                 KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
                 ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
+                ->join('realisasi', 'realisasi.detail_rencana_id', '=', 'detail_rencana.id')
                 ->where('rencana.unit_id', $unit->id) // Tambahkan kondisi ini
+                ->whereNull('realisasi.realisasi')
                 ->get();
 
             // Menghitung nilai 'jumlah' dan menyimpannya ke dalam tabel 'rencana'
