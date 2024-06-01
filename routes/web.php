@@ -3,15 +3,19 @@
 use App\Http\Controllers\Auth\LoginController as AuthLoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\SuperAdmin\ProfileController as SuperAdminProfileController;
 use App\Http\Controllers\Admin\KategoriController as AdminKategoriController;
 use App\Http\Controllers\Admin\KodeController as AdminKodeController;
 use App\Http\Controllers\Admin\SatuanController as AdminSatuanController;
 use App\Http\Controllers\Admin\MonitoringController as AdminMonitoringController;
 use App\Http\Controllers\Admin\UsulanController as AdminUsulanController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Unit\RencanaPenarikanDanaController as UnitRencanaPenarikanDanaController;
 use App\Http\Controllers\Direksi\MonitoringController as DireksiMonitoringController;
+use App\Http\Controllers\Direksi\ProfileController as DireksiProfileController;
 use App\Http\Controllers\Unit\UsulanController as UnitUsulanController;
 use App\Http\Controllers\Unit\MonitoringController as UnitMonitoringController;
+use App\Http\Controllers\Unit\ProfileController as UnitProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -36,8 +40,11 @@ Route::post('/login',[AuthLoginController::class, 'postlogin'])->name('login');
 Route::get('/logout',[AuthLoginController::class, 'logout'])->name('logout');
 
 Auth::routes();
+// REDIRECT HOME
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
 
+// REDIRECT PROFILE
+Route::get('/profile', [App\Http\Controllers\SuperAdmin\ProfileController::class, 'redirectProfile'])->name('profile.redirect');
 
 Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
     Route::get('/superadmin/dashboard', [HomeController::class, 'superadminHome'])->name('superadmin.dashboard');
@@ -45,6 +52,7 @@ Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
     Route::post('/tambah-user', [UserController::class, 'store'])->name('superadmin.tambah_user');
     Route::post('/edit-user', [UserController::class, 'edit'])->name('superadmin.edit_user');
     Route::post('/hapus-user', [UserController::class, 'destroy'])->name('superadmin.hapus_user');
+    Route::get('/superadmin/profile', [SuperAdminProfileController::class, 'index'])->name('superadmin.profile');
 });
 
 
@@ -69,12 +77,15 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::get('admin/realisasi',  [AdminUsulanController::class, 'rpd'])->name('admin.realisasi');
     Route::post('/admin/simpan-validasi', [AdminUsulanController::class, 'storevalidasi'])->name('admin.simpan_validasiRPD');
     Route::get('/admin/monitoring',  [AdminMonitoringController::class, 'index'])->name('admin.monitoring');
+    // PROFILE
+    Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
 });
 
 
 Route::middleware(['auth', 'user-access:direksi'])->group(function () {
-    Route::get('/direksi/dashboard', [HomeController::class, 'direksinHome'])->name('direksi.dashboard');
+    Route::get('/direksi/dashboard', [HomeController::class, 'direksiHome'])->name('direksi.dashboard');
     Route::get('/direksi/monitoring', [DireksiMonitoringController::class, 'index'])->name('direksi.monitoring');
+    Route::get('/direksi/profile', [DireksiProfileController::class, 'index'])->name('direksi.profile');
 });
 
 
@@ -93,5 +104,7 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     Route::post('/unit/simpan-skedul', [UnitRencanaPenarikanDanaController::class, 'store'])->name('unit.simpan_skedul');
     // MONITORING RPD
     Route::get('/unit/monitoring', [UnitMonitoringController::class, 'index'])->name('unit.monitoring');
+    // PROFILE
+    Route::get('/unit/profile', [UnitProfileController::class, 'index'])->name('unit.profile');
 });
 

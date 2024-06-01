@@ -33,7 +33,7 @@ class HomeController extends Controller
         return view('super_admin.dashboard');
     }
 
-    public function dminHome(){
+    public function adminHome(){
         return view('admin.dashboard');
     }
 

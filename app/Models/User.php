@@ -50,7 +50,7 @@ class User extends Authenticatable
         return $this->hasOne('App\Models\Admin');
     }
     public function direksi(){
-        return $this->hasOne('App\Models\SuperAdmin');
+        return $this->hasOne('App\Models\Direksi');
     }
     public function unit(){
         return $this->hasOne('App\Models\Unit');

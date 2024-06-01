@@ -12,12 +12,10 @@ class Direksi extends Model
 
     protected $fillable = [
         'name',
-        'nidn',
-        'nip',
         'jabatan',
         'user_id',
     ];
     public function user(){
-        return $this->belongsTo('App\Models\User');
+        return $this->hasMany('App\Models\User');
     }
 }
