@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DetailRencana;
 use App\Models\Rencana;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -46,8 +47,10 @@ class HomeController extends Controller
 
         $totalAnggaran = Rencana::where('unit_id', $unitId)
         ->sum('jumlah');
+        $totalRencana = Rencana::where('unit_id', $unitId)
+        ->count();
 
-        return view('unit.dashboard', compact('totalAnggaran'));
+        return view('unit.dashboard', compact('totalAnggaran', 'totalRencana'));
     }
 
 
