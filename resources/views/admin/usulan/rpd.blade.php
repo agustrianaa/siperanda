@@ -88,6 +88,9 @@
                     {
                         data: 'jumlah',
                         name: 'jumlah',
+                        render: function(data, type, row) {
+                        return formatNumber(data);
+                    }
                     },
                     {
                         data: 'skedul',
@@ -104,6 +107,9 @@
                     [0, 'desc']
                 ]
             });
+            function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
         });
 
         function validasiUsulan(id) {

@@ -9,9 +9,9 @@
         <div class="row">
             <div class="row mb-3">
                 <div class="col"></div>
-                <div class="col-auto">
+                <!-- <div class="col-auto">
                     <a class="btn btn-secondary m-1" onclick="tambahUsulan()" href="javascript:void(0)"><i class="ti ti-plus"></i> Usulan</a>
-                </div>
+                </div> -->
                 <div class="col-auto">
                     <a class="btn btn-success m-1" onclick="tambahRencana()" href="javascript:void(0)"><i class="ti ti-plus"></i> Rencana</a>
                 </div>
@@ -140,6 +140,10 @@
 </div>
 <!-- end bootstrap model -->
 <script type="text/javascript">
+    function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
     $(document).ready(function() {
         $.ajaxSetup({
             headers: {
@@ -176,10 +180,16 @@
                 {
                     data: 'harga',
                     name: 'harga',
+                    render: function(data, type, row) {
+                        return formatNumber(data);
+                    }
                 },
                 {
                     data: 'jumlah',
                     name: 'jumlah',
+                    render: function(data, type, row) {
+                        return formatNumber(data);
+                    }
                 },
                 {
                     data: 'action',

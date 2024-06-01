@@ -57,6 +57,9 @@
                 {
                     data: 'jumlah',
                     name: 'jumlah',
+                    render: function(data, type, row) {
+                        return formatNumber(data);
+                    }
                 },
                 {
                     data: 'action',
@@ -69,6 +72,9 @@
                 [0, 'desc']
             ]
         });
+        function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
     });
 </script>
 @endsection

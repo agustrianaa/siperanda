@@ -34,11 +34,15 @@ class HomeController extends Controller
     }
 
     public function adminHome(){
-        return view('admin.dashboard');
+        $totalAnggaran = Rencana::sum('jumlah');
+        $totalRKA = Rencana::count('id');
+        return view('admin.dashboard', compact('totalAnggaran', 'totalRKA'));
     }
 
     public function direksiHome(){
-        return view('direksi.dashboard');
+        $totalAnggaran = Rencana::sum('jumlah');
+        $totalRKA = Rencana::count('id');
+        return view('direksi.dashboard', compact('totalAnggaran', 'totalRKA'));
     }
 
     public function unitHome(){

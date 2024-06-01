@@ -26,6 +26,9 @@
 </div>
 
 <script type="text/javascript">
+    function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
     $(document).ready(function() {
         $.ajaxSetup({
             headers: {
@@ -57,6 +60,9 @@
                 {
                     data: 'jumlah',
                     name: 'jumlah',
+                    render: function(data, type, row) {
+                        return formatNumber(data);
+                    }
                 },
                 {
                     data: 'action',

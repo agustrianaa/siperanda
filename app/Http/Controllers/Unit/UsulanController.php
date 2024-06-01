@@ -47,21 +47,6 @@ class UsulanController extends Controller
                 ->get();
 
             // Menghitung nilai 'jumlah' dan menyimpannya ke dalam tabel 'rencana'
-            foreach ($usulan as $detail) {
-                $harga = $detail->harga;
-                $volume = $detail->volume;
-                $jumlah = $harga * $volume;
-
-                // Debug: Print values to check
-                error_log("Harga: $harga, Volume: $volume, Jumlah: $jumlah");
-
-                // Update field 'jumlah' dalam tabel 'rencana'
-                $rencana = Rencana::find($detail->rencana_id);
-                if ($rencana) {
-                    $rencana->jumlah = $jumlah;
-                    $rencana->save();
-                }
-            }
 
             // Membangun data hierarki dengan nomor urut
             $usulanData = $this->buildHierarchy($usulan);
@@ -71,7 +56,7 @@ class UsulanController extends Controller
                     $id = $row->detail_rencana_id;
                     $id2 = $row->rencana_id;
                     $action = '<a href="javascript:void(0)" onClick="tambahRencanaLain(' . $id . ')" class="add btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
-                    $action .= '<a href="javascript:void(0)" onClick="editUsulan(' . $id . ')" class="edit btn btn-success btn-sm"><i class="fas fa-edit"></i></a>';
+                    $action .= '<a href="javascript:void(0)" onClick="editUsulan(' . $id . ')" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>';
                     $action .= '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
                     return $action;
                 })
@@ -138,6 +123,10 @@ class UsulanController extends Controller
                 'harga' => $request->input('harga'),
             ]
         );
+
+        $jumlah = $rencana2->harga * $rencana2->volume;
+        $rencana1->jumlah = $jumlah;
+        $rencana1->save();
 
         $detailId = $rencana2->id;
         Log::info('DetailRencana ID: ' . $detailId);
