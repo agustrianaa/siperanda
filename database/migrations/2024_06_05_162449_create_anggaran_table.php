@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kode_komponen', function (Blueprint $table) {
+        Schema::create('anggaran', function (Blueprint $table) {
             $table->id();
-            $table->string('kode');
-            $table->unsignedBigInteger('kode_parent')->nullable();
-            $table->foreignId('kategori_id')->references('id')->on('kategori')->onDelete('cascade');
-            $table->string('uraian');
+            $table->decimal('all_anggaran', 20,2)->nullable(); //untuk anggaran per lembaga
+            $table->foreignId('unit_id')->references('id')->on('unit')->onDelete('cascade')->nullable();
+            $table->decimal('anggaran_perunit',15,2)->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kode_komponen');
+        Schema::dropIfExists('anggaran');
     }
 };

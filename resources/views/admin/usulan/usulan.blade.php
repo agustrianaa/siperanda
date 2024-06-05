@@ -10,7 +10,7 @@
                     <table class="table table-bordered" id="rencanaTabel">
                         <thead>
                             <tr>
-                                <th width="5px">No</th>
+                                <!-- <th width="5px">No</th> -->
                                 <th>Kode</th>
                                 <th>Uraian</th>
                                 <th>Volume</th>
@@ -26,7 +26,45 @@
         </div>
     </div>
 
+    <!-- modal untuk menambahkan keterangan usulan -->
+    <div class="modal fade" id="ketUsulan" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Keterangan Usulan</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="javascript:void(0)" id="ketUsulanForm" name="ketUsulanForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
+                        <div class="form-group mb-3">
+                            <label for="ket">Validasi</label>
+                            <select name="" id="" class="form-select">
+                                <option disabled selected>- Pilih Validasi -</option>
+                                <option value="revisi">Revisi</option>
+                                <option value="disetujui">Disetujui</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="note">Catatan Usulan</label>
+                            <div class="col-sm-12">
+                                <!-- <input type="textarea" id="" name="" placeholder="Masukkan Keterangan" class="form-control"> -->
+                                <textarea name="" id="" class="form-control" placeholder="Masukkan Keterangan"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 offset-sm-8"><br />
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                    </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -40,16 +78,6 @@
             serverSide: true,
             ajax: "{{route('admin.usulan')}}",
             columns: [{
-                    data: null,
-                    name: 'DT_RowIndex',
-                    className: 'text-center',
-                    searchable: false,
-                    orderable: false,
-                    render: function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
-                },
-                {
                     data: 'kode',
                     name: 'kode',
                 },
@@ -90,9 +118,14 @@
                 [0, 'desc']
             ]
         });
+
         function formatNumber(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
     });
+
+    function tambahKetUsulan(id) {
+        $('#ketUsulan').modal('show');
+    }
 </script>
 @endsection

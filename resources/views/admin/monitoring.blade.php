@@ -7,13 +7,15 @@
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-4">Seluruh Perencanaan</h5>
                 <div class="row">
-                <table class="table table-bordered" id="monitoringfromAdmin">
+                    <table class="table table-bordered" id="monitoringfromAdmin">
                         <thead>
                             <tr>
-                                <th width="5px">No</th>
+                                <!-- <th width="5px">No</th> -->
                                 <th>Kode</th>
                                 <th>Program/Kegiatan/KRO/RO/Komponen/Subkomp/Detil</th>
                                 <th>Jumlah</th>
+                                <th>RPD</th>
+                                <th>Realisasi</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -37,16 +39,6 @@
             serverSide: true,
             ajax: "{{route('admin.monitoring')}}",
             columns: [{
-                    data: null,
-                    name: 'DT_RowIndex',
-                    className: 'text-center',
-                    searchable: false,
-                    orderable: false,
-                    render: function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
-                },
-                {
                     data: 'kode',
                     name: 'kode',
                 },
@@ -72,9 +64,10 @@
                 [0, 'desc']
             ]
         });
+
         function formatNumber(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
     });
 </script>
 @endsection

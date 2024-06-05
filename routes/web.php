@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SatuanController as AdminSatuanController;
 use App\Http\Controllers\Admin\MonitoringController as AdminMonitoringController;
 use App\Http\Controllers\Admin\UsulanController as AdminUsulanController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Admin\RPDanaController;
 use App\Http\Controllers\Unit\RencanaPenarikanDanaController as UnitRencanaPenarikanDanaController;
 use App\Http\Controllers\Direksi\MonitoringController as DireksiMonitoringController;
 use App\Http\Controllers\Direksi\ProfileController as DireksiProfileController;
@@ -74,8 +75,8 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::post('/admin/hapus-satuan', [AdminSatuanController::class, 'destroy'])->name('admin.hapus_satuan');
     // Usulan di admin
     Route::get('/admin/usulan',  [AdminUsulanController::class, 'index'])->name('admin.usulan');
-    Route::get('admin/realisasi',  [AdminUsulanController::class, 'rpd'])->name('admin.realisasi');
-    Route::post('/admin/simpan-validasi', [AdminUsulanController::class, 'storevalidasi'])->name('admin.simpan_validasiRPD');
+    Route::get('admin/realisasi',  [RPDanaController::class, 'rpd'])->name('admin.realisasi');
+    Route::post('/admin/simpan-validasi', [RPDanaController::class, 'storevalidasi'])->name('admin.simpan_validasiRPD');
     Route::get('/admin/monitoring',  [AdminMonitoringController::class, 'index'])->name('admin.monitoring');
     // PROFILE
     Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');

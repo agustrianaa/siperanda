@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kode_komponen', function (Blueprint $table) {
+        Schema::create('rpd', function (Blueprint $table) {
             $table->id();
-            $table->string('kode');
-            $table->unsignedBigInteger('kode_parent')->nullable();
-            $table->foreignId('kategori_id')->references('id')->on('kategori')->onDelete('cascade');
-            $table->string('uraian');
+            $table->foreignId('detail_rencana_id')->references('id')->on('detail_rencana')->onDelete('cascade')->nullable();
+            $table->string('bulan_rpd')->nullable();
+            $table->decimal('jumlah', 15,2)->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kode_komponen');
+        Schema::dropIfExists('rpd');
     }
 };

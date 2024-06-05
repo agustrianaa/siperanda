@@ -5,12 +5,12 @@
     <div class="row">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title fw-semibold mb-4">Realisasi</h5>
+                <h5 class="card-title fw-semibold mb-4">Rencana Penarikan Dana</h5>
                 <div class="row">
                     <table class="table table-bordered" id="tabelRPD">
                         <thead>
                             <tr>
-                                <th width="5px">No</th>
+                                <!-- <th width="5px">No</th> -->
                                 <th>Kode</th>
                                 <th>Program/Kegiatan/KRO/RO/Komponen/Subkomp/Detil</th>
                                 <th>Jumlah</th>
@@ -67,16 +67,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{route('admin.realisasi')}}",
-                columns: [{
-                        data: null,
-                        name: 'DT_RowIndex',
-                        className: 'text-center',
-                        searchable: false,
-                        orderable: false,
-                        render: function(data, type, row, meta) {
-                            return meta.row + 1;
-                        }
-                    },
+                columns: [
                     {
                         data: 'kode',
                         name: 'kode',

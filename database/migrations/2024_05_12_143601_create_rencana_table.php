@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('rencana', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('unit_id')->references('id')->on('unit')->onDelete('cascade');
+            $table->foreignId('unit_id')->references('id')->on('unit')->onDelete('cascade')->nullable();
             $table->date('tahun');
-            $table->decimal('jumlah', 10,2)->nullable();
-            $table->decimal('anggaran', 10,2)->nullable();
+            $table->decimal('jumlah', 15,2)->nullable(); //untuk jumlah seluruh RKA per Unit
+            $table->decimal('anggaran', 15,2)->nullable();
             $table->timestamps();
         });
     }
