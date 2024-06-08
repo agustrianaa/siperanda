@@ -68,6 +68,8 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::get('/admin/kode',  [AdminKodeController::class, 'index'])->name('admin.kode');
     Route::post('/admin/edit-kode', [AdminKodeController::class, 'edit'])->name('admin.edit_kode');
     Route::post('/admin/simpan-kode', [AdminKodeController::class, 'store'])->name('admin.simpan_kode');
+    Route::get('/admin/search/code_parent', [AdminKodeController::class, 'searchByCode'])->name('admin.search_codeParent');
+    Route::post('/admin/hapus-kode', [AdminKodeController::class, 'destroy'])->name('admin.hapus_kode');
     // CRUD satuan
     Route::get('/admin/satuan',  [AdminSatuanController::class, 'index'])->name('admin.satuan');
     Route::post('/admin/tambah-satuan', [AdminSatuanController::class, 'store'])->name('admin.tambah_satuan');
@@ -75,7 +77,8 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::post('/admin/hapus-satuan', [AdminSatuanController::class, 'destroy'])->name('admin.hapus_satuan');
     // Usulan di admin
     Route::get('/admin/usulan',  [AdminUsulanController::class, 'index'])->name('admin.usulan');
-    Route::get('admin/realisasi',  [RPDanaController::class, 'rpd'])->name('admin.realisasi');
+    Route::post('/admin/simpan-ket', [AdminUsulanController::class, 'storeKet'])->name('admin.simpan_ketUsulan');
+    Route::get('/admin/realisasi',  [RPDanaController::class, 'rpd'])->name('admin.realisasi');
     Route::post('/admin/simpan-validasi', [RPDanaController::class, 'storevalidasi'])->name('admin.simpan_validasiRPD');
     Route::get('/admin/monitoring',  [AdminMonitoringController::class, 'index'])->name('admin.monitoring');
     // PROFILE

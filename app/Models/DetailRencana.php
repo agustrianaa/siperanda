@@ -17,7 +17,7 @@ class DetailRencana extends Model
         'satuan_id',
         'volume',
         'harga',
-        'note',
+        'status',
     ];
 
     public function kodeKomponen()

@@ -13,8 +13,13 @@ class KodeController extends Controller
     {
         $kategori = Kategori::all();
         if (request()->ajax()) {
-            $kodeKomponen = KodeKomponen::select('kode_komponen.*', 'kategori.nama_kategori')
+            $kodeKomponen = KodeKomponen::select(
+                'kode_komponen.*',
+                // 'kode_komponen.kode as kodeParent',
+                'parent.kode as parent_kode',
+                'kategori.nama_kategori',)
                 ->join('kategori', 'kode_komponen.kategori_id', '=', 'kategori.id')
+                ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
                 ->get();
             return datatables()->of($kodeKomponen)
                 ->addColumn('action', function ($row) {
@@ -52,5 +57,26 @@ class KodeController extends Controller
                 'uraian' => $request->uraian,
             ]
         );
+    }
+
+    public function searchByCode(Request $request)
+    {
+        // Log::info('searchByCode: ');
+        $search = $request->input('search');
+        // Log::info('Search: ' . $search);
+
+        $results = KodeKomponen::where('kode', 'LIKE', "%{$search}%")
+            ->orWhere('uraian', 'LIKE', "%{$search}%")
+            ->get();
+        // Log::info('Results: ' . $results);
+
+        return response()->json($results);
+    }
+
+    public function destroy(Request $request)
+    {
+        $kode = KodeKomponen::where('id',$request->id)->delete();
+
+        return Response()->json($kode);
     }
 }

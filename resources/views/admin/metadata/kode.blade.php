@@ -24,7 +24,7 @@
                                 <th>No Kode</th>
                                 <th>Kode Parent</th>
                                 <th>Kategori</th>
-                                <th>Uraian</th>
+                                <th class="text-center" >Uraian</th>
                                 <th width="15%">Action</th>
                             </tr>
                         </thead>
@@ -54,8 +54,10 @@
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Kode Parent</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="kode_parent" name="kode_parent" placeholder="Masukkan kode" maxlength="50" >
-                            </div>
+                <input type="text" class="form-control" id="kode_parent_display" placeholder="Cari Kode Parent" maxlength="50">
+                <input type="hidden" id="kode_parent" name="kode_parent">
+                <div id="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;"></div>
+            </div>
                         </div>
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Kategori</label>
@@ -102,14 +104,17 @@
                 {
                     data: 'kode',
                     name: 'kode',
+                    className: 'text-center',
                 },
                 {
-                data: 'kode_parent',
-                    name: 'kode_parent',
+                data: 'parent_kode',
+                    name: 'parent_kode',
+                    className: 'text-center',
                 },
                 {
                     data: 'nama_kategori',
                     name: 'nama_kategori',
+                    className: 'text-center',
                 },
                 {
                     data: 'uraian',
@@ -125,6 +130,55 @@
             order: [
                 [0, 'desc']
             ]
+        });
+
+        $('#kode_parent_display').on('input', function() {
+            let searchValue = $(this).val();
+            if (searchValue.length > 0) {
+                $.ajax({
+                    url: '/admin/search/code_parent',
+                    method: 'GET',
+                    data: {
+                        search: searchValue
+                    },
+                    success: function(data) {
+                        console.log('Data received:', data);
+                        let results = $('#kode-results');
+                        results.empty();
+                        if (data.length > 0) {
+                            $.each(data, function(index, item) {
+                                results.append(`<div class="dropdown-item" data-id="${item.id}" data-kode="${item.kode}" data-uraian="${item.uraian || ''}">${item.kode}.${item.kode_parent|| ''} - ${item.uraian || 'Uraian Kosong'}</div>`);
+                            });
+                            results.show();
+                        } else {
+                            results.hide();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error:', error);
+                    }
+                });
+            } else {
+                $('#kode-results').hide();
+            }
+        });
+
+
+        // Handle click on search results
+        $(document).on('click', '#kode-results .dropdown-item', function() {
+            let selectedId = $(this).data('id');
+            let selectedKode = $(this).data('kode');
+            let selectedUraian = $(this).data('uraian');
+            $('#kode_parent').val(selectedId);
+            $('#kode_parent_display').val(`${selectedKode} - ${selectedUraian}`);
+            $('#kode-results').hide();
+        });
+
+        // Hide results when clicking outside
+        $(document).on('click', function(event) {
+            if (!$(event.target).closest('#kode_parent_display').length && !$(event.target).closest('#kode-results').length) {
+                $('#kode-results').hide();
+            }
         });
     });
 
@@ -155,6 +209,40 @@
             }
         });
     }
+
+    function hapusKode(id) {
+        Swal.fire({
+            title: 'Delete Record?',
+            text: "Anda yakin ingin menghapus data ini?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Ajax request
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('admin.hapus_kode')}}",
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(res) {
+                        var oTable = $('#tabelKode').DataTable();
+                        oTable.ajax.reload();
+                        Swal.fire(
+                            'Terhapus!',
+                            'Data berhasil dihapus.',
+                            'success'
+                        );
+                    }
+                });
+            }
+        });
+    }
+
 
     $('#kodeForm').submit(function(e) {
         e.preventDefault();

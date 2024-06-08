@@ -14,7 +14,7 @@
                                 <th>Kode</th>
                                 <th>Program/Kegiatan/KRO/RO/Komponen/Subkomp/Detil</th>
                                 <th>Jumlah</th>
-                                <th>Skedul</th>
+                                <th>RPD</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -77,15 +77,15 @@
                         name: 'uraian',
                     },
                     {
-                        data: 'jumlah',
-                        name: 'jumlah',
+                        data: 'jumlahUsulan',
+                        name: 'jumlahUsulan',
                         render: function(data, type, row) {
                         return formatNumber(data);
                     }
                     },
                     {
-                        data: 'skedul',
-                        name: 'skedul',
+                        data: 'bulan_rpd',
+                        name: 'bulan_rpd',
                     },
                     {
                         data: 'action',

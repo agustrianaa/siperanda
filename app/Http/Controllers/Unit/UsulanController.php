@@ -36,6 +36,7 @@ class UsulanController extends Controller
                 'kode_komponen.*',
                 'realisasi.*',
                 'satuan.*',
+                'rpd.*',
                 KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
@@ -43,7 +44,7 @@ class UsulanController extends Controller
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
                 ->join('realisasi', 'realisasi.detail_rencana_id', '=', 'detail_rencana.id')
                 ->where('rencana.unit_id', $unit->id) // Tambahkan kondisi ini
-                ->whereNull('realisasi.realisasi')
+                ->join('rpd', 'rpd.detail_rencana_id', '=','detail_rencana.id')
                 ->get();
 
             // Menghitung nilai 'jumlah' dan menyimpannya ke dalam tabel 'rencana'

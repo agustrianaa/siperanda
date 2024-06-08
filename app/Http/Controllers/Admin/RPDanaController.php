@@ -15,18 +15,20 @@ class RPDanaController extends Controller
         if (request()->ajax()) {
             $rencana = Realisasi::select(
                 'realisasi.*',
-                'realisasi.realisasi as realisasi',
+                'realisasi.id as id',
                 'detail_rencana.*',
                 'detail_rencana.id as id_detail',
                 'rencana.*',
+                'rencana.jumlah as jumlahUsulan',
                 'kode_komponen.*',
                 'satuan.*',
+                'rpd.*'
             )
             ->join('detail_rencana', 'realisasi.detail_rencana_id', '=', 'detail_rencana.id')
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
                 ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-                ->whereNull('realisasi.realisasi')
+                ->leftJoin('rpd', 'rpd.detail_rencana_id', '=', 'detail_rencana.id')
                 ->get();
                 return datatables()->of($rencana)
                 ->addColumn('action', function ($row) {

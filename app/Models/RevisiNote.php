@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Realisasi extends Model
+class RevisiNote extends Model
 {
     use HasFactory;
-    protected $table = 'realisasi';
+
+    protected $table = 'note_revisi';
 
     protected $fillable = [
         'detail_rencana_id',
-        'bulan_realisasi',
-        'jumlah',
+        'note',
     ];
 
     public function detailRencana(){

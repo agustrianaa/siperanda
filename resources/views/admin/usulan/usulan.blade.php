@@ -36,25 +36,26 @@
                 </div>
                 <div class="modal-body">
                     <form action="javascript:void(0)" id="ketUsulanForm" name="ketUsulanForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" id="detail_rencana_id" name="detail_rencana_id">
                         <div class="form-group mb-3">
-                            <label for="ket">Validasi</label>
-                            <select name="" id="" class="form-select">
+                            <label for="status">Validasi</label>
+                            <select name="status" id="status" class="form-select">
                                 <option disabled selected>- Pilih Validasi -</option>
-                                <option value="revisi">Revisi</option>
-                                <option value="disetujui">Disetujui</option>
+                                <option value="revisi"> Revisi</option>
+                                <option value="disetujui"> Disetujui</option>
                             </select>
                         </div>
                         <div class="form-group mb-2">
                             <label for="note">Catatan Usulan</label>
                             <div class="col-sm-12">
                                 <!-- <input type="textarea" id="" name="" placeholder="Masukkan Keterangan" class="form-control"> -->
-                                <textarea name="" id="" class="form-control" placeholder="Masukkan Keterangan"></textarea>
+                                <textarea name="note" id="note" class="form-control" placeholder="Masukkan Keterangan"></textarea>
                             </div>
                         </div>
                         <div class="col-sm-8 offset-sm-8"><br />
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
-                        <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
-                    </div>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -76,10 +77,17 @@
         $('#rencanaTabel').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{route('admin.usulan')}}",
+            ajax: {
+                url: "{{ route('admin.usulan') }}",
+                type: 'GET',
+                dataSrc: function(json) {
+                    console.log(json); // Log the data received from server
+                    return json.data;
+                }
+            },
             columns: [{
-                    data: 'kode',
-                    name: 'kode',
+                    data: 'kodeUsulan',
+                    name: 'kodeUsulan',
                 },
                 {
                     data: 'uraian',
@@ -101,8 +109,8 @@
                     }
                 },
                 {
-                    data: 'jumlah',
-                    name: 'jumlah',
+                    data: 'jumlahUsulan',
+                    name: 'jumlahUsulan',
                     render: function(data, type, row) {
                         return formatNumber(data);
                     }
@@ -126,6 +134,38 @@
 
     function tambahKetUsulan(id) {
         $('#ketUsulan').modal('show');
+        console.log('id nya adalah', id);
+        // $('#detail_rencana_id').val(id);
+        $('#ketUsulanForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            formData.append('id', id); // Tambahkan ID ke formData
+
+            $.ajax({
+                type: 'POST',
+                url: "{{ route('admin.simpan_ketUsulan') }}",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: (data) => {
+                    $("#ketUsulan").modal('hide');
+                    var oTable = $('#rencanaTabel').DataTable();
+                    oTable.ajax.reload();
+                    $("#btn-save").html('Submit');
+                    $("#btn-save").attr("disabled", false);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.success
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        });
     }
+
 </script>
 @endsection
