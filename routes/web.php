@@ -105,7 +105,7 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     Route::post('/unit/hapus-usulan', [UnitUsulanController::class, 'destroy'])->name('unit.hapus_usulan');
     // CRUD RPD
     Route::get('/unit/rpd', [UnitRencanaPenarikanDanaController::class, 'index'])->name('unit.rpd');
-    Route::post('/unit/simpan-skedul', [UnitRencanaPenarikanDanaController::class, 'store'])->name('unit.simpan_skedul');
+    Route::post('/unit/simpan-skedul', [UnitRencanaPenarikanDanaController::class, 'storeRPD'])->name('unit.simpan_skedul');
     // MONITORING RPD
     Route::get('/unit/monitoring', [UnitMonitoringController::class, 'index'])->name('unit.monitoring');
     // PROFILE

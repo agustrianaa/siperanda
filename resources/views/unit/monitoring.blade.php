@@ -14,7 +14,9 @@
                                 <th>Kode</th>
                                 <th>Program/Kegiatan/KRO/RO/Komponen/Subkomp/Detil</th>
                                 <th>Jumlah</th>
-                                <th>Action</th>
+                                <th>RPD</th>
+                                <th>Realisasi</th>
+                                <th>Ket</th>
                             </tr>
                         </thead>
                     </table>
@@ -58,11 +60,19 @@
                     name: 'uraian',
                 },
                 {
-                    data: 'jumlah',
-                    name: 'jumlah',
+                    data: 'jumlahUsulan',
+                    name: 'jumlahUsulan',
                     render: function(data, type, row) {
                         return formatNumber(data);
                     }
+                },
+                {
+                    data: 'bulan_rpd',
+                    name: 'bulan_rpd',
+                },
+                {
+                    data: 'bulan_realisasi',
+                    name: 'bulan_realisasi',
                 },
                 {
                     data: 'action',

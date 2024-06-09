@@ -7,6 +7,7 @@ use App\Models\DetailRencana;
 use App\Models\KodeKomponen;
 use App\Models\Realisasi;
 use App\Models\Rencana;
+use App\Models\RPD;
 use App\Models\Satuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,17 +35,13 @@ class UsulanController extends Controller
                 'rencana.*',
                 'rencana.tahun as tahun',
                 'kode_komponen.*',
-                'realisasi.*',
                 'satuan.*',
-                'rpd.*',
                 KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
                 ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-                ->join('realisasi', 'realisasi.detail_rencana_id', '=', 'detail_rencana.id')
                 ->where('rencana.unit_id', $unit->id) // Tambahkan kondisi ini
-                ->join('rpd', 'rpd.detail_rencana_id', '=','detail_rencana.id')
                 ->get();
 
             // Menghitung nilai 'jumlah' dan menyimpannya ke dalam tabel 'rencana'
@@ -131,12 +128,16 @@ class UsulanController extends Controller
 
         $detailId = $rencana2->id;
         Log::info('DetailRencana ID: ' . $detailId);
-        $rpd = Realisasi::create(
+        $rpd = RPD::create(
             [
                 'detail_rencana_id' => $detailId,
             ]
         );
-        Log::info('Created Realisasi ID: ' . $rpd->id);
+        $realisasi = Realisasi::create(
+            [
+                'detail_rencana_id' => $detailId,
+            ]
+        );
         return Response()->json($rencana2,);
     }
 

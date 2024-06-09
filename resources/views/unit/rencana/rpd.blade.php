@@ -1,6 +1,6 @@
 @extends('template')
 @section('page-title')
-  <h4 class="fw-semibold">Rencana Penarikan Dana</h4>
+<h4 class="fw-semibold">Rencana Penarikan Dana</h4>
 @endsection
 @section('content')
 
@@ -12,9 +12,12 @@
                     <table class="table table-bordered" id="RPD">
                         <thead>
                             <tr>
-                                <th width="5px">No</th>
+                                <!-- <th width="5px">No</th> -->
                                 <th>Kode</th>
                                 <th>Program/Kegiatan/KRO/RO/Komponen/Subkomp/Detil</th>
+                                <th>Volume</th>
+                                <th>Satuan</th>
+                                <th>Harga/sat</th>
                                 <th>Jumlah</th>
                                 <th>Action</th>
                             </tr>
@@ -36,12 +39,19 @@
                 </div>
                 <div class="modal-body">
                     <form action="javascript:void(0)" id="rpdForm" name="rpdForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="detail_rencana_id" id="detail_rencana_id">
                         <div class="form-group">
-                        <label for="name" class="col-sm-4 control-label">Skedul</label>
-                        <div class="col-sm-12">
-                            <input type="date" class="form-control" id="skedul" name="skedul" placeholder="Masukkan Harga" maxlength="50" required="">
+                            <label for="name" class="col-sm-4 control-label">Skedul</label>
+                            <div class="col-sm-12 mb-4">
+                                <input type="date" class="form-control" id="bulan_rpd" name="bulan_rpd" placeholder="Masukkan Harga" maxlength="50" required="">
+                            </div>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label for="jumlah">Jumlah Duit nya</label>
+                            <div class="col-sm-12 mb-4">
+                                <input type="text" class="form-control" id="jumlah" name="jumlah" placeholder="Masukkan Jumlah duit nya">
+                            </div>
+                        </div>
                         <div class="col-sm-8 offset-sm-8"><br />
                             <button type="button" class="btn btn-danger mr-2" data-bs-dismiss="modal">Tutup</button>
                             <button type="submit" class="btn btn-primary" id="btn-save">Simpan</button>
@@ -70,16 +80,7 @@
             processing: true,
             serverSide: true,
             ajax: "{{route('unit.rpd')}}",
-            columns: [{
-                    data: null,
-                    name: 'DT_RowIndex',
-                    className: 'text-center',
-                    searchable: false,
-                    orderable: false,
-                    render: function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
-                },
+            columns: [
                 {
                     data: 'kode',
                     name: 'kode',
@@ -89,8 +90,23 @@
                     name: 'uraian',
                 },
                 {
-                    data: 'jumlah',
-                    name: 'jumlah',
+                        data: 'volume',
+                        name: 'volume',
+                    },
+                    {
+                        data: 'satuan',
+                        name: 'satuan',
+                    },
+                    {
+                        data: 'harga',
+                        name: 'harga',
+                        render: function(data, type, row) {
+                            return formatNumber(data);
+                        }
+                    },
+                {
+                    data: 'jumlahUsulan',
+                    name: 'jumlahUsulan',
                     render: function(data, type, row) {
                         return formatNumber(data);
                     }
@@ -107,16 +123,19 @@
             ]
         });
     });
+    var id;
 
-    function tambahRPD(id) {
+    function tambahRPD(_id) {
+        id = _id;
         console.log('Menjalankan fungsi tambahRPD() dengan id:', id);
-        $('#rpdForm').trigger("reset");
         $('#rpd-modal').modal('show');
+        $('#rpdForm').trigger("reset");
     }
 
-    $('#rpdForm').submit(function(e) {
+    $('#rpdForm').off('submit').on('submit', function(e) {
         e.preventDefault();
         var formData = new FormData(this);
+        formData.append('detail_rencana_id', id);
         $.ajax({
             type: "POST",
             url: "{{ route('unit.simpan_skedul')}}",
@@ -126,8 +145,6 @@
             processData: false,
             success: (data) => {
                 $("#rpd-modal").modal('hide');
-                var oTable = $('#RPD').DataTable();
-                oTable.ajax.reload();
                 $("#btn-save").html('Submit');
                 $("#btn-save").attr("disabled", false);
                 Swal.fire({
@@ -141,5 +158,6 @@
             }
         })
     });
+
 </script>
 @endsection

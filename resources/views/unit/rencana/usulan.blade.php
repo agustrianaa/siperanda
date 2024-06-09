@@ -158,7 +158,6 @@
                     name: 'number',
                     className: 'text-center',
                     orderable: false,
-
                 },
                 {
                     data: 'allkode',

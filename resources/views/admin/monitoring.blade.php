@@ -16,7 +16,7 @@
                                 <th>Jumlah</th>
                                 <th>RPD</th>
                                 <th>Realisasi</th>
-                                <th>Action</th>
+                                <th>Ket</th>
                             </tr>
                         </thead>
                     </table>

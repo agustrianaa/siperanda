@@ -52,9 +52,12 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Role</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="role" name="role" placeholder="Enter Role" maxlength="50" required="">
-                            </div>
+                            <select name="role" id="role" class="form-select">
+                                <option value="#" disabled selected>- Pilih Role -</option>
+                                <option value="admin">Admin</option>
+                                <option value="direksi">Direksi</option>
+                                <option value="unit">Unit</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">Password</label>

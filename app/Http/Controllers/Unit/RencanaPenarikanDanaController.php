@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Unit;
 use App\Http\Controllers\Controller;
 use App\Models\DetailRencana;
 use App\Models\Realisasi;
+use App\Models\RPD;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -24,30 +25,33 @@ class RencanaPenarikanDanaController extends Controller
             if (!$unit) {
                 return response()->json(['data' => []]);
             }
-            $realisasi = Realisasi::select(
-                'realisasi.*', // Kolom dari tabel realisasi
+            $rpd = DetailRencana::select(
+                'detail_rencana.*',
+                'detail_rencana.id as idRencana',
+                'rpd.*', // Kolom dari tabel rpd
                 'detail_rencana.*', // Kolom dari tabel detail_rencana
                 'kode_komponen.*', // Kolom dari tabel kode_komponen
                 'satuan.*', // Kolom dari tabel satuan
                 'rencana.*',
-                'realisasi.skedul as skedul'
+                'rencana.jumlah as jumlahUsulan'
             )
-            ->join('detail_rencana', 'realisasi.detail_rencana_id', '=', 'detail_rencana.id')
-            ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
-            ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
-            ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-            ->where('rencana.unit_id', $unit->id)
-            ->whereNull('realisasi.realisasi')
-            ->get();
+                ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
+                ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+                ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
+                ->leftJoin('rpd', 'rpd.detail_rencana_id', '=', 'detail_rencana.id')
+                ->where('rencana.unit_id', $unit->id)
+                ->get();
 
-            return datatables()->of($realisasi)
+            return datatables()->of($rpd)
                 ->addColumn('action', function ($row) {
-                    $id = $row->id;
-                    if ($row->skedul){
-                        $action = '<div class="info btn btn-danger btn-sm disabled">Pending</div>';
-                    } else {// Ambil ID dari baris data
-                    $action = '<a href="javascript:void(0)" onClick="tambahRPD(' . $id . ')" class="tambah btn btn-success btn-sm">Tambah RPD</a>';
-                    } return $action;
+                    $id = $row->idRencana;
+                    if ($row->bulan_rpd) {
+                        $action = '<div class="info btn btn-danger btn-sm disabled">Submited</div>';
+                        $action .= '<a href="javascript:void(0)" onClick="tambahRPD(' . $id . ')" class="tambah btn btn-success btn-sm">Tambah RPDLain</a>';
+                    } else { // Ambil ID dari baris data
+                        $action = '<a href="javascript:void(0)" onClick="tambahRPD(' . $id . ')" class="tambah btn btn-success btn-sm">Tambah RPD</a>';
+                    }
+                    return $action;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -72,10 +76,25 @@ class RencanaPenarikanDanaController extends Controller
         $unitId = $user->unit->id;
 
         // Lakukan update pada semua entri dalam tabel Realisasi
-        $rpd = Realisasi::query()->update([
-            'skedul' => $request->skedul,
+        $rpd = RPD::query()->update([
+            'bulan_rpd' => $request->bulan_rpd,
+            'jumlah' => $request->jumlah,
         ]);
 
+        return response()->json($rpd);
+    }
+
+    public function storeRPD(Request $request){
+        // $id = $request->id;
+        // $rencana = DetailRencana::findOrFail($id);
+
+        // if (!empty($request->bulan_rpd)) {
+            $rpd = new Rpd();
+            $rpd->detail_rencana_id = $request->detail_rencana_id;
+            $rpd->bulan_rpd = $request->bulan_rpd;
+            $rpd->jumlah = $request->jumlah;
+            $rpd->save();
+    // }
         return response()->json($rpd);
     }
 

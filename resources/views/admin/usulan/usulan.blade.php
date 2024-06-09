@@ -3,27 +3,70 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title fw-semibold mb-4">Usulan</h5>
-                <div class="row">
-                    <table class="table table-bordered" id="rencanaTabel">
-                        <thead>
-                            <tr>
-                                <!-- <th width="5px">No</th> -->
-                                <th>Kode</th>
-                                <th>Uraian</th>
-                                <th>Volume</th>
-                                <th>Satuan</th>
-                                <th>Harga Satuan</th>
-                                <th>Jumlah</th>
-                                <th width="15%">Action</th>
-                            </tr>
-                        </thead>
-                    </table>
+        <!-- filter -->
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title fw-semibold mb-3">Filter</h5>
+                    <div class="row">
+                        <div class="col-lg-2 mb-2">
+                            <!-- <label for="unit">Pilih Unit </label> -->
+                            <select name="funit" id="funit" class="form-select">
+                                <option value="#" disabled selected>- Pilih Unit -</option>
+                                @if($unit->isEmpty())
+                                <option disabled>Tidak ada Unit</option>
+                                @else
+                                @foreach($unit as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                                @endif
+                            </select>
+                        </div>
+                        <div class="col-lg-2 mb-2">
+                            <select name="fkategori" id="fkategori" class="form-select">
+                                <option value="#" disabled selected> - Pilih Kategori - </option>
+                                @if($kategoris->isEmpty())
+                                <option disabled>Tidak ada kategori</option>
+                                @else
+                                @foreach($kategoris as $item)
+                                <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
+                                @endforeach
+                                @endif
+                            </select>
+                        </div>
+                        <div class="col-lg-1 mb-1">
+                            <button class="btn btn-dark" id="resetFilter">Reset</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- end filter -->
+
+        <!-- card table -->
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <table class="table table-bordered" id="rencanaTabel">
+                            <thead>
+                                <tr>
+                                    <!-- <th width="5px">No</th> -->
+                                    <th>Kode</th>
+                                    <th>Uraian</th>
+                                    <th>Volume</th>
+                                    <th>Satuan</th>
+                                    <th>Harga Satuan</th>
+                                    <th>Jumlah</th>
+                                    <th width="15%">Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- modal untuk menambahkan keterangan usulan -->
@@ -74,58 +117,85 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        $('#rencanaTabel').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('admin.usulan') }}",
-                type: 'GET',
-                dataSrc: function(json) {
-                    console.log(json); // Log the data received from server
-                    return json.data;
-                }
-            },
-            columns: [{
-                    data: 'kodeUsulan',
-                    name: 'kodeUsulan',
-                },
-                {
-                    data: 'uraian',
-                    name: 'uraian',
-                },
-                {
-                    data: 'volume',
-                    name: 'volume',
-                },
-                {
-                    data: 'satuan',
-                    name: 'satuan',
-                },
-                {
-                    data: 'harga',
-                    name: 'harga',
-                    render: function(data, type, row) {
-                        return formatNumber(data);
+
+        dataRencana();
+
+        function dataRencana() {
+            var funit = $('#funit').val();
+            var fkategori = $('#fkategori').val();
+
+            $('#rencanaTabel').DataTable({
+                processing: true,
+                serverSide: true,
+                destroy: true,
+                ajax: {
+                    url: "{{ route('admin.usulan') }}",
+                    type: 'GET',
+                    data: {
+                        unit_id: funit,
+                        kategori_id: fkategori,
+                    },
+                    dataSrc: function(json) {
+                        console.log(json); // Log the data received from server
+                        return json.data;
                     }
                 },
-                {
-                    data: 'jumlahUsulan',
-                    name: 'jumlahUsulan',
-                    render: function(data, type, row) {
-                        return formatNumber(data);
+                columns: [{
+                        data: 'kodeUsulan',
+                        name: 'kodeUsulan',
+                    },
+                    {
+                        data: 'uraian',
+                        name: 'uraian',
+                    },
+                    {
+                        data: 'volume',
+                        name: 'volume',
+                    },
+                    {
+                        data: 'satuan',
+                        name: 'satuan',
+                    },
+                    {
+                        data: 'harga',
+                        name: 'harga',
+                        render: function(data, type, row) {
+                            return formatNumber(data);
+                        }
+                    },
+                    {
+                        data: 'jumlahUsulan',
+                        name: 'jumlahUsulan',
+                        render: function(data, type, row) {
+                            return formatNumber(data);
+                        }
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        className: 'text-center',
+                        orderable: false,
                     }
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    className: 'text-center',
-                    orderable: false,
-                }
-            ],
-            order: [
-                [0, 'desc']
-            ]
+                ],
+                order: [
+                    [0, 'desc']
+                ]
+            });
+        }
+
+        $('#funit').on('change', function() {
+            dataRencana();
         });
+
+        $('#fkategori').on('change', function() {
+            dataRencana();
+        });
+
+        $('#resetFilter').click(function() {
+            $('#funit').val("#").trigger('change');
+            $('#fkategori').val("#").trigger('change');
+            dataRencana();
+        })
 
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -140,7 +210,6 @@
             e.preventDefault();
             var formData = new FormData(this);
             formData.append('id', id); // Tambahkan ID ke formData
-
             $.ajax({
                 type: 'POST',
                 url: "{{ route('admin.simpan_ketUsulan') }}",
@@ -166,6 +235,5 @@
             });
         });
     }
-
 </script>
 @endsection
