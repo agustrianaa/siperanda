@@ -14,11 +14,12 @@
                             <tr>
                                 <!-- <th width="5px">No</th> -->
                                 <th>Kode</th>
-                                <th>Program/Kegiatan/KRO/RO/Komponen/Subkomp/Detil</th>
+                                <th>Program/Kegiatan/KRO/RO/dsb</th>
                                 <th>Volume</th>
                                 <th>Satuan</th>
                                 <th>Harga/sat</th>
                                 <th>Jumlah</th>
+                                <th width="15%">RPD</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -30,7 +31,7 @@
     </div>
 
     <!-- modal untuk rencana penarikan dana -->
-    <div class="modal fade" id="rpd-modal" aria-hidden="true">
+    <div class="modal fade" id="rpd-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -43,7 +44,21 @@
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Skedul</label>
                             <div class="col-sm-12 mb-4">
-                                <input type="date" class="form-control" id="bulan_rpd" name="bulan_rpd" placeholder="Masukkan Harga" maxlength="50" required="">
+                                <select name="bulan_rpd" id="bulan_rpd" class="form-select">
+                                    <option value="">-Pilih Bulan</option>
+                                    <option value="Januari">Januari</option>
+                                    <option value="Februari">Februari</option>
+                                    <option value="Maret">Maret</option>
+                                    <option value="April">April</option>
+                                    <option value="Mei">Mei</option>
+                                    <option value="Juni">Juni</option>
+                                    <option value="Juli">Juli</option>
+                                    <option value="Agustus">Agustus</option>
+                                    <option value="September">September</option>
+                                    <option value="Oktober">Oktober</option>
+                                    <option value="November">November</option>
+                                    <option value="Desember">Desember</option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-group">
@@ -66,44 +81,40 @@
 </div>
 
 <script type="text/javascript">
-    function formatNumber(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
-
     $(document).ready(function() {
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        $('#RPD').DataTable({
+
+        var table = $('#RPD').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{route('unit.rpd')}}",
-            columns: [
-                {
+            columns: [{
                     data: 'kode',
-                    name: 'kode',
+                    name: 'kode'
                 },
                 {
                     data: 'uraian',
-                    name: 'uraian',
+                    name: 'uraian'
                 },
                 {
-                        data: 'volume',
-                        name: 'volume',
-                    },
-                    {
-                        data: 'satuan',
-                        name: 'satuan',
-                    },
-                    {
-                        data: 'harga',
-                        name: 'harga',
-                        render: function(data, type, row) {
-                            return formatNumber(data);
-                        }
-                    },
+                    data: 'volume',
+                    name: 'volume'
+                },
+                {
+                    data: 'satuan',
+                    name: 'satuan'
+                },
+                {
+                    data: 'harga',
+                    name: 'harga',
+                    render: function(data, type, row) {
+                        return formatNumber(data);
+                    }
+                },
                 {
                     data: 'jumlahUsulan',
                     name: 'jumlahUsulan',
@@ -112,17 +123,35 @@
                     }
                 },
                 {
+                    data: 'bulan_rpd',
+                    name: 'bulan_rpd',
+                    render: function(data, type, row) {
+                        if (data) {
+                            return data; // Jika data tidak kosong, kembalikan nilainya
+                        } else {
+                            return ''; // Jika data kosong, kembalikan string kosong
+                        }
+                    }
+                },
+                {
                     data: 'action',
                     name: 'action',
                     className: 'text-center',
-                    orderable: false,
+                    orderable: false
                 }
             ],
             order: [
                 [0, 'desc']
             ]
         });
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+
     });
+
     var id;
 
     function tambahRPD(_id) {
@@ -146,6 +175,8 @@
             success: (data) => {
                 $("#rpd-modal").modal('hide');
                 $("#btn-save").html('Submit');
+                var oTable = $('#RPD').DataTable();
+                oTable.ajax.reload(null, false);
                 $("#btn-save").attr("disabled", false);
                 Swal.fire({
                     icon: 'success',
@@ -156,8 +187,7 @@
             error: function(data) {
                 console.log(data);
             }
-        })
+        });
     });
-
 </script>
 @endsection

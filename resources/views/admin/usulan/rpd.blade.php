@@ -136,6 +136,10 @@
                     }
                 });
             });
+
+            function lihatRPD(id){
+
+            }
         }
     </script>
     @endsection

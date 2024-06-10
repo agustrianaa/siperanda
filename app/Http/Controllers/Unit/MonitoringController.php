@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Unit;
 
 use App\Http\Controllers\Controller;
 use App\Models\DetailRencana;
+use App\Models\Realisasi;
+use App\Models\RPD;
 use App\Models\Satuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,25 +24,50 @@ class MonitoringController extends Controller
             }
             $rencana = DetailRencana::select(
                 'detail_rencana.*',
-                'detail_rencana.id as id',
+                'detail_rencana.id as idRencana',
                 'rencana.*',
                 'rencana.jumlah as jumlahUsulan',
                 'kode_komponen.*',
-                'realisasi.*',
                 'satuan.*',
                 'satuan.satuan as satuan',
-                'rpd.*'
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
                 ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-                ->leftJoin('realisasi', 'realisasi.detail_rencana_id', '=', 'detail_rencana.id')
-                ->leftJoin('rpd', 'rpd.detail_rencana_id', '=', 'detail_rencana.id')
                 ->where('rencana.unit_id', $unit->id)
                 ->get();
+
+            foreach ($rencana as $data) {
+                $data->rpds = RPD::where('detail_rencana_id', $data->idRencana)->get();
+            }
+            foreach ($rencana as $data) {
+                $data->realisasi = Realisasi::where('detail_rencana_id', $data->idRencana)->get();
+            }
+
             return datatables()->of($rencana)
-                ->addColumn('action', function ($row) {
-                    $id = $row->id; // Ambil ID dari baris data
+                ->addColumn('bulan_rpd', function ($row) {
+                    $bulans = [];
+                    // Memastikan properti rpds adalah sebuah array
+                    if (!is_null($row->rpds)) {
+                        foreach ($row->rpds as $rpd) {
+                            $bulans[] = $rpd->bulan_rpd;
+                        }
+                    }
+                    return implode(', ', $bulans);
+                })
+                ->addColumn('bulan_realisasi', function ($row) {
+                    $bulans = [];
+                    // Memastikan properti rpds adalah sebuah array
+                    if (!is_null($row->realisasi)) {
+                        foreach ($row->realisasi as $data) {
+                            $bulans[] = $data->bulan_realisasi;
+                        }
+                    }
+                    return implode(', ', $bulans);
+                })
+
+                ->addColumn('ket', function ($row) {
+                    $id = $row->idRencana; // Ambil ID dari baris data
                     $action =  '<div class="edit btn btn-success m-1 btn-sm disabled">Diproses</div>';
                     // if ($row->realisasi === 'disetujui') {
                     //     $action =  '<div class="edit btn btn-success m-1 btn-sm disabled">Disetujui</div>';
@@ -53,7 +80,7 @@ class MonitoringController extends Controller
                     // }
                     return $action;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action','ket'])
                 ->make(true);
         }
         return view('unit.monitoring');

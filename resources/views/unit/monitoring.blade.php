@@ -12,7 +12,7 @@
                             <tr>
                                 <th width="5px">No</th>
                                 <th>Kode</th>
-                                <th>Program/Kegiatan/KRO/RO/Komponen/Subkomp/Detil</th>
+                                <th>Program/Kegiatan/KRO/RO/dsb</th>
                                 <th>Jumlah</th>
                                 <th>RPD</th>
                                 <th>Realisasi</th>
@@ -75,8 +75,8 @@
                     name: 'bulan_realisasi',
                 },
                 {
-                    data: 'action',
-                    name: 'action',
+                    data: 'ket',
+                    name: 'ket',
                     className: 'text-center',
                     orderable: false,
                 }

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SatuanController as AdminSatuanController;
 use App\Http\Controllers\Admin\MonitoringController as AdminMonitoringController;
 use App\Http\Controllers\Admin\UsulanController as AdminUsulanController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RPDanaController;
 use App\Http\Controllers\Unit\RencanaPenarikanDanaController as UnitRencanaPenarikanDanaController;
 use App\Http\Controllers\Direksi\MonitoringController as DireksiMonitoringController;
@@ -80,9 +81,14 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::post('/admin/simpan-ket', [AdminUsulanController::class, 'storeKet'])->name('admin.simpan_ketUsulan');
     Route::get('/admin/realisasi',  [RPDanaController::class, 'rpd'])->name('admin.realisasi');
     Route::post('/admin/simpan-validasi', [RPDanaController::class, 'storevalidasi'])->name('admin.simpan_validasiRPD');
+
+    //MONITORING
     Route::get('/admin/monitoring',  [AdminMonitoringController::class, 'index'])->name('admin.monitoring');
+    Route::post('/admin/simpan-realisasi', [AdminMonitoringController::class, 'store'])->name('admin.simpan_realisasi');
     // PROFILE
     Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
+    // REPORT
+    Route::get('/admin/report', [ReportController::class, 'index'])->name('admin.report');
 });
 
 

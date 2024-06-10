@@ -31,16 +31,12 @@ class UsulanController extends Controller
             'rencana.jumlah as jumlahUsulan',
             'kode_komponen.*',
             'kode_komponen.kode as kodeUsulan',
-            'realisasi.*',
             'satuan.*',
             'satuan.satuan as satuan',
-            'rpd.*'
         )
             ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
             ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
-            ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-            ->leftJoin('realisasi', 'realisasi.detail_rencana_id', '=', 'detail_rencana.id')
-            ->leftJoin('rpd', 'rpd.detail_rencana_id', '=', 'detail_rencana.id');
+            ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id');
 
         // Filter by unit_id if provided
         if ($funit) {

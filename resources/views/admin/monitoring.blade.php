@@ -12,10 +12,11 @@
                             <tr>
                                 <!-- <th width="5px">No</th> -->
                                 <th>Kode</th>
-                                <th>Program/Kegiatan/KRO/RO/Komponen/Subkomp/Detil</th>
+                                <th>Program/Kegiatan/KRO/RO/Komponen/dsb</th>
                                 <th>Jumlah</th>
-                                <th>RPD</th>
-                                <th>Realisasi</th>
+                                <th width="10%" class="text-center">RPD</th>
+                                <th width="10%" class="text-center">Realisasi</th>
+                                <th>Action</th>
                                 <th>Ket</th>
                             </tr>
                         </thead>
@@ -34,15 +35,24 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="javascript:void(0)" id="ketUsulanForm" name="ketUsulanForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
+                    <form action="javascript:void(0)" id="realisasiForm" name="realisasiForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
                         <div class="form-group mb-3">
                             <label for="ket">Bulan Te - Realisasi</label>
-                            <!-- <select name="" id="" class="form-select">
-                                <option disabled selected>- Pilih Validasi -</option>
-                                <option value="revisi">Revisi</option>
-                                <option value="disetujui">Disetujui</option>
-                            </select> -->
-                            <input type="date" class="form-control">
+                            <select name="bulan_realisasi" id="bulan_realisasi" class="form-select">
+                                    <option value="">-Pilih Bulan</option>
+                                    <option value="Januari">Januari</option>
+                                    <option value="Februari">Februari</option>
+                                    <option value="Maret">Maret</option>
+                                    <option value="April">April</option>
+                                    <option value="Mei">Mei</option>
+                                    <option value="Juni">Juni</option>
+                                    <option value="Juli">Juli</option>
+                                    <option value="Agustus">Agustus</option>
+                                    <option value="September">September</option>
+                                    <option value="Oktober">Oktober</option>
+                                    <option value="November">November</option>
+                                    <option value="Desember">Desember</option>
+                                </select>
                         </div>
                         <div class="form-group mb-2">
                             <label for="note">Jumlah</label>
@@ -87,6 +97,7 @@
                 {
                     data: 'jumlahUsulan',
                     name: 'jumlahUsulan',
+                    className: 'text-center',
                     render: function(data, type, row) {
                         return formatNumber(data);
                     }
@@ -104,6 +115,12 @@
                     name: 'action',
                     className: 'text-center',
                     orderable: false,
+                },
+                {
+                    data: 'ket',
+                    name: 'ket',
+                    className: 'text-center',
+                    orderable: false,
                 }
             ],
             order: [
@@ -116,8 +133,40 @@
         }
     });
 
-    function tambahRealisasi(id) {
+    var id;
+    function tambahRealisasi(_id) {
+        id = _id;
         $('#modalRealisasi').modal('show');
+        $('#realisasiForm').trigger('reset');
     }
+
+    $('#realisasiForm').off('submit').on('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        formData.append('detail_rencana_id', id);
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.simpan_realisasi')}}",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: (data) => {
+                $("#modalRealisasi").modal('hide');
+                $("#btn-save").html('Submit');
+                var oTable = $('#monitoringfromAdmin').DataTable();
+                oTable.ajax.reload(null, false);
+                $("#btn-save").attr("disabled", false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.success
+                });
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        });
+    });
 </script>
 @endsection
