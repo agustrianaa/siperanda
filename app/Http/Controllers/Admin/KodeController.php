@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\ExportKodeKomponen;
 use App\Http\Controllers\Controller;
 use App\Models\Kategori;
 use App\Models\KodeKomponen;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class KodeController extends Controller
 {
@@ -78,5 +80,9 @@ class KodeController extends Controller
         $kode = KodeKomponen::where('id',$request->id)->delete();
 
         return Response()->json($kode);
+    }
+
+    public function export_kode(){
+        return Excel::download(new ExportKodeKomponen, 'kode.xlsx');
     }
 }

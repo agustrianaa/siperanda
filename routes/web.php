@@ -89,6 +89,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
     // REPORT
     Route::get('/admin/report', [ReportController::class, 'index'])->name('admin.report');
+    Route::get('/admin/report/export-kode', [AdminKodeController::class, 'export_kode'])->name('admin.export_kode');
 });
 
 
