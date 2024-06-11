@@ -38,7 +38,7 @@
     </div>
 
     <!-- modal Usulan-->
-    <!-- <div class="modal fade" id="usulan-modal" aria-hidden="true">
+    <div class="modal fade" id="usulan-modal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -47,28 +47,47 @@
             </div>
             <div class="modal-body">
                 <form action="javascript:void(0)" id="rencanaForm" name="rencanaForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="id" id="id">
-                    <input type="hidden" name="unit_id" id="unit_id" value="{{ Auth::user()->unit->id }}">
-                    <div class="form-group">
-                        <label for="tahun">Tahun</label>
-                        <select name="tahun" id="tahun" class="form-control">
-                            <option disabled selected>-Pilih Tahun-</option>
-                            @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
-                                @endfor
-                        </select>
-                        @if ($errors->has('year'))
-                        <span class="text-danger">{{$errors->first('year')}}</span>
-                        @endif
-                    </div>
-                    <div class="col-sm-offset-2 col-sm-10"><br />
-                        <button type="submit" class="btn btn-primary" id="btn-save">Simpan</button>
-                    </div>
+                <input type="hidden" name="id" id="id">
+                        <input type="hidden" id="rencana_id" name="rencana_id">
+                        <div class="form-group">
+                            <label for="name" class="col-sm-4 control-label">Kode</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="kode" name="kode" placeholder="Masukkan kode" maxlength="50" required="">
+                                <input type="hidden" id="kode_komponen_id" name="kode_komponen_id">
+                                <div id="kode-results" name="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-4 control-label">Volume</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="volume" name="volume" placeholder="Masukkan volume" maxlength="50" required="">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-4 control-label">Satuan</label>
+                            <select name="satuan_id" id="satuan_id" class="form-control">
+                                <option disabled selected>-Pilih Satuan-</option>
+                                @foreach ($satuan as $item )
+                                <option value="{{$item->id}}">{{$item->satuan}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" class="col-sm-4 control-label">Harga</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="harga" name="harga" placeholder="Masukkan Harga" maxlength="50" required="">
+                            </div>
+                        </div>
+                        <div class="col-sm-8 offset-sm-8"><br />
+                            <button type="button" class="btn btn-danger mr-2" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                        </div>
                 </form>
             </div>
             <div class="modal-footer"></div>
         </div>
     </div>
-</div> -->
+</div>
     <!-- end bootstrap modal usulan -->
 
     <!-- modal -->

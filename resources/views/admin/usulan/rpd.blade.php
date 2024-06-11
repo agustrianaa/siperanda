@@ -12,9 +12,12 @@
                             <tr>
                                 <!-- <th width="5px">No</th> -->
                                 <th>Kode</th>
-                                <th>Program/Kegiatan/KRO/RO/Komponen/Subkomp/Detil</th>
+                                <th>Program/Kegiatan/KRO/RO/dsb</th>
+                                <th>Volume</th>
+                                <th>Satuan</th>
+                                <th>Harga/sat</th>
                                 <th>Jumlah</th>
-                                <th>RPD</th>
+                                <th width="15%">RPD</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -67,8 +70,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{route('admin.realisasi')}}",
-                columns: [
-                    {
+                columns: [{
                         data: 'kode',
                         name: 'kode',
                     },
@@ -77,11 +79,26 @@
                         name: 'uraian',
                     },
                     {
+                        data: 'volume',
+                        name: 'volume'
+                    },
+                    {
+                        data: 'satuan',
+                        name: 'satuan'
+                    },
+                    {
+                        data: 'harga',
+                        name: 'harga',
+                        render: function(data, type, row) {
+                            return formatNumber(data);
+                        }
+                    },
+                    {
                         data: 'jumlahUsulan',
                         name: 'jumlahUsulan',
                         render: function(data, type, row) {
-                        return formatNumber(data);
-                    }
+                            return formatNumber(data);
+                        }
                     },
                     {
                         data: 'bulan_rpd',
@@ -98,9 +115,10 @@
                     [0, 'desc']
                 ]
             });
+
             function formatNumber(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
         });
 
         function validasiUsulan(id) {
@@ -137,7 +155,7 @@
                 });
             });
 
-            function lihatRPD(id){
+            function lihatRPD(id) {
 
             }
         }

@@ -41,7 +41,6 @@ class RencanaPenarikanDanaController extends Controller
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
                 // ->leftJoin('rpd', 'rpd.detail_rencana_id', '=', 'detail_rencana.id')
                 ->where('rencana.unit_id', $unit->id)
-                ->groupBy('detail_rencana.id', 'detail_rencana.volume', 'detail_rencana.harga', 'kode_komponen.kode', 'kode_komponen.uraian', 'satuan.satuan', 'rencana.jumlah')
                 ->get();
 
                 foreach ($rpd as $rencana) {

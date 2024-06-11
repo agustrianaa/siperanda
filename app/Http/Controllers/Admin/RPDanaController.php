@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\DetailRencana;
 use App\Models\Realisasi;
+use App\Models\RPD;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -13,24 +14,34 @@ class RPDanaController extends Controller
     public function rpd()
     {
         if (request()->ajax()) {
-            $rencana = Realisasi::select(
-                'realisasi.*',
-                'realisasi.id as id',
-                'detail_rencana.*',
-                'detail_rencana.id as id_detail',
-                'rencana.*',
+            $rencana = DetailRencana::select(
+                'detail_rencana.id as idRencana',
+                'detail_rencana.volume',
+                'detail_rencana.harga',
+                'kode_komponen.kode', // Kolom dari tabel kode_komponen
+                'kode_komponen.uraian',
+                'satuan.satuan', // Kolom dari tabel satuan
                 'rencana.jumlah as jumlahUsulan',
-                'kode_komponen.*',
-                'satuan.*',
-                'rpd.*'
             )
-            ->join('detail_rencana', 'realisasi.detail_rencana_id', '=', 'detail_rencana.id')
-                ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
-                ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
-                ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-                ->leftJoin('rpd', 'rpd.detail_rencana_id', '=', 'detail_rencana.id')
-                ->get();
+            ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
+            ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+            ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
+            ->get();
+
+            foreach ($rencana as $rpd) {
+                $rpd->rpds = RPD::where('detail_rencana_id', $rpd->idRencana)->get();
+            }
                 return datatables()->of($rencana)
+                ->addColumn('bulan_rpd', function ($row) {
+                    $bulans = [];
+                    // Memastikan properti rpds adalah sebuah array
+                    if (!is_null($row->rpds)) {
+                        foreach ($row->rpds as $rpd) {
+                            $bulans[] = $rpd->bulan_rpd;
+                        }
+                    }
+                    return implode(', ', $bulans);
+                })
                 ->addColumn('action', function ($row) {
                     $id = $row->id_detail; // Ambil ID dari baris data
                     $action = '<div class="edit btn btn-success m-1 btn-sm disabled">Keterangan</div>';
@@ -47,7 +58,7 @@ class RPDanaController extends Controller
 
                 })
 
-                ->rawColumns(['action'])
+                ->rawColumns(['bulan_rpd','action'])
                 ->make(true);
         }
         return view('admin.usulan.rpd');
