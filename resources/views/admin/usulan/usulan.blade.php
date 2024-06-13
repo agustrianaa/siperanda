@@ -3,50 +3,88 @@
 
 <div class="container-fluid">
     <div class="row">
-        <!-- filter -->
         <div class="row">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title fw-semibold mb-3">Filter</h5>
-                    <div class="row">
-                        <div class="col-lg-2 mb-2">
-                            <!-- <label for="unit">Pilih Unit </label> -->
-                            <select name="funit" id="funit" class="form-select">
-                                <option value="#" disabled selected>- Pilih Unit -</option>
-                                @if($unit->isEmpty())
-                                <option disabled>Tidak ada Unit</option>
-                                @else
-                                @foreach($unit as $user)
-                                <option value="{{ $user->id }}">{{ $user->name }}</option>
-                                @endforeach
-                                @endif
-                            </select>
-                        </div>
-                        <div class="col-lg-2 mb-2">
-                            <select name="fkategori" id="fkategori" class="form-select">
-                                <option value="#" disabled selected> - Pilih Kategori - </option>
-                                @if($kategoris->isEmpty())
-                                <option disabled>Tidak ada kategori</option>
-                                @else
-                                @foreach($kategoris as $item)
-                                <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
-                                @endforeach
-                                @endif
-                            </select>
-                        </div>
-                        <div class="col-lg-1 mb-1">
-                            <button class="btn btn-dark" id="resetFilter">Reset</button>
+            <!-- filter -->
+            <div class="col-lg-9">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title fw-semibold mb-3">Filter</h5>
+                        <div class="row">
+                            <div class="col-lg-4 mb-2">
+                                <!-- <label for="unit">Pilih Unit </label> -->
+                                <select name="funit" id="funit" class="form-select">
+                                    <option value="#" disabled selected>- Pilih Unit -</option>
+                                    @if($unit->isEmpty())
+                                    <option disabled>Tidak ada Unit</option>
+                                    @else
+                                    @foreach($unit as $user)
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="col-lg-4 mb-2">
+                                <select name="fkategori" id="fkategori" class="form-select">
+                                    <option value="#" disabled selected> - Pilih Kategori - </option>
+                                    @if($kategoris->isEmpty())
+                                    <option disabled>Tidak ada kategori</option>
+                                    @else
+                                    @foreach($kategoris as $item)
+                                    <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="col-lg-1 mb-1">
+                                <button class="btn btn-dark" id="resetFilter">Reset</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- end filter -->
+            <!-- end filter -->
+            <div class="col-lg-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- <h5 class="card-title fw-semibold mb-3">Buka Usulan</h5> -->
+                            <div class="col"></div>
+                            <h5 class="card-title fw-semibold mb-3 text-center">Buka Rencana Awal</h5>
+                            <a href="javascript:void(0)" onclick="buttonbukaRencana()" class="btn btn-dark"><i class="ti ti-plus"></i> Rencana Awal</a>
+                        </div>
 
-        <!-- card table -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- card tabel rencana awal -->
         <div class="row">
             <div class="card">
                 <div class="card-body">
+                <h5 class="card-title fw-semibold mb-3">Rencana Awal</h5>
+                    <div class="row">
+                        <table class="table table-bordered" id="rencanaAwalTabel">
+                            <thead>
+                                <tr>
+                                    <th>Unit</th>
+                                    <th>Anggaran</th>
+                                    <th>Tahun</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- card table detail renacana-->
+        <div class="row">
+            <div class="card">
+                <div class="card-body">
+                <h5 class="card-title fw-semibold mb-3">Detail Rencana</h5>
                     <div class="row">
                         <table class="table table-bordered" id="rencanaTabel">
                             <thead>
@@ -67,6 +105,65 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- modal untuk menambahkan rencana untuk membuka usulan per unit nya -->
+    <div class="modal fade" id="bukaRencana" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Awal Rencana</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="javascript:void(0)" id="bukaRencanaForm" name="bukaRencanaForm" class="form-horizontal" method="POST" enctype="multipart/form-data" class="needs-validation" >
+                        <input type="hidden" id="id" name="id">
+                        <div class="form-group mb-2">
+                            <label for="unit_id">Unit</label>
+                            <select name="unit_id" id="unit_id" class="form-select" required="Harus diisi">
+                                <option disabled selected>- Pilih Unit -</option>
+                                @if($unit->isEmpty())
+                                <option disabled>Tidak ada Unit</option>
+                                @else
+                                @foreach ($unit as $data )
+                                <option value="{{$data->id}}">{{$data->name}}</option>
+                                @endforeach
+                                @endif
+                            </select>
+                            <div class="invalid-feedback">
+                                Unit Harus Dipilih
+                            </div>
+                            <div class="valid-feedback">
+                                Good Job!
+                            </div>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="tahun">Tahun</label>
+                            <select name="tahun" id="tahun" class="form-select" required="Pilih Tahun">
+                                <option disabled selected>-Pilih Tahun-</option>
+                                @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
+                                    @endfor
+                            </select>
+                            @if ($errors->has('year'))
+                            <span class="text-danger">{{$errors->first('year')}}</span>
+                            @endif
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="note">Anggaran</label>
+                            <div class="col-sm-12">
+                                <input type="text" name="anggaran" id="anggaran" class="form-control" placeholder="Masukkan Anggaran"></input>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 offset-sm-8"><br />
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary" id="btn-simpan1">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- modal untuk menambahkan keterangan usulan -->
@@ -129,7 +226,7 @@
                 serverSide: true,
                 destroy: true,
                 ajax: {
-                    url: "{{ route('admin.usulan') }}",
+                    url: "{{ route('admin.tabelRencana') }}",
                     type: 'GET',
                     data: {
                         unit_id: funit,
@@ -164,8 +261,8 @@
                         }
                     },
                     {
-                        data: 'jumlahUsulan',
-                        name: 'jumlahUsulan',
+                        data: 'total',
+                        name: 'total',
                         render: function(data, type, row) {
                             return formatNumber(data);
                         }
@@ -181,6 +278,39 @@
                     [0, 'desc']
                 ]
             });
+
+            $('#rencanaAwalTabel').DataTable({
+                processing: true,
+                serverSide: true,
+                destroy: true,
+                ajax: {
+                    url: "{{ route('admin.tabelRencanaAwal') }}",
+                    type: 'GET',
+                    data: {
+                        unit_id: funit,
+
+                    },
+                },
+                columns: [{
+                        data: 'nama_unit',
+                        name: 'nama_unit',
+                    },
+                    {
+                        data: 'anggaran',
+                        name: 'anggaran',
+                    },
+                    {
+                        data: 'tahun',
+                        name: 'tahun',
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        className: 'text-center',
+                        orderable: false,
+                    }
+                    ]
+            })
         }
 
         $('#funit').on('change', function() {
@@ -201,6 +331,45 @@
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
     });
+
+    // buka usulan per unit
+    function buttonbukaRencana() {
+        $('#bukaRencana').modal('show');
+        $('#bukaRencanaForm').trigger('reset');
+    }
+    $('#bukaRencanaForm').submit(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            type: 'POST',
+            url: "{{route('admin.bukaRencana')}}",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: (data) => {
+                $('#bukaRencana').modal('hide');
+                var oTable = $('#rencanaAwalTabel').DataTable();
+                    oTable.ajax.reload();
+                $("#btn-simpan1").html('Submit');
+                $("#btn-simpan1").attr("disabled", false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.success
+                });
+            },
+            error: function(data) {
+                console.log(data);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'eror',
+                    text: data.error
+                })
+            },
+        })
+    });
+
 
     function tambahKetUsulan(id) {
         $('#ketUsulan').modal('show');

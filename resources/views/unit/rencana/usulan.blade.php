@@ -5,6 +5,11 @@
 @section('content')
 
 <div class="container-fluid">
+    @if(!$rencanaId)
+            <div class="alert alert-warning">
+                Rencana kerja anggarannya belum dibuka
+            </div>
+        @else
     <div class="row">
         <div class="row">
             <div class="row mb-3">
@@ -38,7 +43,7 @@
     </div>
 
     <!-- modal Usulan-->
-    <div class="modal fade" id="usulan-modal" aria-hidden="true">
+    <!-- <div class="modal fade" id="usulan-modal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -87,7 +92,7 @@
             <div class="modal-footer"></div>
         </div>
     </div>
-</div>
+</div> -->
     <!-- end bootstrap modal usulan -->
 
     <!-- modal -->
@@ -101,21 +106,22 @@
                 <div class="modal-body">
                     <form action="javascript:void(0)" id="rencana2Form" name="rencana2Form" class="form-horizontal" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="id" id="id">
-                        <input type="hidden" id="rencana_id" name="rencana_id">
+                        <input type="hidden" id="rencana_id" name="rencana_id" value="{{ $rencanaId->id }}">
                         <input type="hidden" name="noparent_id" id="noparent_id">
-                        <input type="hidden" name="detail_rencana_id" id="detail_rencana_id">
-                        <div class="form-group">
-                            <label for="tahun">Tahun</label>
-                            <select name="tahun" id="tahun" class="form-control" required="Pilih Tahun">
-                                <option disabled selected>-Pilih Tahun-</option>
-                                @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
-                                    @endfor
+                        <div class="form-group mb-2">
+                            <label for="kategori">Kategori</label>
+                            <select name="kategori" id="kategori" class="form-select">
+                                <option value="#" disabled selected>-Pilih jika tidak ada Kode nya-</option>
+                                <option value="detil">Detil</option>
                             </select>
-                            @if ($errors->has('year'))
-                            <span class="text-danger">{{$errors->first('year')}}</span>
-                            @endif
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mb-2" id="uraian-group" style="display:none;">
+                            <label for="uraian" class="col-sm-4 control-label">Uraian</label>
+                            <div class="col-sm-12">
+                                <textarea name="uraian" id="uraian" class="form-control" placeholder="Masukkan uraian" maxlength="255"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group mb-2">
                             <label for="name" class="col-sm-4 control-label">Kode</label>
                             <div class="col-sm-12">
                                 <input type="text" class="form-control" id="kode" name="kode" placeholder="Masukkan kode" maxlength="50" required="">
@@ -123,13 +129,13 @@
                                 <div id="kode-results" name="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;"></div>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mb-2">
                             <label for="name" class="col-sm-4 control-label">Volume</label>
                             <div class="col-sm-12">
                                 <input type="text" class="form-control" id="volume" name="volume" placeholder="Masukkan volume" maxlength="50" required="">
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mb-2">
                             <label for="name" class="col-sm-4 control-label">Satuan</label>
                             <select name="satuan_id" id="satuan_id" class="form-control">
                                 <option disabled selected>-Pilih Satuan-</option>
@@ -138,7 +144,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group mb-2">
                             <label for="name" class="col-sm-4 control-label">Harga</label>
                             <div class="col-sm-12">
                                 <input type="text" class="form-control" id="harga" name="harga" placeholder="Masukkan Harga" maxlength="50" required="">
@@ -155,9 +161,36 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 <!-- end bootstrap model -->
 <script type="text/javascript">
+    // untuk form
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get elements
+        const kategoriSelect = document.getElementById('kategori');
+        const uraianGroup = document.getElementById('uraian-group');
+        const kodeInput = document.getElementById('kode');
+
+        // Function to toggle kode input based on kategori selection
+        function toggleKodeInput() {
+            kodeInput.disabled = kategoriSelect.value === 'detil';
+        }
+
+        // Add event listener for kategori select
+        kategoriSelect.addEventListener('change', function() {
+            if (kategoriSelect.value === 'detil') {
+                uraianGroup.style.display = 'block';
+            } else {
+                uraianGroup.style.display = 'none';
+            }
+            toggleKodeInput(); // Call the function to toggle kode input
+        });
+
+        // Call the function initially to set kode input state based on initial kategori value
+        toggleKodeInput();
+    });
+
     function formatNumber(num) {
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
@@ -202,8 +235,8 @@
                     }
                 },
                 {
-                    data: 'jumlah',
-                    name: 'jumlah',
+                    data: 'total',
+                    name: 'total',
                     render: function(data, type, row) {
                         return formatNumber(data);
                     }
@@ -285,6 +318,19 @@
         $('#usulanLain-modal').modal('show');
         $('#parent_id').val('');
         $('#id').val('');
+
+        if ($('#kategori').val() === 'detil') {
+            $('#kode').prop('disabled', true);
+        } else {
+            $('#kode').prop('disabled', false);
+        }
+
+        $('#usulanLain-modal').on('hidden.bs.modal', function() {
+            // Mengaktifkan kembali input kode jika kategori bukan "detil"
+            if ($('#kategori').val() !== 'detil') {
+                $('#kode').prop('disabled', false);
+            }
+        });
     }
 
     // untuk menambahkan detail usulan yang sesuai dengan usulan pertama
@@ -299,30 +345,6 @@
         $('#rencana2Form').trigger("reset");
         $('#noparent_id').val(parentId);
         $('#usulanLain-modal').modal('show');
-    }
-
-    function editUsulan(id) {
-        console.log(id);
-        $.ajax({
-            type: "POST",
-            url: "{{ route('unit.edit_usulan')}}",
-            data: {
-                id: id
-            },
-            dataType: 'json',
-            success: function(res) {
-                $('#usulanLain-modal .modal-title').html("Edit Usulan");
-                $('#usulanLain-modal').modal('show');
-                $('#id').val(res.id);
-                $('#tahun').val(res.tahun.split('-')[0]);
-                console.log(tahun);
-                $('#kode').val(res.kode_uraian); // Mengisi input dengan gabungan kode dan uraian
-                $('#kode_komponen_id').val(res.kode_komponen_id); // Isi input tersembunyi
-                $('#volume').val(res.volume);
-                $('#satuan_id').val(res.satuan_id); // Pilih satuan yang sesuai di dropdown
-                $('#harga').val(res.harga);
-            }
-        });
     }
 
     function hapusUsulan(id) {
@@ -392,7 +414,7 @@
         e.preventDefault();
         var formData = new FormData(this);
         var id = $('#id').val();
-        var url = id ? "/unit/update-usulan/" + id : "{{ route('unit.simpan_rencana2') }}"; // URL untuk update jika ID ada, atau create jika ID tidak ada
+        var url = id ? "/unit/update-usulan/" + id : "/unit/simpan-rencana2/";
         var method = id ? "POST" : "POST"; // Menggunakan POST untuk metode spoofing PUT atau PATCH
         if (id) {
             formData.append('_method', 'PUT'); // Menambahkan spoofing metode PUT jika ID ada

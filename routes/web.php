@@ -78,6 +78,9 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::post('/admin/hapus-satuan', [AdminSatuanController::class, 'destroy'])->name('admin.hapus_satuan');
     // Usulan di admin
     Route::get('/admin/usulan',  [AdminUsulanController::class, 'index'])->name('admin.usulan');
+    Route::get('/admin/datatabel',  [AdminUsulanController::class, 'tabelAwalRencana'])->name('admin.tabelRencanaAwal');
+    Route::get('/admin/datatabe2',  [AdminUsulanController::class, 'tabelRencana'])->name('admin.tabelRencana');
+    Route::post('/admin/buka-rencana', [AdminUsulanController::class, 'store'])->name('admin.bukaRencana');
     Route::post('/admin/simpan-ket', [AdminUsulanController::class, 'storeKet'])->name('admin.simpan_ketUsulan');
     Route::get('/admin/realisasi',  [RPDanaController::class, 'rpd'])->name('admin.realisasi');
     Route::post('/admin/simpan-validasi', [RPDanaController::class, 'storevalidasi'])->name('admin.simpan_validasiRPD');
@@ -106,7 +109,7 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     Route::get('/unit/usulan', [UnitUsulanController::class, 'index'])->name('unit.usulan');
     Route::post('/unit/simpan-rencana', [UnitUsulanController::class, 'store'])->name('unit.simpan_tahun');
     Route::post('/unit/simpan-rencana2', [UnitUsulanController::class, 'store2'])->name('unit.simpan_rencana2');
-    Route::post('/unit/edit-usulan', [UnitUsulanController::class, 'edit'])->name('unit.edit_usulan');
+    Route::post('/unit/edit-usulan/', [UnitUsulanController::class, 'edit'])->name('unit.edit_usulan');
     Route::put('/unit/update-usulan/{id}', [UnitUsulanController::class, 'update'])->name('unit.update_usulan');
     Route::get('/unit/search/code', [UnitUsulanController::class, 'searchByCode'])->name('unit.search_code');
     Route::post('/unit/hapus-usulan', [UnitUsulanController::class, 'destroy'])->name('unit.hapus_usulan');

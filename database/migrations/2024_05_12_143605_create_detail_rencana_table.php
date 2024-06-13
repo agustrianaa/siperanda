@@ -16,11 +16,12 @@ return new class extends Migration
             $table->foreignId('rencana_id')->references('id')->on('rencana')->onDelete('cascade');
             $table->unsignedBigInteger('noparent_id')->nullable();
             $table->foreign('noparent_id')->references('id')->on('detail_rencana')->onDelete('cascade');
-            $table->foreignId('kode_komponen_id')->references('id')->on('kode_komponen')->onDelete('cascade');
+            $table->foreignId('kode_komponen_id')->references('id')->on('kode_komponen')->onDelete('cascade')->nullable();
             $table->foreignId('satuan_id')->references('id')->on('satuan')->onDelete('cascade');
             $table->string('volume');
-            $table->decimal('harga');
-            $table->string('status')->nullable();
+            $table->decimal('harga', 15,2)->nullable();
+            $table->decimal('total', 15,2)->nullable();;
+            $table->text('uraian')->nullable();
             $table->timestamps();
         });
     }
