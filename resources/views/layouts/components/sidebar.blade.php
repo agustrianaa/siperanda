@@ -203,6 +203,14 @@
                     </a>
                 </li>
                 <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route("unit.histori")}}" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-article"></i>
+                        </span>
+                        <span class="hide-menu">Histori</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("unit.rpd")}}" aria-expanded="false">
                         <span>
                             <i class="ti ti-article"></i>

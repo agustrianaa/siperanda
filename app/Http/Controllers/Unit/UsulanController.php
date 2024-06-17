@@ -22,6 +22,7 @@ class UsulanController extends Controller
         $unit_id = $user->unit->id;
         // $latestRencana = Rencana::where('unit_id', $unit_id->id)->first();
         $rencanaId = $this->getLatestRencana($unit_id);
+        // $historiRencana = $this->getHistoriRencana($unit_id);
         if ($request->ajax()) {
             $unit = $user->unit;
 
@@ -35,18 +36,19 @@ class UsulanController extends Controller
                 'detail_rencana.*',
                 'detail_rencana.id as detail_rencana_id',
                 'rencana.*',
+                'detail_rencana.uraian as uraian_rencana',
+                'kode_komponen.uraian as uraian_kode_komponen',
                 'rencana.tahun as tahun',
                 'kode_komponen.*',
                 'satuan.*',
                 KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
-                ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+                ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
                 ->where('rencana.unit_id', $unit->id) // Tambahkan kondisi ini
+                ->where('rencana.id', $rencanaId->id)
                 ->get();
-
-            // Menghitung nilai 'jumlah' dan menyimpannya ke dalam tabel 'rencana'
 
             // Membangun data hierarki dengan nomor urut
             $usulanData = $this->buildHierarchy($usulan);
@@ -63,7 +65,7 @@ class UsulanController extends Controller
                 ->make(true);
         }
 
-        return view('unit.rencana.usulan', compact('satuan','rencanaId'));
+        return view('unit.rencana.usulan', compact('satuan','rencanaId',));
     }
 
     protected function getLatestRencana($unit_id)
@@ -74,6 +76,20 @@ class UsulanController extends Controller
         return $rencanaId;
     }
 
+    protected function getHistoriRencana($unit_id){
+        $rencanaId = $this->getLatestRencana($unit_id);
+
+        if($rencanaId){
+            $historiRencana = Rencana::where('unit_id', $unit_id)
+            ->where('id', '!=', $rencanaId ? $rencanaId->id : 0)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        } else {
+            $historiRencana = Rencana::where('unit_id', $unit_id)->orderBy('created_at', 'desc')->get();
+        }
+
+        return $historiRencana;
+    }
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -194,18 +210,13 @@ class UsulanController extends Controller
     public function update(Request $request, $id)
     {
         $detailRencana = DetailRencana::findOrFail($id);
-    $rencana = $detailRencana->rencana;
-
-    if ($rencana) {
-        $rencana->tahun = $request->input('tahun') . '-01-01';
-        $rencana->save();
-    }
 
     // Update DetailRencana
     $detailRencana->kode_komponen_id = $request->kode_komponen_id;
     $detailRencana->volume = $request->volume;
     $detailRencana->satuan_id = $request->satuan_id;
     $detailRencana->harga = $request->harga;
+    $detailRencana->total = $request->volume * $request->harga; 
     $detailRencana->save();
 
     return response()->json(['success' => 'Data berhasil diperbarui.']);

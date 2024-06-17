@@ -6,10 +6,10 @@
 
 <div class="container-fluid">
     @if(!$rencanaId)
-            <div class="alert alert-warning">
-                Rencana kerja anggarannya belum dibuka
-            </div>
-        @else
+    <div class="alert alert-warning">
+        Rencana kerja anggarannya belum dibuka
+    </div>
+    @else
     <div class="row">
         <div class="row">
             <div class="row mb-3">
@@ -214,10 +214,21 @@
                 {
                     data: 'allkode',
                     name: 'allkode',
+                    render: function(data, type, row) {
+                            return data ? data : '';
+                        }
                 },
                 {
                     data: 'uraian',
                     name: 'uraian',
+                    render: function(data, type, row) {
+                        // Logika untuk menampilkan uraian dari kode komponen atau uraian rencana
+                        if (row.uraian_kode_komponen) {
+                            return row.uraian_kode_komponen;
+                        } else {
+                            return row.uraian_rencana;
+                        }
+                    }
                 },
                 {
                     data: 'volume',
@@ -444,5 +455,26 @@
             }
         });
     });
+    function editUsulan(id) {
+        $.ajax({
+            type: "POST",
+            url: "{{ route('unit.edit_usulan')}}",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(res) {
+                $('#usulanLain-modal .modal-title').html("Edit Usulan");
+            $('#usulanLain-modal').modal('show');
+            $('#id').val(res.id);
+            $('#kode').val(res.kode_uraian);  // Mengisi input dengan gabungan kode dan uraian
+            $('#kode_komponen_id').val(res.kode_komponen_id); // Isi input tersembunyi
+            $('#volume').val(res.volume);
+            $('#satuan_id').val(res.satuan_id); // Pilih satuan yang sesuai di dropdown
+            $('#harga').val(res.harga);
+            
+            }
+        });
+    }
 </script>
 @endsection

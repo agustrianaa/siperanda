@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\RPDanaController;
 use App\Http\Controllers\Unit\RencanaPenarikanDanaController as UnitRencanaPenarikanDanaController;
 use App\Http\Controllers\Direksi\MonitoringController as DireksiMonitoringController;
 use App\Http\Controllers\Direksi\ProfileController as DireksiProfileController;
+use App\Http\Controllers\Unit\HistoriController;
 use App\Http\Controllers\Unit\UsulanController as UnitUsulanController;
 use App\Http\Controllers\Unit\MonitoringController as UnitMonitoringController;
 use App\Http\Controllers\Unit\ProfileController as UnitProfileController;
@@ -113,6 +114,8 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     Route::put('/unit/update-usulan/{id}', [UnitUsulanController::class, 'update'])->name('unit.update_usulan');
     Route::get('/unit/search/code', [UnitUsulanController::class, 'searchByCode'])->name('unit.search_code');
     Route::post('/unit/hapus-usulan', [UnitUsulanController::class, 'destroy'])->name('unit.hapus_usulan');
+    // Menu Histori
+    Route::get('/unit/histori', [HistoriController::class, 'index'])->name('unit.histori');
     // CRUD RPD
     Route::get('/unit/rpd', [UnitRencanaPenarikanDanaController::class, 'index'])->name('unit.rpd');
     Route::post('/unit/simpan-skedul', [UnitRencanaPenarikanDanaController::class, 'storeRPD'])->name('unit.simpan_skedul');
