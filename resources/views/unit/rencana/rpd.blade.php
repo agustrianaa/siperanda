@@ -44,7 +44,7 @@
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Skedul</label>
                             <div class="col-sm-12 mb-4">
-                                <select name="bulan_rpd" id="bulan_rpd" class="form-select">
+                                <select name="bulan_rpd" id="bulan_rpd" class="form-select" required>
                                     <option value="">-Pilih Bulan</option>
                                     <option value="Januari">Januari</option>
                                     <option value="Februari">Februari</option>
@@ -64,7 +64,7 @@
                         <div class="form-group">
                             <label for="jumlah">Jumlah Duit nya</label>
                             <div class="col-sm-12 mb-4">
-                                <input type="text" class="form-control" id="jumlah" name="jumlah" placeholder="Masukkan Jumlah duit nya">
+                                <input type="text" class="form-control" id="jumlah" name="jumlah" placeholder="Masukkan Jumlah duit nya" required>
                             </div>
                         </div>
                         <div class="col-sm-8 offset-sm-8"><br />
@@ -74,6 +74,25 @@
                     </form>
                 </div>
                 <div class="modal-footer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal untuk melihat lebih lengkap RPD -->
+    <div class="modal fade" id="showRPD" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Detail RPD</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ABCD
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Understood</button>
+                </div>
             </div>
         </div>
     </div>
@@ -93,12 +112,23 @@
             serverSide: true,
             ajax: "{{route('unit.rpd')}}",
             columns: [{
-                    data: 'kode',
-                    name: 'kode'
+                    data: 'allkode',
+                    name: 'allkode',
+                    render: function(data, type, row) {
+                        return data ? data : '';
+                    }
                 },
                 {
                     data: 'uraian',
-                    name: 'uraian'
+                    name: 'uraian',
+                    render: function(data, type, row) {
+                        // Logika untuk menampilkan uraian dari kode komponen atau uraian rencana
+                        if (row.uraian_kode_komponen) {
+                            return row.uraian_kode_komponen;
+                        } else {
+                            return row.uraian_rencana;
+                        }
+                    }
                 },
                 {
                     data: 'volume',
@@ -161,6 +191,9 @@
         $('#rpdForm').trigger("reset");
     }
 
+    function lihatRPD(id) {
+        $('#showRPD').modal('show');
+    }
     $('#rpdForm').off('submit').on('submit', function(e) {
         e.preventDefault();
         var formData = new FormData(this);

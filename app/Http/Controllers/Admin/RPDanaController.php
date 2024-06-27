@@ -21,7 +21,7 @@ class RPDanaController extends Controller
                 'kode_komponen.kode', // Kolom dari tabel kode_komponen
                 'kode_komponen.uraian',
                 'satuan.satuan', // Kolom dari tabel satuan
-                'rencana.jumlah as jumlahUsulan',
+                'detail_rencana.total as jumlahUsulan',
             )
             ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
             ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')

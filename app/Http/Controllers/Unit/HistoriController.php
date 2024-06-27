@@ -51,14 +51,6 @@ class HistoriController extends Controller
             // $usulanData = $this->buildHierarchy($usulan);
 
             return datatables()->of($usulan)
-                ->addColumn('action', function ($row) {
-                    $id = $row->detail_rencana_id;
-                    $action = '<a href="javascript:void(0)" onClick="tambahRencanaLain(' . $id . ')" class="add btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
-                    $action .= '<a href="javascript:void(0)" onClick="editUsulan(' . $id . ')" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>';
-                    $action .= '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
-                    return $action;
-                })
-                ->rawColumns(['action'])
                 ->make(true);
         }
 

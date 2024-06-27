@@ -1,4 +1,3 @@
-
 @extends('template')
 @section('content')
 
@@ -20,11 +19,11 @@
                     <table class="table table-bordered" id="tabelKode">
                         <thead>
                             <tr>
-                                <!-- <th width="5px">No</th> -->
-                                <th>No Kode</th>
+                                <th width="5px">No</th>
+                                <th>Kode</th>
                                 <th>Kode Parent</th>
                                 <th>Kategori</th>
-                                <th class="text-center" >Uraian</th>
+                                <th class="text-center">Uraian</th>
                                 <th width="15%">Action</th>
                             </tr>
                         </thead>
@@ -35,7 +34,7 @@
     </div>
 
     <!-- modal -->
-    <div class="modal fade" id="kode-modal" aria-hidden="true">
+    <div class="modal fade" id="kode-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -54,24 +53,24 @@
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Kode Parent</label>
                             <div class="col-sm-12">
-                <input type="text" class="form-control" id="kode_parent_display" placeholder="Cari Kode Parent" maxlength="50">
-                <input type="hidden" id="kode_parent" name="kode_parent">
-                <div id="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;"></div>
-            </div>
+                                <input type="text" class="form-control" id="kode_parent_display" placeholder="Cari Kode Parent" maxlength="50" >
+                                <input type="hidden" id="kode_parent" name="kode_parent" >
+                                <div id="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;" required=""></div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Kategori</label>
-                            <select name="kategori_id" id="kategori_id" class="form-select">
+                            <select name="kategori_id" id="kategori_id" class="form-select" aria-required="true" required>
                                 <option disabled selected>- Pilih Kategori - </option>
-                                @foreach($kategori as $kategori )
-                                    <option value="{{ $kategori->id}}">{{ $kategori->nama_kategori}}</option>
+                                @foreach($kategori as $item )
+                                <option value="{{ $item->id}}">{{ $item->nama_kategori}}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Uraian</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="uraian" name="uraian" placeholder="Masukkan Uraian" maxlength="50" required="">
+                                <textarea name="uraian" id="uraian" class="form-control" placeholder="Masukkan Keterangan" required=""></textarea>
                             </div>
                         </div>
                         <div class="col-sm-8 offset-sm-8"><br />
@@ -102,12 +101,22 @@
             ajax: "{{route('admin.kode')}}",
             columns: [
                 {
+                    data: null,
+                    name: 'DT_RowIndex',
+                    className: 'text-center',
+                    searchable: false,
+                    orderable: false,
+                    render: function(data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                {
                     data: 'kode',
                     name: 'kode',
                     className: 'text-center',
                 },
                 {
-                data: 'parent_kode',
+                    data: 'parent_kode',
                     name: 'parent_kode',
                     className: 'text-center',
                 },
@@ -189,7 +198,7 @@
         $('#id').val('');
     }
 
-    function editKode(id){
+    function editKode(id) {
         $.ajax({
             type: "POST",
             url: "{{ route('admin.edit_kode')}}",
@@ -261,10 +270,10 @@
                 $("#btn-save").html('Submit');
                 $("#btn-save").attr("disabled", false);
                 Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: data.success
-            });
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.success
+                });
             },
             error: function(data) {
                 console.log(data);

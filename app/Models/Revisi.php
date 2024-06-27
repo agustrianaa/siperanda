@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DetailRencana extends Model
+class Revisi extends Model
 {
     use HasFactory;
-    protected $table = 'detail_rencana';
+    protected $table = 'revisi';
 
     protected $fillable = [
         'rencana_id',
@@ -17,7 +17,9 @@ class DetailRencana extends Model
         'satuan_id',
         'volume',
         'harga',
+        'total',
         'status',
+        'revision'
     ];
 
     public function kodeKomponen()
@@ -34,10 +36,5 @@ class DetailRencana extends Model
     public function rencana()
     {
         return $this->belongsTo(Rencana::class);
-    }
-
-    public function realisasi()
-    {
-        return $this->hasMany(Realisasi::class);
     }
 }

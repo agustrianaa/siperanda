@@ -7,6 +7,8 @@ use App\Models\DetailRencana;
 use App\Models\KodeKomponen;
 use App\Models\Realisasi;
 use App\Models\Rencana;
+use App\Models\Revisi;
+use App\Models\RevisiNote;
 use App\Models\RPD;
 use App\Models\Satuan;
 use Illuminate\Http\Request;
@@ -16,6 +18,26 @@ use Illuminate\Support\Facades\Log;
 class UsulanController extends Controller
 {
     public function index(Request $request)
+    {
+        $user = Auth::user();
+        $satuan = Satuan::all();
+        $unit_id = $user->unit->id;
+        $rencanaId = $this->getLatestRencana($unit_id);
+
+        $is_rev = 0;
+        $noteRev ='';
+
+        if ($rencanaId) {
+            $is_rev = DetailRencana::where('rencana_id', $rencanaId->id)->where('is_revised', true)->count();
+        }
+        if($rencanaId){
+            $noteRev = RevisiNote::where('rencana_id', $rencanaId->id)->orderBy('created_at', 'desc')->first();
+        }
+
+        return view('unit.rencana.usulan', compact('satuan','rencanaId', 'is_rev', 'noteRev'));
+    }
+
+    public function tabel1(Request $request)
     {
         $user = Auth::user();
         $satuan = Satuan::all();
@@ -62,6 +84,49 @@ class UsulanController extends Controller
                     return $action;
                 })
                 ->rawColumns(['action'])
+                ->make(true);
+        }
+    }
+
+    public function tabel2(Request $request)
+    {
+        $user = Auth::user();
+        $satuan = Satuan::all();
+        $unit_id = $user->unit->id;
+        // $latestRencana = Rencana::where('unit_id', $unit_id->id)->first();
+        $rencanaId = $this->getLatestRencana($unit_id);
+        // $historiRencana = $this->getHistoriRencana($unit_id);
+        if ($request->ajax()) {
+            $unit = $user->unit;
+
+            // Pastikan unit ditemukan
+            if (!$unit) {
+                return response()->json(['data' => []]);
+            }
+
+            // Sesuaikan query untuk hanya mengambil data terkait dengan unit pengguna
+            $usulan = Revisi::select(
+                'revisi.*',
+                'revisi.id as revisi_id',
+                'rencana.*',
+                'revisi.uraian as uraian_rencana',
+                'kode_komponen.uraian as uraian_kode_komponen',
+                'rencana.tahun as tahun',
+                'kode_komponen.*',
+                'satuan.*',
+                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
+            )
+                ->join('rencana', 'revisi.rencana_id', '=', 'rencana.id')
+                ->leftJoin('kode_komponen', 'revisi.kode_komponen_id', '=', 'kode_komponen.id')
+                ->join('satuan', 'revisi.satuan_id', '=', 'satuan.id')
+                ->where('rencana.unit_id', $unit->id) // Tambahkan kondisi ini
+                ->where('rencana.id', $rencanaId->id)
+                ->get();
+
+            // Membangun data hierarki dengan nomor urut
+            // $usulanData = $this->buildHierarchy($usulan);
+
+            return datatables()->of($usulan)
                 ->make(true);
         }
 
@@ -199,25 +264,49 @@ class UsulanController extends Controller
     $rencana = Rencana::findOrFail($detailRencana->rencana_id);
 
     // Gabungkan kode dan uraian untuk dikirim ke view
-    $detailRencana->kode_uraian = $detailRencana->kodeKomponen->kode . '.' . $detailRencana->kodeKomponen->kode_parent . ' - ' . $detailRencana->kodeKomponen->uraian;
+    if ($detailRencana->kodeKomponen) {
+        $detailRencana->kode_uraian = $detailRencana->kodeKomponen->kode . '.' . $detailRencana->kodeKomponen->kode_parent . ' - ' . $detailRencana->kodeKomponen->uraian;
+    } else {
+        $detailRencana->kode_uraian = 'N/A'; // Atau nilai default lainnya
+    }
+
     $detailRencana->tahun = $rencana->tahun;
+    $detailRencana->status = $rencana->status;
 
     // Kembalikan respons JSON dengan data DetailRencana yang diedit
     return response()->json($detailRencana);
 }
 
 
+
     public function update(Request $request, $id)
     {
-        $detailRencana = DetailRencana::findOrFail($id);
+        $detailRencana = DetailRencana::with('rencana')->findOrFail($id);
 
-    // Update DetailRencana
-    $detailRencana->kode_komponen_id = $request->kode_komponen_id;
-    $detailRencana->volume = $request->volume;
-    $detailRencana->satuan_id = $request->satuan_id;
-    $detailRencana->harga = $request->harga;
-    $detailRencana->total = $request->volume * $request->harga; 
-    $detailRencana->save();
+        if($detailRencana->rencana->status == 'revisi'){
+            Revisi::create([
+                'rencana_id' => $detailRencana->rencana_id,
+                'kode_komponen_id'  => $detailRencana->kode_komponen_id,
+                'volume'    => $detailRencana->volume,
+                'satuan_id' => $detailRencana->satuan_id,
+                'harga' => $detailRencana->harga,
+                'total' => $detailRencana->total = $detailRencana->volume * $detailRencana->harga,
+                'uraian' => $detailRencana->uraian,
+                'revision' => ($detailRencana->is_revised + $detailRencana->is_revised2 + $detailRencana->is_revised3) + 1,
+            ]);
+
+            $detailRencana->is_revised3 = $detailRencana->is_revised2 ? 1 : 0;
+            $detailRencana->is_revised2 = $detailRencana->is_revised ? 1 : 0;
+            $detailRencana->is_revised = 1;
+        }
+
+        // Update DetailRencana
+        $detailRencana->kode_komponen_id = $request->kode_komponen_id;
+        $detailRencana->volume = $request->volume;
+        $detailRencana->satuan_id = $request->satuan_id;
+        $detailRencana->harga = $request->harga;
+        $detailRencana->total =  $request->volume * $request->harga;
+        $detailRencana->save();
 
     return response()->json(['success' => 'Data berhasil diperbarui.']);
     }
@@ -227,19 +316,8 @@ class UsulanController extends Controller
         // Temukan detail rencana berdasarkan ID
         $detailRencana = DetailRencana::findOrFail($request->id);
 
-        // Simpan ID rencana yang terkait
-        $rencanaId = $detailRencana->rencana_id;
-
         // Hapus detail rencana
         $detailRencana->delete();
-
-        // Cek jika tidak ada detail rencana lain yang terkait dengan rencana ini
-        $remainingDetails = DetailRencana::where('rencana_id', $rencanaId)->count();
-
-        if ($remainingDetails == 0) {
-            // Hapus rencana jika tidak ada detail rencana lain yang terkait
-            Rencana::findOrFail($rencanaId)->delete();
-        }
 
         return response()->json(['success' => 'Detail rencana (dan rencana terkait jika tidak ada detail rencana lain) berhasil dihapus.']);
     }

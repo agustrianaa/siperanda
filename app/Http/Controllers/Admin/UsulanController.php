@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\DetailRencana;
 use App\Models\Kategori;
+use App\Models\KodeKomponen;
 use App\Models\Realisasi;
 use App\Models\Rencana;
 use App\Models\RevisiNote;
+use App\Models\Satuan;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -24,7 +26,7 @@ class UsulanController extends Controller
     public function tabelAwalRencana(Request $request){
         if ($request->ajax()) {
             $funit = $request->unit_id;
-            // $fkategori = $request->kategori_id;
+            $ftahun = $request->tahun;
 
             $rencana = Rencana::select(
                 'rencana.*',
@@ -38,13 +40,18 @@ class UsulanController extends Controller
             if ($funit) {
                 $rencana->where('rencana.unit_id', $funit);
             }
+            if ($ftahun) {
+                $ftahunFormat = $ftahun . '-01-01';
+                $rencana->where('rencana.tahun', $ftahunFormat);
+            }
 
             $usulan = $rencana->get();
             return datatables()->of($usulan)
             ->addColumn('action', function ($row) {
                 $id = $row->idRencana1;
-                $action =  '<a href="javascript:void(0)" onClick="editUsulan(' . $id . ')" class="add btn btn-success btn-sm mr-2"><i class="fas fa-edit"></i></a>';
-                $action .= '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                $action =  '<a href="javascript:void(0)" onClick="showUsulan(' . $id . ')" class="add btn btn-success btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+                $action .=  '<a href="javascript:void(0)" onClick="editUsulan(' . $id . ')" class="add btn btn-success btn-sm mr-2"><i class="fas fa-edit"></i></a>';
+                $action .= '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm mr-2"><i class="fas fa-trash"></i></a>';
                 return $action;
             })
             ->rawColumns(['action'])
@@ -57,21 +64,23 @@ class UsulanController extends Controller
         if ($request->ajax()) {
             $funit = $request->unit_id;
             $fkategori = $request->kategori_id;
+            $ftahun = $request->tahun;
 
             $rencanaQuery = DetailRencana::select(
                 'detail_rencana.*',
-                'detail_rencana.id as idRencana',
+                'rencana.id as idRencana',
                 'detail_rencana.volume as volume',
                 'rencana.*',
                 'rencana.unit_id as unit_id',
-                'rencana.jumlah as jumlahUsulan',
+                'detail_rencana.uraian as uraian_rencana',
                 'kode_komponen.*',
-                'kode_komponen.kode as kodeUsulan',
+                'kode_komponen.uraian as uraian_kode_komponen',
                 'satuan.*',
                 'satuan.satuan as satuan',
+                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
-                ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+                ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id');
 
             // Filter by unit_id if provided
@@ -82,14 +91,18 @@ class UsulanController extends Controller
             if ($fkategori) {
                 $rencanaQuery->where('kode_komponen.kategori_id', $fkategori);
             }
+            if ($ftahun) {
+                $ftahunFormat = $ftahun . '-01-01';
+                $rencanaQuery->where('rencana.tahun', $ftahunFormat);
+            }
 
             $rencana = $rencanaQuery->get();
 
             return datatables()->of($rencana)
                 ->addColumn('action', function ($row) {
                     $id = $row->idRencana;
-                    $action =  '<a href="javascript:void(0)" onClick="tambahKetUsulan(' . $id . ')" class="add btn btn-success btn-sm mr-2"><i class="fas fa-plus"></i>Ket</a>';
-                    $action .= '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                    // $action =  '<a href="javascript:void(0)" onClick="tambahKetUsulan(' . $id . ')" class="add btn btn-success btn-sm mr-2"><i class="fas fa-plus"></i>Ket</a>';
+                    $action = '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
                     return $action;
                 })
                 ->rawColumns(['action'])
@@ -99,23 +112,25 @@ class UsulanController extends Controller
 
 
     public function storeKet(Request $request)
-    {
-        $id = $request->id;
-        Log::info('ID received: ' . $id);
-        $rencana = DetailRencana::findOrFail($id);
+{
 
-        if ($rencana) {
-            $rencana->status = $request->input('status');
-            $rencana->save();
-        }
-        if (!empty($request->note)) {
-            RevisiNote::create([
-                'detail_rencana_id' => $rencana->id,
-                'note' => $request->note,
-            ]);
-        }
-        return response()->json($rencana);
+    $id = $request->id;
+    Log::info('ID received in request: ' . $request->id);
+    Log::info('ID received: ' . $id);
+    $rencana = Rencana::findOrFail($id);
+
+    if ($rencana) {
+        $rencana->status = $request->input('status');
+        $rencana->save();
     }
+    if (!empty($request->note)) {
+        RevisiNote::create([
+            'rencana_id' => $rencana->id,
+            'note' => $request->note,
+        ]);
+    }
+    return response()->json($rencana);
+}
 
     // untuk menyimpan rencanan awal
     public function store(Request $request)
@@ -135,4 +150,34 @@ class UsulanController extends Controller
 
         return response()->json($rencana);
     }
+
+    public function show(Request $request){
+        $id = $request->query('id');
+        $rencana = Rencana::findorFail($id);
+        return view('admin.usulan.detail', compact('rencana'));
+    }
+
+    public function edit(Request $request){
+        $id = $request->query('id');
+        $rencana = Rencana::findorFail($id);
+        $satuan = Satuan::all();
+        return view('admin.usulan.edit_rencana', compact('rencana', 'satuan'));
+    }
+
+    // untuk mencari kode/uraian dari db Kode Komponen 
+    public function searchByCode(Request $request)
+    {
+        Log::info('searchByCode: ');
+        $search = $request->input('search');
+        Log::info('Search: ' . $search);
+
+        $results = KodeKomponen::where('kode', 'LIKE', "%{$search}%")
+            ->orWhere('uraian', 'LIKE', "%{$search}%")
+            ->get();
+        Log::info('Results: ' . $results);
+
+        return response()->json($results);
+    }
+
+
 }

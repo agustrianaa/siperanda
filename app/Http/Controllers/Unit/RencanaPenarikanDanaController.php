@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Unit;
 
 use App\Http\Controllers\Controller;
 use App\Models\DetailRencana;
+use App\Models\KodeKomponen;
 use App\Models\Realisasi;
 use App\Models\RPD;
 use Illuminate\Http\Request;
@@ -30,16 +31,15 @@ class RencanaPenarikanDanaController extends Controller
                 'detail_rencana.id as idRencana',
                 'detail_rencana.volume',
                 'detail_rencana.harga',
-                // 'rpd.bulan_rpd', // Kolom dari tabel rpd
-                'kode_komponen.kode', // Kolom dari tabel kode_komponen
-                'kode_komponen.uraian',
-                'satuan.satuan', // Kolom dari tabel satuan
-                'rencana.jumlah as jumlahUsulan',
+                'kode_komponen.uraian as uraian_kode_komponen',
+                'satuan.satuan',
+                'detail_rencana.total as jumlahUsulan',
+                'detail_rencana.uraian as uraian_rencana',
+                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
-                ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+                ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-                // ->leftJoin('rpd', 'rpd.detail_rencana_id', '=', 'detail_rencana.id')
                 ->where('rencana.unit_id', $unit->id)
                 ->get();
 

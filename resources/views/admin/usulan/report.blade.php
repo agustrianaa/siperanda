@@ -6,22 +6,59 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title fw-semibold mb-3">Report</h5>
-                <div class="row">
-                <div class="col">
-                    <div class="col-lg-2 mb-2">
-                    ini report yang perlu di report!
-                    </div>
-
-                    <br>
-                    <div class="col-lg-2">
-                        <a href="{{route('admin.export_kode')}}" class="btn btn-primary">Export data</a>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title fw-semibold mb-3">Kode Komponen</h5>
+                    <div class="row">
+                        <div class="col">
+                            <div class="col mb-2">
+                                Jika membutuhkan!
+                            </div>
+                            <br>
+                            <div class="col-lg-6">
+                                <a href="{{route('admin.export_kode')}}" class="btn btn-primary">Export data</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title fw-semibold mb-3">Seluruh Rencana</h5>
+                    <div class="row">
+                        <div class="col">
+                            <div class="col mb-2">
+                                Jika membutuhkan!
+                            </div>
+                            <br>
+                            <div class="col-lg-6">
+                                <a href="{{route('admin.export_allRencana')}}" class="btn btn-primary">Export data</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title fw-semibold mb-3">Rencana per Unit</h5>
+                    <form id="exportForm" method="POST" action="{{route('admin.export_rencanaUnit')}}">
+                        @csrf
+                        <div class="form-group">
+                            <select id="unit_id" name="unit_id" class="form-select" required>
+                                <option value="" selected disabled>-- Pilih Unit --</option>
+                                @foreach($units as $unit)
+                                <option value="{{ $unit->id }}">{{ $unit->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Export Data</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

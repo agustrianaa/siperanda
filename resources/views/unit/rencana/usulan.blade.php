@@ -12,11 +12,23 @@
     @else
     <div class="row">
         <div class="row">
-            <div class="row mb-3">
-                <div class="col"></div>
-                <!-- <div class="col-auto">
-                    <a class="btn btn-secondary m-1" onclick="tambahUsulan()" href="javascript:void(0)"><i class="ti ti-plus"></i> Usulan</a>
-                </div> -->
+            <div class="row mb-2">
+                <div class="col">
+                    @if (isset($rencanaId) && $rencanaId)
+                    @if ($rencanaId->status == 'revisi')
+                    <div class="btn btn-danger status-btn">Revisi</div>
+                    @elseif ($rencanaId->status == 'approved')
+                    <div class="btn btn-success status-btn">Disetujui</div>
+                    @elseif ($rencanaId->status == 'rejected')
+                    <div class="btn btn-dark status-btn" disabled>Tidak Disetujui</div>
+                    @elseif ($rencanaId->status == 'draft')
+                    <div class="btn btn-secondary status-btn">Draft</div>
+                    @endif
+                    @else
+                    <div class="btn btn-warning status-btn">Status Tidak Tersedia</div>
+                    @endif
+                </div>
+
                 <div class="col-auto">
                     <a class="btn btn-success m-1" onclick="tambahRencana()" href="javascript:void(0)"><i class="ti ti-plus"></i> Rencana</a>
                 </div>
@@ -37,6 +49,27 @@
                             <th width="15%">Action</th>
                         </tr>
                     </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row {{ $is_rev ? '' : 'd-none'}}" id="last-div">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title fw-semibold mb-3">Usulan Lama</h5>
+                <table class="table table-bordered" id="last">
+                    <thead>
+                        <tr>
+                            <!-- <th width="3px">No</th> -->
+                            <th>Kode</th>
+                            <th width="30%">Uraian</th>
+                            <th>Volume</th>
+                            <th>Satuan</th>
+                            <th>Harga</th>
+                            <th width="15%">Jumlah</th>
+                        </tr>
+                    </thead>
+
                 </table>
             </div>
         </div>
@@ -137,7 +170,7 @@
                         </div>
                         <div class="form-group mb-2">
                             <label for="name" class="col-sm-4 control-label">Satuan</label>
-                            <select name="satuan_id" id="satuan_id" class="form-control">
+                            <select name="satuan_id" id="satuan_id" class="form-select" required>
                                 <option disabled selected>-Pilih Satuan-</option>
                                 @foreach ($satuan as $item )
                                 <option value="{{$item->id}}">{{$item->satuan}}</option>
@@ -162,6 +195,32 @@
         </div>
     </div>
     @endif
+
+    <!-- modal untuk keterangan dan status -->
+
+    <div class="modal fade" id="showKet" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Detail Status</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-2">
+                        <form>
+                            <label for="ket">Catatan</label>
+                            <textarea id="ket" class="form-control" rows="4" disabled>{{ $noteRev->note ?? 'Tidak ada keterangan.' }}</textarea>
+                        </form>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Understood</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- end bootstrap model -->
 <script type="text/javascript">
@@ -204,7 +263,7 @@
         $('#usulan').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{route('unit.usulan')}}",
+            ajax: "{{route('unit.new')}}",
             columns: [{
                     data: 'number',
                     name: 'number',
@@ -215,8 +274,8 @@
                     data: 'allkode',
                     name: 'allkode',
                     render: function(data, type, row) {
-                            return data ? data : '';
-                        }
+                        return data ? data : '';
+                    }
                 },
                 {
                     data: 'uraian',
@@ -258,6 +317,57 @@
                     className: 'text-center',
                     orderable: false,
                 }
+            ],
+            order: [
+                [0, 'desc']
+            ]
+        });
+
+        $('#last').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{route('unit.last')}}",
+            columns: [{
+                    data: 'allkode',
+                    name: 'allkode',
+                    render: function(data, type, row) {
+                        return data ? data : '';
+                    }
+                },
+                {
+                    data: 'uraian',
+                    name: 'uraian',
+                    render: function(data, type, row) {
+                        // Logika untuk menampilkan uraian dari kode komponen atau uraian rencana
+                        if (row.uraian_kode_komponen) {
+                            return row.uraian_kode_komponen;
+                        } else {
+                            return row.uraian_rencana;
+                        }
+                    }
+                },
+                {
+                    data: 'volume',
+                    name: 'volume',
+                },
+                {
+                    data: 'satuan',
+                    name: 'satuan',
+                },
+                {
+                    data: 'harga',
+                    name: 'harga',
+                    render: function(data, type, row) {
+                        return formatNumber(data);
+                    }
+                },
+                {
+                    data: 'total',
+                    name: 'total',
+                    render: function(data, type, row) {
+                        return formatNumber(data);
+                    }
+                },
             ],
             order: [
                 [0, 'desc']
@@ -312,6 +422,10 @@
                 $('#kode-results').hide();
             }
         });
+
+        $('.status-btn').on('click', function() {
+            $('#showKet').modal('show');
+        });
     });
 
     // untuk menambahkan TAHUN
@@ -344,14 +458,6 @@
         });
     }
 
-    // untuk menambahkan detail usulan yang sesuai dengan usulan pertama
-    // let currentKode = '';
-    // if (currentKode === '') {
-    // Ambil nilai kode dari input jika pertama kali
-    //     currentKode = $('#kode').val();
-    // }
-    // $('#kode').val(currentKode);
-
     function tambahRencanaLain(parentId) {
         $('#rencana2Form').trigger("reset");
         $('#noparent_id').val(parentId);
@@ -359,6 +465,7 @@
     }
 
     function hapusUsulan(id) {
+        console.log(id);
         Swal.fire({
             title: 'Delete Record?',
             text: "Anda yakin ingin menghapus data ini?",
@@ -440,8 +547,8 @@
             processData: false,
             success: (data) => {
                 $("#usulanLain-modal").modal('hide');
-                var oTable = $('#usulan').DataTable();
-                oTable.ajax.reload();
+                var usulanTable = $('#usulan').DataTable();
+                usulanTable.ajax.reload();
                 $("#btn-simpan").html('Submit');
                 $("#btn-simpan").attr("disabled", false);
                 Swal.fire({
@@ -449,12 +556,18 @@
                     title: 'Success',
                     text: data.success
                 });
+                if (data.status === 'revisi') {
+                    $('#last-div').removeClass('d-none');
+                    var lastTable = $('#last').DataTable();
+                    lastTable.ajax.reload();
+                }
             },
             error: function(data) {
                 console.log(data);
             }
         });
     });
+
     function editUsulan(id) {
         $.ajax({
             type: "POST",
@@ -464,16 +577,29 @@
             },
             dataType: 'json',
             success: function(res) {
-                $('#usulanLain-modal .modal-title').html("Edit Usulan");
-            $('#usulanLain-modal').modal('show');
-            $('#id').val(res.id);
-            $('#kode').val(res.kode_uraian);  // Mengisi input dengan gabungan kode dan uraian
-            $('#kode_komponen_id').val(res.kode_komponen_id); // Isi input tersembunyi
-            $('#volume').val(res.volume);
-            $('#satuan_id').val(res.satuan_id); // Pilih satuan yang sesuai di dropdown
-            $('#harga').val(res.harga);
-            
-            }
+                if (res.is_revised3) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Sudah melebihi batas revisi'
+                    });
+                } else if (res.status === 'approved') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Usulan sudah disetujui dan tidak bisa diubah'
+                    });
+                } else {
+                    $('#usulanLain-modal .modal-title').html("Edit Usulan");
+                    $('#usulanLain-modal').modal('show');
+                    $('#id').val(res.id);
+                    $('#kode').val(res.kode_uraian); // Mengisi input dengan gabungan kode dan uraian
+                    $('#kode_komponen_id').val(res.kode_komponen_id); // Isi input tersembunyi
+                    $('#volume').val(res.volume);
+                    $('#satuan_id').val(res.satuan_id); // Pilih satuan yang sesuai di dropdown
+                    $('#harga').val(res.harga);
+                }
+            },
         });
     }
 </script>

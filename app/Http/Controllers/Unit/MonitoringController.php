@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Unit;
 
 use App\Http\Controllers\Controller;
 use App\Models\DetailRencana;
+use App\Models\KodeKomponen;
 use App\Models\Realisasi;
 use App\Models\RPD;
 use App\Models\Satuan;
@@ -26,13 +27,16 @@ class MonitoringController extends Controller
                 'detail_rencana.*',
                 'detail_rencana.id as idRencana',
                 'rencana.*',
-                'rencana.jumlah as jumlahUsulan',
+                'detail_rencana.total as jumlahUsulan',
+                'detail_rencana.uraian as uraian_rencana',
                 'kode_komponen.*',
+                'kode_komponen.uraian as uraian_kode_komponen',
                 'satuan.*',
                 'satuan.satuan as satuan',
+                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
-                ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+                ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
                 ->where('rencana.unit_id', $unit->id)
                 ->get();

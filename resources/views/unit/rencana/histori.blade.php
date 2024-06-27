@@ -13,7 +13,6 @@
                         <th>Kode</th>
                         <th>Uraian</th>
                         <th>Total</th>
-                        <th>Action</th>
                     </thead>
                 </table>
             </div>
@@ -59,12 +58,6 @@
                         return formatNumber(data);
                     }
                 },
-                {
-                    data: 'action',
-                    name: 'action',
-                    className: 'text-center',
-                    orderable: false,
-                }
             ]
         });
     });

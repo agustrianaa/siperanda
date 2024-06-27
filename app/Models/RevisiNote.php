@@ -12,11 +12,11 @@ class RevisiNote extends Model
     protected $table = 'note_revisi';
 
     protected $fillable = [
-        'detail_rencana_id',
+        'rencana_id',
         'note',
     ];
 
-    public function detailRencana(){
-        return $this->belongsTo(DetailRencana::class, 'detail_rencana_id');
+    public function rencana(){
+        return $this->belongsTo(Rencana::class, 'rencana_id');
     }
 }

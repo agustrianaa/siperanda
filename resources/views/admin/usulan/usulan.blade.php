@@ -10,7 +10,7 @@
                     <div class="card-body">
                         <h5 class="card-title fw-semibold mb-3">Filter</h5>
                         <div class="row">
-                            <div class="col-lg-4 mb-2">
+                            <div class="col-lg-3 mb-2">
                                 <!-- <label for="unit">Pilih Unit </label> -->
                                 <select name="funit" id="funit" class="form-select">
                                     <option value="#" disabled selected>- Pilih Unit -</option>
@@ -23,7 +23,7 @@
                                     @endif
                                 </select>
                             </div>
-                            <div class="col-lg-4 mb-2">
+                            <div class="col-lg-3 mb-2">
                                 <select name="fkategori" id="fkategori" class="form-select">
                                     <option value="#" disabled selected> - Pilih Kategori - </option>
                                     @if($kategoris->isEmpty())
@@ -33,6 +33,13 @@
                                     <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
                                     @endforeach
                                     @endif
+                                </select>
+                            </div>
+                            <div class="col-lg-3 mb-2">
+                                <select name="fkategori" id="ftahun" class="form-select">
+                                    <option value="#" disabled selected> - Pilih Tahun - </option>
+                                    @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
+                                    @endfor
                                 </select>
                             </div>
                             <div class="col-lg-1 mb-1">
@@ -63,7 +70,7 @@
         <div class="row">
             <div class="card">
                 <div class="card-body">
-                <h5 class="card-title fw-semibold mb-3">Rencana Awal</h5>
+                    <h5 class="card-title fw-semibold mb-3">Rencana Awal</h5>
                     <div class="row">
                         <table class="table table-bordered" id="rencanaAwalTabel">
                             <thead>
@@ -84,7 +91,7 @@
         <div class="row">
             <div class="card">
                 <div class="card-body">
-                <h5 class="card-title fw-semibold mb-3">Detail Rencana</h5>
+                    <h5 class="card-title fw-semibold mb-3">Detail Rencana</h5>
                     <div class="row">
                         <table class="table table-bordered" id="rencanaTabel">
                             <thead>
@@ -116,7 +123,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="javascript:void(0)" id="bukaRencanaForm" name="bukaRencanaForm" class="form-horizontal" method="POST" enctype="multipart/form-data" class="needs-validation" >
+                    <form action="javascript:void(0)" id="bukaRencanaForm" name="bukaRencanaForm" class="form-horizontal" method="POST" enctype="multipart/form-data" class="needs-validation">
                         <input type="hidden" id="id" name="id">
                         <div class="form-group mb-2">
                             <label for="unit_id">Unit</label>
@@ -166,43 +173,7 @@
         </div>
     </div>
 
-    <!-- modal untuk menambahkan keterangan usulan -->
-    <div class="modal fade" id="ketUsulan" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Keterangan Usulan</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="javascript:void(0)" id="ketUsulanForm" name="ketUsulanForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
-                        <input type="hidden" id="detail_rencana_id" name="detail_rencana_id">
-                        <div class="form-group mb-3">
-                            <label for="status">Validasi</label>
-                            <select name="status" id="status" class="form-select">
-                                <option disabled selected>- Pilih Validasi -</option>
-                                <option value="revisi"> Revisi</option>
-                                <option value="disetujui"> Disetujui</option>
-                            </select>
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="note">Catatan Usulan</label>
-                            <div class="col-sm-12">
-                                <!-- <input type="textarea" id="" name="" placeholder="Masukkan Keterangan" class="form-control"> -->
-                                <textarea name="note" id="note" class="form-control" placeholder="Masukkan Keterangan"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-sm-8 offset-sm-8"><br />
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
-                            <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                </div>
-            </div>
-        </div>
-    </div>
+
 </div>
 
 
@@ -220,6 +191,7 @@
         function dataRencana() {
             var funit = $('#funit').val();
             var fkategori = $('#fkategori').val();
+            var ftahun = $('#ftahun').val();
 
             $('#rencanaTabel').DataTable({
                 processing: true,
@@ -231,6 +203,7 @@
                     data: {
                         unit_id: funit,
                         kategori_id: fkategori,
+                        tahun: ftahun,
                     },
                     dataSrc: function(json) {
                         console.log(json); // Log the data received from server
@@ -238,12 +211,22 @@
                     }
                 },
                 columns: [{
-                        data: 'kodeUsulan',
-                        name: 'kodeUsulan',
+                        data: 'allkode',
+                        name: 'allkode',
+                        render: function(data, type, row) {
+                            return data ? data : '';
+                        }
                     },
                     {
                         data: 'uraian',
                         name: 'uraian',
+                        render: function(data, type, row) {
+                        if (row.uraian_kode_komponen) {
+                            return row.uraian_kode_komponen;
+                        } else {
+                            return row.uraian_rencana;
+                        }
+                    }
                     },
                     {
                         data: 'volume',
@@ -288,7 +271,7 @@
                     type: 'GET',
                     data: {
                         unit_id: funit,
-
+                        tahun: ftahun,
                     },
                 },
                 columns: [{
@@ -309,7 +292,7 @@
                         className: 'text-center',
                         orderable: false,
                     }
-                    ]
+                ]
             })
         }
 
@@ -321,9 +304,14 @@
             dataRencana();
         });
 
+        $('#ftahun').on('change', function() {
+            dataRencana();
+        });
+
         $('#resetFilter').click(function() {
             $('#funit').val("#").trigger('change');
             $('#fkategori').val("#").trigger('change');
+            $('#ftahun').val("#").trigger('change');
             dataRencana();
         })
 
@@ -337,6 +325,8 @@
         $('#bukaRencana').modal('show');
         $('#bukaRencanaForm').trigger('reset');
     }
+
+    // submit rencana awal
     $('#bukaRencanaForm').submit(function(e) {
         e.preventDefault();
         var formData = new FormData(this);
@@ -350,7 +340,7 @@
             success: (data) => {
                 $('#bukaRencana').modal('hide');
                 var oTable = $('#rencanaAwalTabel').DataTable();
-                    oTable.ajax.reload();
+                oTable.ajax.reload();
                 $("#btn-simpan1").html('Submit');
                 $("#btn-simpan1").attr("disabled", false);
                 Swal.fire({
@@ -370,6 +360,15 @@
         })
     });
 
+    function showUsulan(id) {
+        window.location.href = '{{ route("admin.show_rencana") }}' + '?id=' + id;
+        console.log(id);
+    }
+
+    function editUsulan(id){
+        window.location.href = '{{ route("admin.edit_rencana") }}' + '?id=' + id;
+        console.log(id);
+    }
 
     function tambahKetUsulan(id) {
         $('#ketUsulan').modal('show');

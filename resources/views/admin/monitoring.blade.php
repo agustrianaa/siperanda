@@ -38,7 +38,7 @@
                     <form action="javascript:void(0)" id="realisasiForm" name="realisasiForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
                         <div class="form-group mb-3">
                             <label for="ket">Bulan Te - Realisasi</label>
-                            <select name="bulan_realisasi" id="bulan_realisasi" class="form-select">
+                            <select name="bulan_realisasi" id="bulan_realisasi" class="form-select" required>
                                     <option value="">-Pilih Bulan</option>
                                     <option value="Januari">Januari</option>
                                     <option value="Februari">Februari</option>
@@ -57,7 +57,7 @@
                         <div class="form-group mb-2">
                             <label for="note">Jumlah</label>
                             <div class="col-sm-12">
-                                <input type="text" id="jumlah" name="jumlah" placeholder="Masukkan Jumlah" class="form-control">
+                                <input type="text" id="jumlah" name="jumlah" placeholder="Masukkan Jumlah" class="form-control" required>
                             </div>
                         </div>
                         <div class="col-sm-8 offset-sm-8"><br />

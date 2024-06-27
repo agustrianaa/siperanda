@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('detail_rencana', function (Blueprint $table) {
+        Schema::create('revisi', function (Blueprint $table) {
             $table->id();
             $table->foreignId('rencana_id')->references('id')->on('rencana')->onDelete('cascade');
             $table->unsignedBigInteger('noparent_id')->nullable();
@@ -20,12 +20,10 @@ return new class extends Migration
             $table->foreignId('satuan_id')->references('id')->on('satuan')->onDelete('cascade');
             $table->string('volume');
             $table->decimal('harga', 15,2)->nullable();
-            $table->decimal('total', 15,2)->nullable();;
+            $table->decimal('total', 15,2)->nullable();
             $table->text('uraian')->nullable();
-            $table->boolean('is_revised')->nullable();
-            $table->boolean('is_revised2')->nullable();
-            $table->boolean('is_revised3')->nullable();
-            $table->string('revisi_keterangan')->nullable();
+            $table->integer('revision')->default(0);
+
             $table->timestamps();
         });
     }
@@ -35,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('detail_rencana');
+        Schema::dropIfExists('revisi');
     }
 };

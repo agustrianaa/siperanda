@@ -10,7 +10,7 @@
                     <table class="table table-bordered" id="monitoringfromUnit">
                         <thead>
                             <tr>
-                                <th width="5px">No</th>
+                                <!-- <th width="5px">No</th> -->
                                 <th>Kode</th>
                                 <th>Program/Kegiatan/KRO/RO/dsb</th>
                                 <th>Jumlah</th>
@@ -41,23 +41,25 @@
             processing: true,
             serverSide: true,
             ajax: "{{route('unit.monitoring')}}",
-            columns: [{
-                    data: null,
-                    name: 'DT_RowIndex',
-                    className: 'text-center',
-                    searchable: false,
-                    orderable: false,
-                    render: function(data, type, row, meta) {
-                        return meta.row + 1;
-                    }
-                },
+            columns: [
                 {
-                    data: 'kode',
-                    name: 'kode',
+                    data: 'allkode',
+                    name: 'allkode',
+                    render: function(data, type, row) {
+                            return data ? data : '';
+                        }
                 },
                 {
                     data: 'uraian',
                     name: 'uraian',
+                    render: function(data, type, row) {
+                        // Logika untuk menampilkan uraian dari kode komponen atau uraian rencana
+                        if (row.uraian_kode_komponen) {
+                            return row.uraian_kode_komponen;
+                        } else {
+                            return row.uraian_rencana;
+                        }
+                    }
                 },
                 {
                     data: 'jumlahUsulan',

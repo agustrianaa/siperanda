@@ -18,7 +18,7 @@ class MonitoringController extends Controller
                 'detail_rencana.id as idRencana',
                 'detail_rencana.volume as volume',
                 'rencana.*',
-                'rencana.jumlah as jumlahUsulan',
+                'detail_rencana.total as jumlahUsulan',
                 'kode_komponen.*',
                 'kode_komponen.kode as kodeUsulan',
                 'satuan.*',

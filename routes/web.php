@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DetailRencanaController;
 use App\Http\Controllers\Auth\LoginController as AuthLoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Unit\UsulanController as UnitUsulanController;
 use App\Http\Controllers\Unit\MonitoringController as UnitMonitoringController;
 use App\Http\Controllers\Unit\ProfileController as UnitProfileController;
 use App\Http\Controllers\UserController;
+use App\Models\DetailRencana;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -79,10 +81,18 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::post('/admin/hapus-satuan', [AdminSatuanController::class, 'destroy'])->name('admin.hapus_satuan');
     // Usulan di admin
     Route::get('/admin/usulan',  [AdminUsulanController::class, 'index'])->name('admin.usulan');
-    Route::get('/admin/datatabel',  [AdminUsulanController::class, 'tabelAwalRencana'])->name('admin.tabelRencanaAwal');
-    Route::get('/admin/datatabe2',  [AdminUsulanController::class, 'tabelRencana'])->name('admin.tabelRencana');
+    Route::get('/admin/datatabell',  [AdminUsulanController::class, 'tabelAwalRencana'])->name('admin.tabelRencanaAwal');
+    Route::get('/admin/datatabel2',  [AdminUsulanController::class, 'tabelRencana'])->name('admin.tabelRencana');
+    // DETAIL RENCANA SETIAP PENGJUAN UNIT
+    Route::get('/admin/detail-rencana', [AdminUsulanController::class, 'show'])->name('admin.show_rencana');
+    Route::get('/admin/edit-rencana', [AdminUsulanController::class, 'edit'])->name('admin.edit_rencana');
+    Route::get('/admin/search/code', [AdminUsulanController::class, 'searchByCode'])->name('admin.search_code');
+    Route::get('/admin/tabeldetail', [DetailRencanaController::class, 'tabelDetail'])->name('admin.tabeldetail');
+    Route::post('/admin/simpan-rencanaLengkap', [DetailRencanaController::class, 'storelengkapiRencana'])->name('admin.simpan_rencanaLengkap');
+    // RENCANA AWAL
     Route::post('/admin/buka-rencana', [AdminUsulanController::class, 'store'])->name('admin.bukaRencana');
     Route::post('/admin/simpan-ket', [AdminUsulanController::class, 'storeKet'])->name('admin.simpan_ketUsulan');
+    // REALISASI
     Route::get('/admin/realisasi',  [RPDanaController::class, 'rpd'])->name('admin.realisasi');
     Route::post('/admin/simpan-validasi', [RPDanaController::class, 'storevalidasi'])->name('admin.simpan_validasiRPD');
 
@@ -94,6 +104,8 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // REPORT
     Route::get('/admin/report', [ReportController::class, 'index'])->name('admin.report');
     Route::get('/admin/report/export-kode', [AdminKodeController::class, 'export_kode'])->name('admin.export_kode');
+    Route::post('/admin/report/export-rencana-unit', [ReportController::class, 'exportRencanaUnit'])->name('admin.export_rencanaUnit');
+    Route::get('/admin/report/export-all-rencana', [ReportController::class, 'exportRencana'])->name('admin.export_allRencana');
 });
 
 
@@ -108,6 +120,8 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     Route::get('/unit/dashboard', [HomeController::class, 'unitHome'])->name('unit.dashboard');
     // CRUD rencana
     Route::get('/unit/usulan', [UnitUsulanController::class, 'index'])->name('unit.usulan');
+    Route::get('/unit/tabel1', [UnitUsulanController::class, 'tabel1'])->name('unit.new');
+    Route::get('/unit/tabel2', [UnitUsulanController::class, 'tabel2'])->name('unit.last');
     Route::post('/unit/simpan-rencana', [UnitUsulanController::class, 'store'])->name('unit.simpan_tahun');
     Route::post('/unit/simpan-rencana2', [UnitUsulanController::class, 'store2'])->name('unit.simpan_rencana2');
     Route::post('/unit/edit-usulan/', [UnitUsulanController::class, 'edit'])->name('unit.edit_usulan');

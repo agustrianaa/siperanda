@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('kode');
             $table->unsignedBigInteger('kode_parent')->nullable();
             $table->foreignId('kategori_id')->references('id')->on('kategori')->onDelete('cascade');
-            $table->string('uraian');
+            $table->text('uraian');
             $table->timestamps();
         });
     }

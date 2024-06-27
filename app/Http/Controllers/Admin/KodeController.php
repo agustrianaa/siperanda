@@ -19,7 +19,8 @@ class KodeController extends Controller
                 'kode_komponen.*',
                 // 'kode_komponen.kode as kodeParent',
                 'parent.kode as parent_kode',
-                'kategori.nama_kategori',)
+                'kategori.nama_kategori',
+            )
                 ->join('kategori', 'kode_komponen.kategori_id', '=', 'kategori.id')
                 ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
                 ->get();
@@ -47,8 +48,15 @@ class KodeController extends Controller
     public function store(Request $request)
     {
         $kodeId = $request->id;
+        $request->validate([
+            'kode' => 'required',
+            'kode_parent' => 'required',
+            'kategori_id' => 'required',
+            'uraian' => 'required',
+        ]);
 
-        $kategori = KodeKomponen::updateOrCreate(
+        $kode = KodeKomponen::updateOrCreate(
+
             [
                 'id' => $kodeId,
             ],
@@ -59,6 +67,7 @@ class KodeController extends Controller
                 'uraian' => $request->uraian,
             ]
         );
+        return Response()->json($kode);
     }
 
     public function searchByCode(Request $request)
@@ -77,12 +86,13 @@ class KodeController extends Controller
 
     public function destroy(Request $request)
     {
-        $kode = KodeKomponen::where('id',$request->id)->delete();
+        $kode = KodeKomponen::where('id', $request->id)->delete();
 
         return Response()->json($kode);
     }
 
-    public function export_kode(){
+    public function export_kode()
+    {
         return Excel::download(new ExportKodeKomponen, 'kode.xlsx');
     }
 }
