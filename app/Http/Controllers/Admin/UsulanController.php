@@ -161,10 +161,11 @@ class UsulanController extends Controller
         $id = $request->query('id');
         $rencana = Rencana::findorFail($id);
         $satuan = Satuan::all();
-        return view('admin.usulan.edit_rencana', compact('rencana', 'satuan'));
+        $unit = Unit::all();
+        return view('admin.usulan.edit_rencana', compact('rencana', 'satuan', 'unit'));
     }
 
-    // untuk mencari kode/uraian dari db Kode Komponen 
+    // untuk mencari kode/uraian dari db Kode Komponen
     public function searchByCode(Request $request)
     {
         Log::info('searchByCode: ');

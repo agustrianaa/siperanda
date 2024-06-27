@@ -88,9 +88,12 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::get('/admin/edit-rencana', [AdminUsulanController::class, 'edit'])->name('admin.edit_rencana');
     Route::get('/admin/search/code', [AdminUsulanController::class, 'searchByCode'])->name('admin.search_code');
     Route::get('/admin/tabeldetail', [DetailRencanaController::class, 'tabelDetail'])->name('admin.tabeldetail');
+    Route::get('/admin/tabeleditRA', [DetailRencanaController::class, 'tabeleditRA'])->name('admin.tabeleditRA');
+    Route::get('/admin/editRA', [DetailRencanaController::class, 'editRencAwal'])->name('admin.editRencAwal');
     Route::post('/admin/simpan-rencanaLengkap', [DetailRencanaController::class, 'storelengkapiRencana'])->name('admin.simpan_rencanaLengkap');
     // RENCANA AWAL
     Route::post('/admin/buka-rencana', [AdminUsulanController::class, 'store'])->name('admin.bukaRencana');
+    Route::post('/admin/simpan-RA', [DetailRencanaController::class, 'storeEditRA'])->name('admin.simpan_RA');
     Route::post('/admin/simpan-ket', [AdminUsulanController::class, 'storeKet'])->name('admin.simpan_ketUsulan');
     // REALISASI
     Route::get('/admin/realisasi',  [RPDanaController::class, 'rpd'])->name('admin.realisasi');
