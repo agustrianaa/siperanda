@@ -136,7 +136,7 @@ class UsulanController extends Controller
     protected function getLatestRencana($unit_id)
     {
         // Mendapatkan rencana terbaru berdasarkan tanggal atau kriteria lainnya
-        $rencanaId = Rencana::where('unit_id', $unit_id)->orderBy('created_at', 'desc')->first();
+        $rencanaId = Rencana::where('unit_id', $unit_id)->orderBy('tahun', 'desc')->first();
 
         return $rencanaId;
     }

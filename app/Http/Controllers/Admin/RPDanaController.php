@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\DetailRencana;
+use App\Models\KodeKomponen;
 use App\Models\Realisasi;
 use App\Models\RPD;
 use Illuminate\Http\Request;
@@ -18,13 +19,15 @@ class RPDanaController extends Controller
                 'detail_rencana.id as idRencana',
                 'detail_rencana.volume',
                 'detail_rencana.harga',
+                'detail_rencana.uraian as uraian_rencana',
                 'kode_komponen.kode', // Kolom dari tabel kode_komponen
-                'kode_komponen.uraian',
+                'kode_komponen.uraian as uraian_kode_komponen',
                 'satuan.satuan', // Kolom dari tabel satuan
                 'detail_rencana.total as jumlahUsulan',
+                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
             )
             ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
-            ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+            ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
             ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
             ->get();
 
@@ -77,5 +80,13 @@ class RPDanaController extends Controller
             $realisasi->save();
         }
         return response()->json($realisasi);
+    }
+
+    public function edit(Request $request)
+    {
+        $id = array('id' => $request->id);
+        $realisasi  = Realisasi::where($id)->first();
+
+        return Response()->json($realisasi);
     }
 }

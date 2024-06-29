@@ -8,13 +8,11 @@
                     <i class="ti ti-menu-2"></i>
                 </a>
             </li>
-            <li class="nav-item align-items-center" >
-                <!-- <a class="nav-link nav-icon-hover" href="javascript:void(0)">
-                    <i class="ti ti-bell-ringing"></i>
-                    <div class="notification bg-primary rounded-circle"></div>
-                    Usulan
-                </a> -->
-                <span class="logo d-flex align-items-center">
+
+        </ul>
+        <ul class="navbar-nav  flex-row ms-auto align-items-center mt-2">
+            <li>
+                <span class="d-flex align-text-center">
                     @yield('page-title')
                 </span>
             </li>
@@ -27,11 +25,24 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
                         <div class="message-body">
+                            <div class="align-text-center dropdown-item" aria-disabled="">
+                                <p class="mb-0 fs-3 fw-semibold text-center">
+                                    @if (auth()->user()->role == 'admin')
+                                    {{ auth()->user()->admin->name }}
+                                    @elseif (auth()->user()->role == 'unit')
+                                    {{ auth()->user()->unit->name }}
+                                    @elseif (auth()->user()->role == 'direksi')
+                                    {{ auth()->user()->direksi->name }}
+                                    @else
+                                    {{ auth()->user()->name }}
+                                    @endif
+                                </p>
+                            </div>
                             <a href="{{route('profile.redirect')}}" class="d-flex align-items-center gap-2 dropdown-item">
                                 <i class="ti ti-user fs-6"></i>
                                 <p class="mb-0 fs-3">My Profile</p>
                             </a>
-                            
+
                             <a href="{{ route('logout') }}" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
                         </div>
                     </div>

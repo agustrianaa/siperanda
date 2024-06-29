@@ -4,14 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\DetailRencana;
+use App\Models\Kategori;
+use App\Models\KodeKomponen;
 use App\Models\Realisasi;
 use App\Models\RPD;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 
 class MonitoringController extends Controller
 {
     public function index()
     {
+        $unit = Unit::all();
+        $kategoris = Kategori::all();
         if (request()->ajax()) {
             $rencana = DetailRencana::select(
                 'detail_rencana.*',
@@ -19,13 +24,15 @@ class MonitoringController extends Controller
                 'detail_rencana.volume as volume',
                 'rencana.*',
                 'detail_rencana.total as jumlahUsulan',
+                'detail_rencana.uraian as uraian_rencana',
                 'kode_komponen.*',
-                'kode_komponen.kode as kodeUsulan',
+                'kode_komponen.uraian as uraian_kode_komponen',
                 'satuan.*',
                 'satuan.satuan as satuan',
+                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
-                ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+                ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
                 ->get();
 
@@ -61,15 +68,6 @@ class MonitoringController extends Controller
                     $action =  '<a href="javascript:void(0)" onClick="tambahRealisasi(' . $id . ')" class="realisasi btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
                     $action .=  '<a href="javascript:void(0)" onClick="editRealisasi(' . $id . ')" class="realisasi btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>';
                     $action .=  '<a href="javascript:void(0)" onClick="hapusRealisasi(' . $id . ')" class="realisasi btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
-                    // if ($row->realisasi === 'disetujui') {
-                    //     $action =  '<div class="edit btn btn-success m-1 btn-sm disabled">Disetujui</div>';
-                    // } else if ($row->realisasi === 'pending') {
-                    //     $action =  '<div class="edit btn btn-warning m-1 btn-sm disabled">Pending</div>';
-                    // } else if ($row->realisasi === 'tidakdisetujui') {
-                    //     $action =  '<div class="edit btn btn-danger m-1 btn-sm disabled">Tidak Disetujui</div>';
-                    // } else {
-                    //     $action =  '<a href="javascript:void(0)" onClick="validasiUsulan(' . $id . ')" class="validasi btn btn-primary btn-sm"><i class="fas fa-plus"></i>  Validasi</a>';
-                    // }
                     return $action;
                 })
 
@@ -81,7 +79,7 @@ class MonitoringController extends Controller
                 ->rawColumns(['action', 'ket'])
                 ->make(true);
         }
-        return view('admin.monitoring');
+        return view('admin.monitoring', compact('unit', 'kategoris'));
     }
 
     public function store(Request $request){

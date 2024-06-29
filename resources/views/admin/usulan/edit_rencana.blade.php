@@ -1,10 +1,13 @@
 @extends('template')
+@section('page-title')
+<h5 class="fw-semibold align-text-center">Lengkapi Rencana Unit</h5>
+@endsection
 @section('content')
 <div class="container-fluid">
     <div class="row">
         <div class="card">
             <div class="card-body">
-                <h3 class="card-title mb-3">Edit Rencana Awal</h3>
+                <h3 class="card-title mb-3">Rencana Awal</h3>
                 <div class="row">
                     <table class="table table-bordered" id="editRencAwal">
                         <thead>
@@ -29,7 +32,7 @@
         <div class="row">
             <div class="card">
                 <div class="card-body">
-                    <h3 class="card-title mb-3">Lengkapi Rencana Awal</h3>
+                    <h3 class="card-title mb-3">Detail Rencana Unit</h3>
                     <div class="row">
                         <table class="table table-bordered" id="tabelUsulan">
                             <input type="hidden" id="rencana_id" value="{{ $rencana->id }}">

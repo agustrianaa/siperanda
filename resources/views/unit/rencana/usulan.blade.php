@@ -1,6 +1,6 @@
 @extends('template')
 @section('page-title')
-<h4 class="fw-semibold">Usulan</h4>
+<h4 class="fw-semibold align-text-center">Usulan</h4>
 @endsection
 @section('content')
 
@@ -74,59 +74,6 @@
             </div>
         </div>
     </div>
-
-    <!-- modal Usulan-->
-    <!-- <div class="modal fade" id="usulan-modal" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Tambahkan Tahun Usulan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="javascript:void(0)" id="rencanaForm" name="rencanaForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="id" id="id">
-                        <input type="hidden" id="rencana_id" name="rencana_id">
-                        <div class="form-group">
-                            <label for="name" class="col-sm-4 control-label">Kode</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="kode" name="kode" placeholder="Masukkan kode" maxlength="50" required="">
-                                <input type="hidden" id="kode_komponen_id" name="kode_komponen_id">
-                                <div id="kode-results" name="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;"></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="name" class="col-sm-4 control-label">Volume</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="volume" name="volume" placeholder="Masukkan volume" maxlength="50" required="">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="name" class="col-sm-4 control-label">Satuan</label>
-                            <select name="satuan_id" id="satuan_id" class="form-control">
-                                <option disabled selected>-Pilih Satuan-</option>
-                                @foreach ($satuan as $item )
-                                <option value="{{$item->id}}">{{$item->satuan}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="name" class="col-sm-4 control-label">Harga</label>
-                            <div class="col-sm-12">
-                                <input type="text" class="form-control" id="harga" name="harga" placeholder="Masukkan Harga" maxlength="50" required="">
-                            </div>
-                        </div>
-                        <div class="col-sm-8 offset-sm-8"><br />
-                            <button type="button" class="btn btn-danger mr-2" data-bs-dismiss="modal">Tutup</button>
-                            <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
-                        </div>
-                </form>
-            </div>
-            <div class="modal-footer"></div>
-        </div>
-    </div>
-</div> -->
-    <!-- end bootstrap modal usulan -->
 
     <!-- modal -->
     <div class="modal fade" id="usulanLain-modal" aria-hidden="true">

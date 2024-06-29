@@ -1,4 +1,7 @@
 @extends('template')
+@section('page-title')
+<h5 class="fw-semibold align-text-center">Validasi Rencana Unit</h5>
+@endsection
 @section('content')
 <div class="container-fluid">
     <div class="row mb-2">

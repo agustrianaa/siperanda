@@ -99,13 +99,6 @@ class UsulanController extends Controller
             $rencana = $rencanaQuery->get();
 
             return datatables()->of($rencana)
-                ->addColumn('action', function ($row) {
-                    $id = $row->idRencana;
-                    // $action =  '<a href="javascript:void(0)" onClick="tambahKetUsulan(' . $id . ')" class="add btn btn-success btn-sm mr-2"><i class="fas fa-plus"></i>Ket</a>';
-                    $action = '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
-                    return $action;
-                })
-                ->rawColumns(['action'])
                 ->make(true);
         }
     }
@@ -178,6 +171,13 @@ class UsulanController extends Controller
         Log::info('Results: ' . $results);
 
         return response()->json($results);
+    }
+
+    // untuk menghapus rencana awal
+    public function destroyRA(Request $request){
+        $rencanaAwal = Rencana::where('id',$request->id)->delete();
+
+        return Response()->json($rencanaAwal);
     }
 
 

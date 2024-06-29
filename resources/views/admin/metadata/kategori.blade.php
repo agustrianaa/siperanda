@@ -1,10 +1,10 @@
 @extends('template')
+@section('page-title')
+<h5 class="fw-semibold align-text-center">Kategori</h5>
+@endsection
 @section('content')
 
 <div class="container-fluid">
-    <div class="row">
-        <h3>Kategori</h3>
-    </div>
     <div class="row">
         <div class="row mb-3">
             <div class="col">

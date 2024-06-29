@@ -1,4 +1,7 @@
 @extends('template')
+@section('page-title')
+<h5 class="fw-semibold align-text-center">Rencana Kerja Anggaran</h5>
+@endsection
 @section('content')
 
 <div class="container-fluid">
@@ -39,7 +42,7 @@
                                 <select name="fkategori" id="ftahun" class="form-select">
                                     <option value="#" disabled selected> - Pilih Tahun - </option>
                                     @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
-                                    @endfor
+                                        @endfor
                                 </select>
                             </div>
                             <div class="col-lg-1 mb-1">
@@ -103,7 +106,7 @@
                                     <th>Satuan</th>
                                     <th>Harga Satuan</th>
                                     <th>Jumlah</th>
-                                    <th width="15%">Action</th>
+                                    <!-- <th width="15%">Action</th> -->
                                 </tr>
                             </thead>
                         </table>
@@ -221,12 +224,12 @@
                         data: 'uraian',
                         name: 'uraian',
                         render: function(data, type, row) {
-                        if (row.uraian_kode_komponen) {
-                            return row.uraian_kode_komponen;
-                        } else {
-                            return row.uraian_rencana;
+                            if (row.uraian_kode_komponen) {
+                                return row.uraian_kode_komponen;
+                            } else {
+                                return row.uraian_rencana;
+                            }
                         }
-                    }
                     },
                     {
                         data: 'volume',
@@ -250,12 +253,6 @@
                             return formatNumber(data);
                         }
                     },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        className: 'text-center',
-                        orderable: false,
-                    }
                 ],
                 order: [
                     [0, 'desc']
@@ -365,7 +362,7 @@
         console.log(id);
     }
 
-    function editUsulan(id){
+    function editUsulan(id) {
         window.location.href = '{{ route("admin.edit_rencana") }}' + '?id=' + id;
         console.log(id);
     }
@@ -401,6 +398,39 @@
                     console.error('Error:', error);
                 }
             });
+        });
+    }
+
+    function hapusUsulan(id) {
+        Swal.fire({
+            title: 'Delete Record?',
+            text: "Anda yakin ingin menghapus data ini?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Ajax request
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('admin.hapus_RA')}}",
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(res) {
+                        var oTable = $('#rencanaAwalTabel').DataTable();
+                        oTable.ajax.reload();
+                        Swal.fire(
+                            'Terhapus!',
+                            'Data berhasil dihapus.',
+                            'success'
+                        );
+                    }
+                });
+            }
         });
     }
 </script>

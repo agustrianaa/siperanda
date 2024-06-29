@@ -1,12 +1,12 @@
 @extends('template')
+@section('page-title')
+<h5 class="fw-semibold align-text-center">Kode komponen</h5>
+@endsection
 @section('content')
 
 <div class="container-fluid">
     <div class="row">
-        <h3>Kode</h3>
-    </div>
-    <div class="row">
-        <div class="row mb-3">
+        <div class="row mb-2">
             <div class="col">
             </div>
             <div class="col-auto">

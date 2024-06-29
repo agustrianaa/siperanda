@@ -94,6 +94,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // RENCANA AWAL
     Route::post('/admin/buka-rencana', [AdminUsulanController::class, 'store'])->name('admin.bukaRencana');
     Route::post('/admin/simpan-RA', [DetailRencanaController::class, 'storeEditRA'])->name('admin.simpan_RA');
+    Route::post('/admin/hapus-RA', [AdminUsulanController::class, 'destroyRA'])->name('admin.hapus_RA');
     Route::post('/admin/simpan-ket', [AdminUsulanController::class, 'storeKet'])->name('admin.simpan_ketUsulan');
     // REALISASI
     Route::get('/admin/realisasi',  [RPDanaController::class, 'rpd'])->name('admin.realisasi');
@@ -101,6 +102,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     //MONITORING
     Route::get('/admin/monitoring',  [AdminMonitoringController::class, 'index'])->name('admin.monitoring');
+    Route::get('/admin/edit-realisasi',  [RPDanaController::class, 'edit'])->name('admin.edit_realisasi');
     Route::post('/admin/simpan-realisasi', [AdminMonitoringController::class, 'store'])->name('admin.simpan_realisasi');
     // PROFILE
     Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');

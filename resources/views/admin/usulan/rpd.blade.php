@@ -1,11 +1,13 @@
 @extends('template')
+@section('page-title')
+<h5 class="fw-semibold align-text-center">Rencana Penarikan Dana</h5>
+@endsection
 @section('content')
 
 <div class="container-fluid">
     <div class="row">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title fw-semibold mb-4">Rencana Penarikan Dana</h5>
                 <div class="row">
                     <table class="table table-bordered" id="tabelRPD">
                         <thead>
@@ -71,12 +73,23 @@
                 serverSide: true,
                 ajax: "{{route('admin.realisasi')}}",
                 columns: [{
-                        data: 'kode',
-                        name: 'kode',
+                        data: 'allkode',
+                        name: 'allkode',
+                        render: function(data, type, row) {
+                            return data ? data : '';
+                        }
                     },
                     {
-                        data: 'uraian',
-                        name: 'uraian',
+                        data: 'uraian_rencana',
+                        name: 'uraian_rencana',
+                        render: function(data, type, row) {
+                            // Logika untuk menampilkan uraian dari kode komponen atau uraian rencana
+                            if (row.uraian_kode_komponen) {
+                                return row.uraian_kode_komponen;
+                            } else {
+                                return row.uraian_rencana;
+                            }
+                        }
                     },
                     {
                         data: 'volume',

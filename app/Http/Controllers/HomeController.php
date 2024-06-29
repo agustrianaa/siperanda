@@ -34,7 +34,7 @@ class HomeController extends Controller
     }
 
     public function adminHome(){
-        $totalAnggaran = Rencana::sum('jumlah');
+        $totalAnggaran = DetailRencana::sum('total');
         $totalRKA = Rencana::count('id');
         return view('admin.dashboard', compact('totalAnggaran', 'totalRKA'));
     }
