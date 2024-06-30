@@ -27,11 +27,11 @@ class KodeKomponen extends Model
     }
     public function parent()
     {
-        return $this->belongsTo(KodeKomponen::class, 'kode_parent', 'kode');
+        return $this->belongsTo(KodeKomponen::class, 'kode_parent');
     }
 
     public function children()
     {
-        return $this->hasMany(KodeKomponen::class, 'kode_parent', 'kode');
+        return $this->hasMany(KodeKomponen::class, 'kode_parent');
     }
 }

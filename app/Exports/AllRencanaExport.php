@@ -17,7 +17,6 @@ class AllRencanaExport implements FromCollection, WithHeadings, WithMapping, Wit
     /**
     * @return \Illuminate\Support\Collection
     */
-
     protected $tahun;
     public function __construct($tahun)
     {
@@ -53,7 +52,6 @@ class AllRencanaExport implements FromCollection, WithHeadings, WithMapping, Wit
         $kodeKomponen = $rencana->kodeKomponen;
         $uraian = $kodeKomponen ? $kodeKomponen->uraian : $rencana->uraian;
         $kode = $kodeKomponen ? $kodeKomponen->kode . '.' . ($kodeKomponen->parent ? $kodeKomponen->parent->kode : '') : '';
-
         $bulanNames = [
             'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
         ];

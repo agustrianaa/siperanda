@@ -13,7 +13,7 @@
                     <div class="row">
                         <div class="col">
                             <div class="col mb-2">
-                                Jika membutuhkan!
+                                Jika dibutuhkan!
                             </div>
                             <br>
                             <div class="col-lg-6">
