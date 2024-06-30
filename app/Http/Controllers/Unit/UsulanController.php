@@ -196,6 +196,7 @@ class UsulanController extends Controller
                 'satuan_id' => $satuanId,
                 'volume' => $request->input('volume'),
                 'harga' => $request->input('harga'),
+                'created_by' => $request->input('created_by'),
                 'total' => $request->input('harga') * $request->input('volume'),
             ]
 

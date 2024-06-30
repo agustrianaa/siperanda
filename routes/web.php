@@ -90,7 +90,10 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::get('/admin/tabeldetail', [DetailRencanaController::class, 'tabelDetail'])->name('admin.tabeldetail');
     Route::get('/admin/tabeleditRA', [DetailRencanaController::class, 'tabeleditRA'])->name('admin.tabeleditRA');
     Route::get('/admin/editRA', [DetailRencanaController::class, 'editRencAwal'])->name('admin.editRencAwal');
+
+    // LENGKAPI RENCANA NYA UNIT
     Route::post('/admin/simpan-rencanaLengkap', [DetailRencanaController::class, 'storelengkapiRencana'])->name('admin.simpan_rencanaLengkap');
+    Route::get('/admin/edit-lrencana',  [DetailRencanaController::class, 'editLrencana'])->name('admin.edit_Lrencana');
     // RENCANA AWAL
     Route::post('/admin/buka-rencana', [AdminUsulanController::class, 'store'])->name('admin.bukaRencana');
     Route::post('/admin/simpan-RA', [DetailRencanaController::class, 'storeEditRA'])->name('admin.simpan_RA');
@@ -102,7 +105,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     //MONITORING
     Route::get('/admin/monitoring',  [AdminMonitoringController::class, 'index'])->name('admin.monitoring');
-    Route::get('/admin/edit-realisasi',  [RPDanaController::class, 'edit'])->name('admin.edit_realisasi');
+    Route::get('/admin/edit-realisasi',  [AdminMonitoringController::class, 'edit'])->name('admin.edit_realisasi');
     Route::post('/admin/simpan-realisasi', [AdminMonitoringController::class, 'store'])->name('admin.simpan_realisasi');
     // PROFILE
     Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
@@ -110,7 +113,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::get('/admin/report', [ReportController::class, 'index'])->name('admin.report');
     Route::get('/admin/report/export-kode', [AdminKodeController::class, 'export_kode'])->name('admin.export_kode');
     Route::post('/admin/report/export-rencana-unit', [ReportController::class, 'exportRencanaUnit'])->name('admin.export_rencanaUnit');
-    Route::get('/admin/report/export-all-rencana', [ReportController::class, 'exportRencana'])->name('admin.export_allRencana');
+    Route::post('/admin/report/export-all-rencana', [ReportController::class, 'exportRencana'])->name('admin.export_allRencana');
 });
 
 

@@ -7,6 +7,7 @@ use App\Models\DetailRencana;
 use App\Models\KodeKomponen;
 use App\Models\Rencana;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DetailRencanaController extends Controller
 {
@@ -16,7 +17,7 @@ class DetailRencanaController extends Controller
             $id = $request->query('id');
             $rencana = DetailRencana::select(
                 'detail_rencana.*',
-                'rencana.id as idRencana',
+                'detail_rencana.id as idRencana',
                 'detail_rencana.volume as volume',
                 'detail_rencana.uraian as uraian_rencana',
                 'rencana.*',
@@ -35,7 +36,19 @@ class DetailRencanaController extends Controller
                 ->where('rencana.id', $id)
                 ->get();
 
+                $currentUser = Auth::user();
             return datatables()->of($rencana)
+                ->addColumn('action', function ($row) use ($currentUser) {
+                    if ($currentUser->role == 'admin' && $row->created_by == 'admin') {
+                    $id = $row->idRencana;
+                    $action = '<a href="javascript:void(0)" onClick="editRenc(' . $id . ')" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>';
+                    $action .= '<a href="javascript:void(0)" onClick="hapusRenc(' . $id . ')" class="edit btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                    return $action;
+                } else {
+                    return '<button class="btn btn-danger btn-sm" disabled><i class="fa fa-times"></i></button>';
+                }
+                })
+                ->rawColumns(['action'])
                 ->make(true);
         }
     }
@@ -45,8 +58,8 @@ class DetailRencanaController extends Controller
         if ($request->ajax()) {
             $id = $request->query('id');
             $rencana = Rencana::select('*')
-            ->where('rencana.id', $id)
-            ->get();
+                ->where('rencana.id', $id)
+                ->get();
 
             return datatables()->of($rencana)
                 ->addColumn('action', function ($row) {
@@ -59,9 +72,31 @@ class DetailRencanaController extends Controller
         }
     }
 
+    public function editLrencana(Request $request){
+        $id = $request->id;
+    // Ambil data DetailRencana dengan ID yang sesuai
+    $detailRencana = DetailRencana::with('kodeKomponen')->findOrFail($id);
+        $rencana = Rencana::findOrFail($detailRencana->rencana_id);
+
+        // Gabungkan kode dan uraian untuk dikirim ke view
+        $detailRencana->kode_uraian = $detailRencana->kodeKomponen->kode . '.' . $detailRencana->kodeKomponen->kode_parent . ' - ' . $detailRencana->kodeKomponen->uraian;
+        $detailRencana->tahun = $rencana->tahun;
+
+        // Kembalikan respons JSON dengan data DetailRencana yang diedit
+        return response()->json($detailRencana);
+    }
+
     public function storelengkapiRencana(Request $request)
     {
-        $idrencana = $request->id;
+        $request->validate([
+            'rencana_id' => 'required',
+            'satuan_id' => 'required',
+            'volume' => 'required',
+            'harga' => 'required',
+            'kode_komponen_id' => 'required',
+            'created_by' => 'required',
+        ]);
+        $idrencana = $request->rencana_id;
         $p = Rencana::findOrFail($idrencana);
 
         $detailRencanaId = $request->input('id');
@@ -78,9 +113,8 @@ class DetailRencanaController extends Controller
                 'volume' => $request->input('volume'),
                 'harga' => $request->input('harga'),
                 'kode_komponen_id' => $kodeKomponenId,
+                'created_by' => $request->input('created_by'),
             ]
-
-
         );
         $jumlah = $rencana->harga * $rencana->volume;
         $rencana->total = $jumlah;
@@ -89,7 +123,8 @@ class DetailRencanaController extends Controller
         return Response()->json($rencana,);
     }
 
-    public function editRencAwal(Request $request){
+    public function editRencAwal(Request $request)
+    {
         $id = array('id' => $request->id);
         $rencana  = Rencana::where($id)->first();
 
@@ -115,7 +150,7 @@ class DetailRencanaController extends Controller
         $rencana->unit_id = $request->input('unit_id');
         $rencana->anggaran = $request->input('anggaran');
         $rencana->tahun = $request->input('tahun') . '-01-01';
-        $rencana->save();   
+        $rencana->save();
         return response()->json($rencana);
     }
 }

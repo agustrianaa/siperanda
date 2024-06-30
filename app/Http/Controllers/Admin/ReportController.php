@@ -25,6 +25,10 @@ class ReportController extends Controller
     }
 
     public function exportRencana(Request $request){
-        return Excel::download(new AllRencanaExport, 'seluruh_rencana.xlsx');
+        $request->validate([
+            'tahun' => 'required|digits:4',
+        ]);
+        $tahun = $request->input('tahun');
+        return Excel::download(new AllRencanaExport($tahun), 'seluruh_rencana.xlsx');
     }
 }

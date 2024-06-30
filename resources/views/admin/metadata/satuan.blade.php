@@ -16,7 +16,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <table class="table table-bordered" id="tabelSatuan">
+                    <table class="table table-bordered" id="tabelSatuan" style="width:100%">
                         <thead>
                             <tr>
                                 <th width="5px">No</th>

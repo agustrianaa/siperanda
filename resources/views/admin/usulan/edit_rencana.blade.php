@@ -44,6 +44,7 @@
                                     <th>Satuan</th>
                                     <th>Harga</th>
                                     <th>Jumlah</th>
+                                    <th width="10%">Action</th>
                                 </tr>
                             </thead>
                         </table>
@@ -64,13 +65,7 @@
                         <form action="javascript:void(0)" id="lengkapiUsulan-form" name="lengkapiUsulan-form" class="form-horizontal" method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="id" id="id">
                             <input type="hidden" name="noparent_id" id="noparent_id">
-                            <div class="form-group mb-2">
-                                <label for="kategori">Kategori</label>
-                                <select name="kategori" id="kategori" class="form-select" disabled>
-                                    <option value="#" disabled selected>-Pilih jika tidak ada Kode nya-</option>
-                                    <option value="detil">Detil</option>
-                                </select>
-                            </div>
+                            <input type="hidden" name="created_by" id="created_bye" value="admin">
                             <div class="form-group mb-2" id="uraian-group" style="display:none;">
                                 <label for="uraian" class="col-sm-4 control-label">Uraian</label>
                                 <div class="col-sm-12">
@@ -241,6 +236,13 @@
                             return formatNumber(data);
                         }
                     },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        className: 'text-center ',
+                        searchable: false,
+                        orderable: false,
+                    },
                 ]
             });
 
@@ -276,6 +278,8 @@
                         data: 'action',
                         name: 'action',
                         className: 'text-center',
+                        searchable: false,
+                        orderable: false,
                     },
                 ]
             });
@@ -339,10 +343,15 @@
             var rencanaId = $('#rencana_id').val();
             $('#lengkapiUsulan-modal').modal('show');
             console.log('id rencana adalah', rencanaId)
-            $('#lengkapiUsulan-form').off('submit').on('submit', function(e) {
+
+        }
+
+        // submit
+        var rencanaId = $('#rencana_id').val();
+        $('#lengkapiUsulan-form').off('submit').on('submit', function(e) {
                 e.preventDefault();
                 var formData = new FormData(this);
-                formData.append('id', rencanaId);
+                formData.append('rencana_id', rencanaId);
                 $.ajax({
                     type: "POST",
                     url: "{{ route('admin.simpan_rencanaLengkap')}}",
@@ -366,6 +375,27 @@
                         console.log(data);
                     }
                 })
+            });
+
+        function editRenc(id) {
+            console.log(id);
+            $.ajax({
+                type: "GET",
+                url: "{{ route('admin.edit_Lrencana')}}",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(res) {
+                    $('#lengkapiUsulan-modal .modal-title').html("Edit Rencana");
+                    $('#lengkapiUsulan-modal').modal('show');
+                    $('#id').val(res.id);
+                    $('#kode').val(res.kode_uraian); // Mengisi input dengan gabungan kode dan uraian
+                    $('#kode_komponen_id').val(res.kode_komponen_id); // Isi input tersembunyi
+                    $('#volume').val(res.volume);
+                    $('#satuan_id').val(res.satuan_id); // Pilih satuan yang sesuai di dropdown
+                    $('#harga').val(res.harga);
+                }
             });
         }
 

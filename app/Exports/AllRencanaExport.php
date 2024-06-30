@@ -17,9 +17,18 @@ class AllRencanaExport implements FromCollection, WithHeadings, WithMapping, Wit
     /**
     * @return \Illuminate\Support\Collection
     */
+
+    protected $tahun;
+    public function __construct($tahun)
+    {
+        $this->tahun =  $tahun . '-01-01';
+    }
     public function collection()
     {
-        return DetailRencana::with((['rencana','kodeKomponen', 'satuan', 'realisasi']))->get();
+        return DetailRencana::with(['kodeKomponen', 'satuan', 'realisasi'])
+            ->whereHas('rencana', function ($query) {
+                $query->where('tahun', $this->tahun);
+            })->get();
     }
 
     public function headings(): array

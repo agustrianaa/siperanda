@@ -28,17 +28,17 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title fw-semibold mb-3">Seluruh Rencana</h5>
-                    <div class="row">
-                        <div class="col">
-                            <div class="col mb-2">
-                                Jika membutuhkan!
-                            </div>
-                            <br>
-                            <div class="col-lg-6">
-                                <a href="{{route('admin.export_allRencana')}}" class="btn btn-primary">Export data</a>
-                            </div>
+                    <form id="exportForm" method="POST" action="{{route('admin.export_allRencana')}}">
+                        @csrf
+                        <div class="form-group">
+                            <select name="tahun" id="tahun" class="form-select">
+                                <option value="#" disabled selected> - Pilih Tahun - </option>
+                                @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
+                                    @endfor
+                            </select>
                         </div>
-                    </div>
+                        <button type="submit" class="btn btn-primary mt-3">Export Data</button>
+                    </form>
                 </div>
             </div>
         </div>

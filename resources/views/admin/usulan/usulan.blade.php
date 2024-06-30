@@ -39,7 +39,7 @@
                                 </select>
                             </div>
                             <div class="col-lg-3 mb-2">
-                                <select name="fkategori" id="ftahun" class="form-select">
+                                <select name="ftahun" id="ftahun" class="form-select">
                                     <option value="#" disabled selected> - Pilih Tahun - </option>
                                     @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
                                         @endfor
@@ -75,7 +75,7 @@
                 <div class="card-body">
                     <h5 class="card-title fw-semibold mb-3">Rencana Awal</h5>
                     <div class="row">
-                        <table class="table table-bordered" id="rencanaAwalTabel">
+                        <table class="table table-bordered" id="rencanaAwalTabel" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>Unit</th>
@@ -96,7 +96,7 @@
                 <div class="card-body">
                     <h5 class="card-title fw-semibold mb-3">Detail Rencana</h5>
                     <div class="row">
-                        <table class="table table-bordered" id="rencanaTabel">
+                        <table class="table table-bordered" id="rencanaTabel" style="width:100%">
                             <thead>
                                 <tr>
                                     <!-- <th width="5px">No</th> -->
@@ -104,7 +104,7 @@
                                     <th>Uraian</th>
                                     <th>Volume</th>
                                     <th>Satuan</th>
-                                    <th>Harga Satuan</th>
+                                    <th>Harga</th>
                                     <th>Jumlah</th>
                                     <!-- <th width="15%">Action</th> -->
                                 </tr>

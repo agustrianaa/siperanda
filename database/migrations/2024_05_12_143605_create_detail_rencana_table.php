@@ -26,6 +26,7 @@ return new class extends Migration
             $table->boolean('is_revised2')->nullable();
             $table->boolean('is_revised3')->nullable();
             $table->string('revisi_keterangan')->nullable();
+            $table->string('created_by')->nullable();
             $table->timestamps();
         });
     }

@@ -88,6 +88,7 @@
                         <input type="hidden" name="id" id="id">
                         <input type="hidden" id="rencana_id" name="rencana_id" value="{{ $rencanaId->id }}">
                         <input type="hidden" name="noparent_id" id="noparent_id">
+                        <input type="hidden" name="created_by" id="created_bye" value="unit">
                         <div class="form-group mb-2">
                             <label for="kategori">Kategori</label>
                             <select name="kategori" id="kategori" class="form-select">

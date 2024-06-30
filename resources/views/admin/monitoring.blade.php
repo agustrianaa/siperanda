@@ -57,7 +57,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <table class="table table-bordered" id="monitoringfromAdmin">
+                    <table class="table table-bordered" id="monitoringfromAdmin" style="width:100%">
                         <thead>
                             <tr>
                                 <!-- <th width="5px">No</th> -->
@@ -121,9 +121,38 @@
             </div>
         </div>
     </div>
+    <!-- end modal Realisasi -->
+
+    <!-- modal untuk show -->
+    <div class="modal fade" id="showModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Detail Realisasi</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <table class="table table-boordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Bulan</th>
+                                    <th class="text-center">Anggaran</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Understood</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end modal show -->
 </div>
-<!-- end modal -->
-</div>
+
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -132,62 +161,100 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        $('#monitoringfromAdmin').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{route('admin.monitoring')}}",
-            columns: [{
-                    data: 'allkode',
-                    name: 'allkode',
-                    render: function(data, type, row) {
-                        return data ? data : '';
+
+        dataRencana();
+
+        function dataRencana() {
+            var funit = $('#funit').val();
+            var fkategori = $('#fkategori').val();
+            var ftahun = $('#ftahun').val();
+
+            $('#monitoringfromAdmin').DataTable({
+                processing: true,
+                serverSide: true,
+                destroy: true,
+                ajax: {
+                    url: "{{route('admin.monitoring')}}",
+                    type: 'GET',
+                    data: {
+                        unit_id: funit,
+                        kategori_id: fkategori,
+                        tahun: ftahun,
                     }
                 },
-                {
-                    data: 'uraian_rencana',
-                    name: 'uraian_rencana',
-                    render: function(data, type, row) {
-                        // Logika untuk menampilkan uraian dari kode komponen atau uraian rencana
-                        if (row.uraian_kode_komponen) {
-                            return row.uraian_kode_komponen;
-                        } else {
-                            return row.uraian_rencana;
+                columns: [{
+                        data: 'allkode',
+                        name: 'allkode',
+                        render: function(data, type, row) {
+                            return data ? data : '';
                         }
+                    },
+                    {
+                        data: 'uraian_rencana',
+                        name: 'uraian_rencana',
+                        render: function(data, type, row) {
+                            // Logika untuk menampilkan uraian dari kode komponen atau uraian rencana
+                            if (row.uraian_kode_komponen) {
+                                return row.uraian_kode_komponen;
+                            } else {
+                                return row.uraian_rencana;
+                            }
+                        }
+                    },
+                    {
+                        data: 'jumlahUsulan',
+                        name: 'jumlahUsulan',
+                        className: 'text-center',
+                        render: function(data, type, row) {
+                            return formatNumber(data);
+                        }
+                    },
+                    {
+                        data: 'bulan_rpd',
+                        name: 'bulan_rpd',
+                    },
+                    {
+                        data: 'bulan_realisasi',
+                        name: 'bulan_realisasi',
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        className: 'text-center',
+                        orderable: false,
+                    },
+                    {
+                        data: 'ket',
+                        name: 'ket',
+                        className: 'text-center',
+                        orderable: false,
                     }
-                },
-                {
-                    data: 'jumlahUsulan',
-                    name: 'jumlahUsulan',
-                    className: 'text-center',
-                    render: function(data, type, row) {
-                        return formatNumber(data);
-                    }
-                },
-                {
-                    data: 'bulan_rpd',
-                    name: 'bulan_rpd',
-                },
-                {
-                    data: 'bulan_realisasi',
-                    name: 'bulan_realisasi',
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    className: 'text-center',
-                    orderable: false,
-                },
-                {
-                    data: 'ket',
-                    name: 'ket',
-                    className: 'text-center',
-                    orderable: false,
-                }
-            ],
-            order: [
-                [0, 'desc']
-            ]
+                ],
+                order: [
+                    [0, 'desc']
+                ]
+            });
+
+        }
+
+        $('#funit').on('change', function() {
+            dataRencana();
         });
+
+        $('#fkategori').on('change', function() {
+            dataRencana();
+        });
+
+        $('#ftahun').on('change', function() {
+            dataRencana();
+        });
+
+        $('#resetFilter').click(function() {
+            $('#funit').val("#").trigger('change');
+            $('#fkategori').val("#").trigger('change');
+            $('#ftahun').val("#").trigger('change');
+            dataRencana();
+        })
 
         function formatNumber(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -233,21 +300,33 @@
             contentType: false,
             processData: false,
             success: (data) => {
-                $("#modalRealisasi").modal('hide');
-                $("#btn-save").html('Submit');
-                var oTable = $('#monitoringfromAdmin').DataTable();
-                oTable.ajax.reload(null, false);
-                $("#btn-save").attr("disabled", false);
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: data.success
-                });
+                if (response.error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: response.error
+                    });
+                } else {
+                    $("#modalRealisasi").modal('hide');
+                    $("#btn-save").html('Submit');
+                    var oTable = $('#monitoringfromAdmin').DataTable();
+                    oTable.ajax.reload(null, false);
+                    $("#btn-save").attr("disabled", false);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.success
+                    });
+                }
             },
             error: function(data) {
                 console.log(data);
             }
         });
     });
+
+    function show(id) {
+        $('#showModal').modal('show');
+    }
 </script>
 @endsection

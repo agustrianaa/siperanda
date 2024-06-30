@@ -82,11 +82,5 @@ class RPDanaController extends Controller
         return response()->json($realisasi);
     }
 
-    public function edit(Request $request)
-    {
-        $id = array('id' => $request->id);
-        $realisasi  = Realisasi::where($id)->first();
-
-        return Response()->json($realisasi);
-    }
+    
 }

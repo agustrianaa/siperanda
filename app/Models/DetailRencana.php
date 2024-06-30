@@ -18,6 +18,7 @@ class DetailRencana extends Model
         'volume',
         'harga',
         'status',
+        'created_by',
     ];
 
     public function kodeKomponen()
