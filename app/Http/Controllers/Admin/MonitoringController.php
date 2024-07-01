@@ -131,4 +131,23 @@ class MonitoringController extends Controller
 
         return Response()->json($realisasi);
     }
+
+    public function getRealisasi(Request $request){
+        $id = $request->query('id');
+        $rpdData = DB::table('rpd')
+    ->where('detail_rencana_id', $id)
+    ->get();
+
+// Mengambil data dari tabel realisasi
+$realisasiData = DB::table('realisasi')
+    ->where('detail_rencana_id', $id)
+    ->get();
+
+$data = [
+    'rpd' => $rpdData,
+    'realisasi' => $realisasiData,
+];
+
+return response()->json($data);
+    }
 }

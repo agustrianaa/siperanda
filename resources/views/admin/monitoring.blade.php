@@ -125,27 +125,31 @@
 
     <!-- modal untuk show -->
     <div class="modal fade" id="showModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5">Detail Realisasi</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <table class="table table-boordered">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">Bulan</th>
-                                    <th class="text-center">Anggaran</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
+                    <!-- <div class="row"> -->
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">Bulan RPD</th>
+                                <th class="text-center">Anggaran</th>
+                                <th class="text-center">Bulan Realisasi</th>
+                                <th class="text-center">Anggaran</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- dari js -->
+                        </tbody>
+                    </table>
+                    <!-- </div> -->
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Understood</button>
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -257,8 +261,18 @@
         })
 
         function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
+    // Ubah ke tipe number jika num bukan number
+    if (typeof num !== 'number') {
+        num = parseFloat(num);
+    }
+
+    // Format angka dengan pemisah ribuan
+    return num.toLocaleString('id-ID', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+
+    });
+}
     });
 
     var id;
@@ -326,7 +340,69 @@
     });
 
     function show(id) {
-        $('#showModal').modal('show');
+        console.log(id);
+        $.ajax({
+            type: "GET",
+            url: "{{ route('realisasi.getRealisasi',) }}",
+            data: {
+                id: id
+            },
+            success: function(data) {
+                // Kosongkan tabel sebelum mengisi data baru
+                $('#showModal tbody').empty();
+
+                const rpdData = data.rpd;
+                const realisasiData = data.realisasi;
+                const maxLength = Math.max(rpdData.length, realisasiData.length);
+
+                let totalRpdAnggaran = 0;
+                let totalRealisasiAnggaran = 0;
+
+                for (let i = 0; i < maxLength; i++) {
+                    const rpdItem = rpdData[i] || {};
+                    const realisasiItem = realisasiData[i] || {};
+
+                    const rpdAnggaran = parseFloat(rpdItem.jumlah || 0);
+                const realisasiAnggaran = parseFloat(realisasiItem.jumlah || 0);
+
+
+                    totalRpdAnggaran += rpdAnggaran;
+                    totalRealisasiAnggaran += realisasiAnggaran;
+
+                    $('#showModal tbody').append(
+                        '<tr>' +
+                        '<td class="text-center">' + (rpdItem.bulan_rpd || '-') + '</td>' +
+                        '<td class="text-center">' + (rpdAnggaran.toLocaleString('id-ID') || '-') + '</td>' +
+                        '<td class="text-center">' + (realisasiItem.bulan_realisasi || '-') + '</td>' +
+                        '<td class="text-center">' + (realisasiAnggaran.toLocaleString('id-ID') || '-') + '</td>' +
+                        '</tr>'
+                    );
+                }
+
+                if (maxLength === 0) {
+                    $('#showModal tbody').append(
+                        '<tr>' +
+                        '<td colspan="4" class="text-center">Tidak ada data</td>' +
+                        '</tr>'
+                    );
+                }
+
+                // Tambahkan baris untuk total anggaran
+                $('#showModal tbody').append(
+                    '<tr>' +
+                    '<td class="text-center font-weight-bold">Total</td>' +
+                    '<td class="text-center font-weight-bold">' + totalRpdAnggaran.toLocaleString('id-ID') + '</td>' +
+                    '<td class="text-center font-weight-bold">Total</td>' +
+                    '<td class="text-center font-weight-bold">' + totalRealisasiAnggaran.toLocaleString('id-ID') + '</td>' +
+                    '</tr>'
+                );
+                $('#showModal').modal('show');
+            },
+            error: function(error) {
+                console.error(error);
+                alert('Terjadi kesalahan saat mengambil data realisasi');
+            }
+        });
     }
 </script>
 @endsection
