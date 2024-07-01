@@ -83,7 +83,7 @@
                             <div class="form-group mb-2">
                                 <label for="name" class="col-sm-4 control-label">Volume</label>
                                 <div class="col-sm-12">
-                                    <input type="text" class="form-control" id="volume" name="volume" placeholder="Masukkan volume" maxlength="50" required="">
+                                    <input type="number" class="form-control" id="volume" name="volume" placeholder="Masukkan volume" maxlength="50" required="">
                                 </div>
                             </div>
                             <div class="form-group mb-2">
@@ -98,7 +98,7 @@
                             <div class="form-group mb-2">
                                 <label for="name" class="col-sm-4 control-label">Harga</label>
                                 <div class="col-sm-12">
-                                    <input type="text" class="form-control" id="harga" name="harga" placeholder="Masukkan Harga" maxlength="50" required="">
+                                    <input type="numbe" class="form-control" id="harga" name="harga" placeholder="Masukkan Harga" maxlength="50" required="">
                                 </div>
                             </div>
                             <div class="col-sm-8 offset-sm-8"><br />
@@ -157,7 +157,7 @@
                             <div class="form-group mb-2">
                                 <label for="note">Anggaran</label>
                                 <div class="col-sm-12">
-                                    <input type="text" name="anggaran" id="anggaran" class="form-control" placeholder="Masukkan Anggaran"></input>
+                                    <input type="number" name="anggaran" id="anggaran" class="form-control" placeholder="Masukkan Anggaran"></input>
                                 </div>
                             </div>
                             <div class="col-sm-8 offset-sm-8"><br />

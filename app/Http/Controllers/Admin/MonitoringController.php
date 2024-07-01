@@ -39,18 +39,18 @@ class MonitoringController extends Controller
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id');
-                if ($funit) {
-                    $rencana->where('rencana.unit_id', $funit);
-                }
+            if ($funit) {
+                $rencana->where('rencana.unit_id', $funit);
+            }
 
-                if ($fkategori) {
-                    $rencana->where('kode_komponen.kategori_id', $fkategori);
-                }
-                if ($ftahun) {
-                    $ftahunFormat = $ftahun . '-01-01';
-                    $rencana->where('rencana.tahun', $ftahunFormat);
-                }
-                $dataRencana = $rencana->get();
+            if ($fkategori) {
+                $rencana->where('kode_komponen.kategori_id', $fkategori);
+            }
+            if ($ftahun) {
+                $ftahunFormat = $ftahun . '-01-01';
+                $rencana->where('rencana.tahun', $ftahunFormat);
+            }
+            $dataRencana = $rencana->get();
 
             foreach ($dataRencana as $data) {
                 $data->rpds = RPD::where('detail_rencana_id', $data->idRencana)->get();
@@ -101,53 +101,67 @@ class MonitoringController extends Controller
     public function store(Request $request)
     {
         $detailRencanaId = $request->input('detail_rencana_id');
+        $bulanRealisasi = $request->input('bulan_realisasi');
+        $jumlah = $request->input('jumlah');
+
+        // Cek apakah ada data RPD yang terkait dengan detail_rencana_id
+        $rpd = RPD::where('detail_rencana_id', $detailRencanaId)->first();
+
+        // Jika RPD ada, buat data realisasi baru
+        $realisasi = Realisasi::create([
+            'detail_rencana_id' => $detailRencanaId,
+            'bulan_realisasi' => $bulanRealisasi,
+            'jumlah' => $jumlah,
+        ]);
+    }
+
+    public function updateRealisasi(Request $request)
+{
+    $ids = $request->input('id');
     $bulanRealisasi = $request->input('bulan_realisasi');
     $jumlah = $request->input('jumlah');
 
-    // Cek apakah ada data RPD yang terkait dengan detail_rencana_id
-    $rpd = RPD::where('detail_rencana_id', $detailRencanaId)->first();
-
-    if (!$rpd) {
-        // Jika tidak ada RPD yang terkait, kembalikan pesan error
-        return response()->json(['error' => 'Belum ada data RPD yang terkait dengan detail rencana ini.'], 404);
+    foreach ($ids as $index => $id) {
+        DB::table('realisasi')
+            ->where('id', $id)
+            ->update([
+                'bulan_realisasi' => $bulanRealisasi[$index] ?? '',
+                'jumlah' => $jumlah[$index] ?? 0
+            ]);
     }
 
-    // Jika RPD ada, buat data realisasi baru
-    $realisasi = Realisasi::create([
-        'detail_rencana_id' => $detailRencanaId,
-        'bulan_realisasi' => $bulanRealisasi,
-        'jumlah' => $jumlah,
-    ]);
-    }
+    return response()->json(['success' => 'Data realisasi berhasil diupdate']);
+}
 
-    public function edit(Request $request)
+    public function deleteRealisasi(Request $request)
     {
-        $id = array('id' => $request->id);
-        $realisasi = DB::table('realisasi')
-            ->join('rpd', 'realisasi.detail_rencana_id', '=', 'rpd.detail_rencana_id')
-            ->where('realisasi.id', $id)
-            ->select('realisasi.*', 'rpd.bulan_rpd')
-            ->first();
-
-        return Response()->json($realisasi);
+        $ids = $request->input('ids');
+        if (is_array($ids) && count($ids) > 0) {
+            Realisasi::whereIn('id', $ids)->delete();
+            return response()->json(['message' => 'Data realisasi berhasil dihapus'], 200);
+        } else {
+            return response()->json(['message' => 'Tidak ada data yang dipilih'], 400);
+        }
     }
 
-    public function getRealisasi(Request $request){
+
+    public function getRealisasi(Request $request)
+    {
         $id = $request->query('id');
         $rpdData = DB::table('rpd')
-    ->where('detail_rencana_id', $id)
-    ->get();
+            ->where('detail_rencana_id', $id)
+            ->get();
 
-// Mengambil data dari tabel realisasi
-$realisasiData = DB::table('realisasi')
-    ->where('detail_rencana_id', $id)
-    ->get();
+        // Mengambil data dari tabel realisasi
+        $realisasiData = DB::table('realisasi')
+            ->where('detail_rencana_id', $id)
+            ->get();
 
-$data = [
-    'rpd' => $rpdData,
-    'realisasi' => $realisasiData,
-];
+        $data = [
+            'rpd' => $rpdData,
+            'realisasi' => $realisasiData,
+        ];
 
-return response()->json($data);
+        return response()->json($data);
     }
 }

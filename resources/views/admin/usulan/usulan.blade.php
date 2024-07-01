@@ -161,7 +161,7 @@
                         <div class="form-group mb-2">
                             <label for="note">Anggaran</label>
                             <div class="col-sm-12">
-                                <input type="text" name="anggaran" id="anggaran" class="form-control" placeholder="Masukkan Anggaran"></input>
+                                <input type="number" name="anggaran" id="anggaran" class="form-control" placeholder="Masukkan Anggaran"></input>
                             </div>
                         </div>
                         <div class="col-sm-8 offset-sm-8"><br />

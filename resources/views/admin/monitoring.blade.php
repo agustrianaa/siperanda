@@ -105,9 +105,9 @@
                             </select>
                         </div>
                         <div class="form-group mb-2">
-                            <label for="note">Jumlah</label>
+                            <label for="jumlah">Jumlah</label>
                             <div class="col-sm-12">
-                                <input type="text" id="jumlah" name="jumlah" placeholder="Masukkan Jumlah" class="form-control" required>
+                                <input type="number" id="jumlah" name="jumlah" placeholder="Masukkan Jumlah" class="form-control" required>
                             </div>
                         </div>
                         <div class="col-sm-8 offset-sm-8"><br />
@@ -122,6 +122,71 @@
         </div>
     </div>
     <!-- end modal Realisasi -->
+
+    <!-- Edit Realisasi Modal -->
+    <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form id="editForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Edit Realisasi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Bulan Realisasi</th>
+                                    <th class="text-center">Anggaran</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data realisasi akan diisi melalui JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- end modal edit -->
+
+    <!-- modal untuk hapus realisasi menggunakan checkbox -->
+    <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Hapus Realisasi</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- <div class="row"> -->
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center"><input type="checkbox" id="selectAll"></th>
+                                <th class="text-center">Bulan Realisasi</th>
+                                <th class="text-center">Anggaran</th>
+                            </tr>
+                        </thead>
+                        <tbody id="realisasiTableBody">
+                            <!-- dari js -->
+                        </tbody>
+                    </table>
+                    <!-- </div> -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="deleteSelectedRealisasi">Hapus Terpilih</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end modal hapus -->
 
     <!-- modal untuk show -->
     <div class="modal fade" id="showModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -261,18 +326,18 @@
         })
 
         function formatNumber(num) {
-    // Ubah ke tipe number jika num bukan number
-    if (typeof num !== 'number') {
-        num = parseFloat(num);
-    }
+            // Ubah ke tipe number jika num bukan number
+            if (typeof num !== 'number') {
+                num = parseFloat(num);
+            }
 
-    // Format angka dengan pemisah ribuan
-    return num.toLocaleString('id-ID', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
+            // Format angka dengan pemisah ribuan
+            return num.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
 
-    });
-}
+            });
+        }
     });
 
     var id;
@@ -283,25 +348,7 @@
         $('#realisasiForm').trigger('reset');
     }
 
-    function editRealisasi(_id) {
-        id = _id;
-        $.ajax({
-            type: "GET",
-            url: "{{ route('admin.edit_realisasi')}}",
-            data: {
-                id: id
-            },
-            dataType: 'json',
-            success: function(res) {
-                $('#modalRealisasi .modal-title').html("Edit Kategori");
-                $('#modalRealisasi').modal('show');
-                $('#id').val(res.id);
-                $('#bulan_realisasi').val(res.bulan_realisasi);
-                $('#jumlah').val(res.jumlah);
-            }
-        });
-    }
-
+    // BUTTON UNTUK SIMPAN REALISASI
     $('#realisasiForm').off('submit').on('submit', function(e) {
         e.preventDefault();
         var formData = new FormData(this);
@@ -314,36 +361,206 @@
             contentType: false,
             processData: false,
             success: (data) => {
-                if (response.error) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: response.error
-                    });
-                } else {
-                    $("#modalRealisasi").modal('hide');
-                    $("#btn-save").html('Submit');
-                    var oTable = $('#monitoringfromAdmin').DataTable();
-                    oTable.ajax.reload(null, false);
-                    $("#btn-save").attr("disabled", false);
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: data.success
-                    });
-                }
+                $("#modalRealisasi").modal('hide');
+                $("#btn-save").html('Submit');
+                var oTable = $('#monitoringfromAdmin').DataTable();
+                oTable.ajax.reload(null, false);
+                $("#btn-save").attr("disabled", false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.success
+                });
             },
             error: function(data) {
                 console.log(data);
+                Swal.fire({
+                        icon: 'error',
+                        title: 'error',
+                        text: data.error,
+                    });
             }
         });
+    });
+
+    // UNTUK MENGEDIT REALISASI
+    function editRealisasi(id) {
+        $.ajax({
+            type: "GET",
+            url: "{{ route('admin.getRealisasi') }}",
+            data: { id: id },
+            success: function(data) {
+                $('#editModal tbody').empty();
+                const realisasiData = data.realisasi || [];
+
+                const bulanOptions = `
+                    <option value="">-Pilih Bulan-</option>
+                    <option value="Januari">Januari</option>
+                    <option value="Februari">Februari</option>
+                    <option value="Maret">Maret</option>
+                    <option value="April">April</option>
+                    <option value="Mei">Mei</option>
+                    <option value="Juni">Juni</option>
+                    <option value="Juli">Juli</option>
+                    <option value="Agustus">Agustus</option>
+                    <option value="September">September</option>
+                    <option value="Oktober">Oktober</option>
+                    <option value="November">November</option>
+                    <option value="Desember">Desember</option>
+                `;
+
+                if (realisasiData.length > 0) {
+                    realisasiData.forEach(function(item) {
+                        const selectedBulan = item.bulan_realisasi || '';
+
+                        $('#editModal tbody').append(
+                            '<tr>' +
+                            '<td>' +
+                                '<div class="form-group mb-3">' +
+                                    '<label for="bulan_realisasi">Bulan Realisasi</label>' +
+                                    '<select name="bulan_realisasi[]" class="form-select" required>' +
+                                        bulanOptions +
+                                    '</select>' +
+                                '</div>' +
+                            '</td>' +
+                            '<td>' +
+                                '<div class="form-group mb-3">' +
+                                    '<label for="jumlah">Jumlah</label>' +
+                                    '<input type="number" name="jumlah[]" value="' + (item.jumlah || '') + '" class="form-control">' +
+                                '</div>' +
+                            '</td>' +
+                            '<input type="hidden" name="id[]" value="' + item.id + '">' +
+
+                            '</tr>'
+                        );
+
+                        $('select[name="bulan_realisasi[]"]').last().val(selectedBulan);
+                    });
+                } else {
+                    $('#editModal tbody').append(
+                        '<tr>' +
+                        '<td colspan="2" class="text-center">Tidak ada data realisasi</td>' +
+                        '</tr>'
+                    );
+                }
+
+                $('#editModal').modal('show');
+            },
+            error: function(error) {
+                console.error(error);
+                alert('Terjadi kesalahan saat mengambil data realisasi');
+            }
+        });
+    }
+    // button update yang di edit
+    $('#editForm').submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.updateRealisasi') }}",
+            data: $(this).serialize(),
+            success: function(response) {
+                $('#editModal').modal('hide');
+                var oTable = $('#monitoringfromAdmin').DataTable();
+                    oTable.ajax.reload(null, false);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Data realisasi berhasil dihapus'
+                    });
+                },
+            error: function(error) {
+                console.error(error);
+                alert('Terjadi kesalahan saat mengupdate data realisasi');
+            }
+        });
+    });
+
+    function hapusRealisasi(id) {
+        $.ajax({
+            type: "GET",
+            url: "{{ route('admin.getRealisasi')}}",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(data) {
+                $('#realisasiTableBody').empty();
+                const realisasiData = data.realisasi;
+                if (realisasiData.length > 0) {
+                    realisasiData.forEach(function(item) {
+                        $('#realisasiTableBody').append(
+                            '<tr>' +
+                            '<td class="text-center"><input type="checkbox" class="realisasiCheckbox" value="' + item.id + '"></td>' +
+                            '<td class="text-center">' + item.bulan_realisasi + '</td>' +
+                            '<td class="text-center">' + item.jumlah + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                } else {
+                    $('#realisasiTableBody').append(
+                        '<tr>' +
+                        '<td colspan="3" class="text-center">Tidak ada data realisasi</td>' +
+                        '</tr>'
+                    );
+                }
+                $('#deleteModal').modal('show');
+            },
+            error: function(error) {
+                console.error(error);
+                alert('Terjadi kesalahan saat mengambil data realisasi');
+            }
+        });
+    }
+
+    $('#selectAll').on('change', function() {
+        $('.realisasiCheckbox').prop('checked', $(this).prop('checked'));
+    });
+
+    // untuk menghapus data sesuai dengan select di checkbox
+    $('#deleteSelectedRealisasi').on('click', function() {
+        var selectedIds = [];
+        $('.realisasiCheckbox:checked').each(function() {
+            selectedIds.push($(this).val());
+        });
+
+        if (selectedIds.length > 0) {
+            $.ajax({
+                type: "POST",
+                url: "{{ route('admin.deleteRealisasi') }}",
+                data: {
+                    ids: selectedIds,
+                },
+                success: function(response) {
+
+                    $('#deleteModal').modal('hide');
+                    var oTable = $('#monitoringfromAdmin').DataTable();
+                    oTable.ajax.reload(null, false);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Data realisasi berhasil dihapus'
+                    });
+                },
+                error: function(error) {
+                    console.error(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'error',
+                        text: 'Terjadi kesalahan saat menghapus data realisasi'
+                    });
+                }
+            });
+        } else {
+            alert('Pilih setidaknya satu realisasi untuk dihapus');
+        }
     });
 
     function show(id) {
         console.log(id);
         $.ajax({
             type: "GET",
-            url: "{{ route('realisasi.getRealisasi',) }}",
+            url: "{{ route('admin.getRealisasi',) }}",
             data: {
                 id: id
             },
@@ -363,8 +580,7 @@
                     const realisasiItem = realisasiData[i] || {};
 
                     const rpdAnggaran = parseFloat(rpdItem.jumlah || 0);
-                const realisasiAnggaran = parseFloat(realisasiItem.jumlah || 0);
-
+                    const realisasiAnggaran = parseFloat(realisasiItem.jumlah || 0);
 
                     totalRpdAnggaran += rpdAnggaran;
                     totalRealisasiAnggaran += realisasiAnggaran;
@@ -390,9 +606,9 @@
                 // Tambahkan baris untuk total anggaran
                 $('#showModal tbody').append(
                     '<tr>' +
-                    '<td class="text-center font-weight-bold">Total</td>' +
+                    '<td class="text-center fw-semibold">Total</td>' +
                     '<td class="text-center font-weight-bold">' + totalRpdAnggaran.toLocaleString('id-ID') + '</td>' +
-                    '<td class="text-center font-weight-bold">Total</td>' +
+                    '<td class="text-center fw-semibold">Total</td>' +
                     '<td class="text-center font-weight-bold">' + totalRealisasiAnggaran.toLocaleString('id-ID') + '</td>' +
                     '</tr>'
                 );

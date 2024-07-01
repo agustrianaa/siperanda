@@ -49,8 +49,9 @@ class HomeController extends Controller
         $user = Auth::user();
         $unitId = $user->unit->id;
 
-        $totalAnggaran = Rencana::where('unit_id', $unitId)
-        ->sum('jumlah');
+        $totalAnggaran = DetailRencana::whereHas('rencana', function ($query) use ($unitId) {
+            $query->where('unit_id', $unitId);
+        })->sum('total');
         $totalRencana = Rencana::where('unit_id', $unitId)
         ->count();
 

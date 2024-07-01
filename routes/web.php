@@ -105,9 +105,10 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     //MONITORING
     Route::get('/admin/monitoring',  [AdminMonitoringController::class, 'index'])->name('admin.monitoring');
-    Route::get('/admin/edit-realisasi',  [AdminMonitoringController::class, 'edit'])->name('admin.edit_realisasi');
+    Route::post('/admin/update-realisasi', [AdminMonitoringController::class, 'updateRealisasi'])->name('admin.updateRealisasi');
     Route::post('/admin/simpan-realisasi', [AdminMonitoringController::class, 'store'])->name('admin.simpan_realisasi');
-    Route::get('/admin/show-realisasi', [AdminMonitoringController::class, 'getRealisasi'])->name('realisasi.getRealisasi');
+    Route::post('/admin/delete-realisasi', [AdminMonitoringController::class, 'deleteRealisasi'])->name('admin.deleteRealisasi');
+    Route::get('/admin/show-realisasi', [AdminMonitoringController::class, 'getRealisasi'])->name('admin.getRealisasi');
 
     // PROFILE
     Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
