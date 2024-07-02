@@ -24,7 +24,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <table class="table table-bordered" id="detail">
+                    <table class="table table-bordered" id="detail" style="width:100%">
                         <input type="hidden" id="rencana_id" value="{{ $rencana->id }}">
                         <thead>
                             <tr>
@@ -146,7 +146,16 @@
             ]
         });
         function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            // Ubah ke tipe number jika num bukan number
+        if (typeof num !== 'number') {
+                num = parseFloat(num);
+            }
+            // Format angka dengan pemisah ribuan
+            return num.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+
+            });
         }
     });
 

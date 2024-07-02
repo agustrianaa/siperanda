@@ -28,7 +28,6 @@
                     <div class="btn btn-warning status-btn">Status Tidak Tersedia</div>
                     @endif
                 </div>
-
                 <div class="col-auto">
                     <a class="btn btn-success m-1" onclick="tambahRencana()" href="javascript:void(0)"><i class="ti ti-plus"></i> Rencana</a>
                 </div>
@@ -36,7 +35,15 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <table class="table table-bordered" id="usulan">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="card-title fw-semibold mb-3">Detail Rencana</h5>
+                    </div>
+                    <div class="col-auto">
+                        <h5 class="card-title fw-semibold mb-3">Anggaran : Rp. {{number_format($rencanaId->anggaran, 0, ',', '.')}}</h5>
+                    </div>
+                </div>
+                <table class="table table-bordered" id="usulan" style="width:100%">
                     <thead>
                         <tr>
                             <th width="3px">No</th>
@@ -49,6 +56,13 @@
                             <th width="15%">Action</th>
                         </tr>
                     </thead>
+                    <tfoot>
+                        <tr>
+                            <th colspan="6" style="text-align:right">Total:</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -69,7 +83,6 @@
                             <th width="15%">Jumlah</th>
                         </tr>
                     </thead>
-
                 </table>
             </div>
         </div>
@@ -181,7 +194,16 @@
 
         // Function to toggle kode input based on kategori selection
         function toggleKodeInput() {
-            kodeInput.disabled = kategoriSelect.value === 'detil';
+            if (kategoriSelect.value === 'detil') {
+                kodeInput.value = ''; // Clear the kode input value
+                kodeInput.disabled = true;
+                uraianGroup.style.display = 'block';
+                $('#uraian').prop('disabled', false).show();
+            } else {
+                kodeInput.disabled = false;
+                uraianGroup.style.display = 'none';
+                $('#uraian').prop('disabled', true).hide();
+            }
         }
 
         // Add event listener for kategori select
@@ -199,7 +221,16 @@
     });
 
     function formatNumber(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        // Ubah ke tipe number jika num bukan number
+        if (typeof num !== 'number') {
+            num = parseFloat(num);
+        }
+        // Format angka dengan pemisah ribuan
+        return num.toLocaleString('id-ID', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+
+        });
     }
 
     $(document).ready(function() {
@@ -221,6 +252,7 @@
                 {
                     data: 'allkode',
                     name: 'allkode',
+                    className: 'text-center',
                     render: function(data, type, row) {
                         return data ? data : '';
                     }
@@ -240,6 +272,7 @@
                 {
                     data: 'volume',
                     name: 'volume',
+                    className: 'text-center',
                 },
                 {
                     data: 'satuan',
@@ -268,7 +301,41 @@
             ],
             order: [
                 [0, 'desc']
-            ]
+            ],
+            footerCallback: function(row, data, start, end, display) {
+                var api = this.api();
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function(i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+
+                // Total over all pages
+                total = api
+                    .column(6)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Total over this page
+                pageTotal = api
+                    .column(6, {
+                        page: 'current'
+                    })
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(6).footer()).html(
+                    'Rp ' + formatNumber(pageTotal, 0)
+                );
+            }
         });
 
         $('#last').DataTable({
@@ -376,15 +443,6 @@
         });
     });
 
-    // untuk menambahkan TAHUN
-    function tambahUsulan() {
-        $('#rencanaForm').trigger("reset");
-        $('#UsulanModal').html("Tambahkan Usulan");
-        $('#usulan-modal').modal('show');
-        $('#id').val('');
-
-    }
-
     // untuk menambahkan detail usulan
     function tambahRencana() {
         $('#rencana2Form').trigger("reset");
@@ -397,13 +455,6 @@
         } else {
             $('#kode').prop('disabled', false);
         }
-
-        $('#usulanLain-modal').on('hidden.bs.modal', function() {
-            // Mengaktifkan kembali input kode jika kategori bukan "detil"
-            if ($('#kategori').val() !== 'detil') {
-                $('#kode').prop('disabled', false);
-            }
-        });
     }
 
     function tambahRencanaLain(parentId) {
@@ -446,35 +497,6 @@
         });
     }
 
-    // menyimpan data rencana
-    $('#rencanaForm').submit(function(e) {
-        e.preventDefault();
-        var formData = new FormData(this);
-        $.ajax({
-            type: "POST",
-            url: "{{ route('unit.simpan_tahun')}}",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: (data) => {
-                $("#usulan-modal").modal('hide');
-                var oTable = $('#usulan').DataTable();
-                oTable.ajax.reload();
-                $("#btn-save").html('Submit');
-                $("#btn-save").attr("disabled", false);
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: data.success
-                });
-            },
-            error: function(data) {
-                console.log(data);
-            }
-        })
-    });
-
     // Menyimpan detail rencana
     $('#rencana2Form').submit(function(e) {
         e.preventDefault();
@@ -497,6 +519,8 @@
                 $("#usulanLain-modal").modal('hide');
                 var usulanTable = $('#usulan').DataTable();
                 usulanTable.ajax.reload();
+                var lastTable = $('#last').DataTable();
+                lastTable.ajax.reload();
                 $("#btn-simpan").html('Submit');
                 $("#btn-simpan").attr("disabled", false);
                 Swal.fire({
@@ -539,16 +563,40 @@
                     });
                 } else {
                     $('#usulanLain-modal .modal-title').html("Edit Usulan");
-                    $('#usulanLain-modal').modal('show');
+                    // $('#usulanLain-modal').modal('show');
                     $('#id').val(res.id);
                     $('#kode').val(res.kode_uraian); // Mengisi input dengan gabungan kode dan uraian
                     $('#kode_komponen_id').val(res.kode_komponen_id); // Isi input tersembunyi
+                    $('#uraian').val(res.uraian);
                     $('#volume').val(res.volume);
                     $('#satuan_id').val(res.satuan_id); // Pilih satuan yang sesuai di dropdown
                     $('#harga').val(res.harga);
+
+                    if (res.kode_komponen_id === null) {
+                        $('#kategori').val('detil').change();
+                        $('#uraian').val(res.uraian).prop('disabled', false).show();
+                        $('#kode').prop('disabled', true);
+                        $('#uraian-group').show();
+                    } else {
+                        $('#kategori').val('#').change();
+                        $('#kode').prop('disabled', false);
+                        $('#uraian-group').hide();
+                    }
+                    $('#usulanLain-modal').modal('show');
+
                 }
             },
         });
+
+        $('#usulanLain-modal').on('hidden.bs.modal', function() {
+            // Mengaktifkan kembali input kode jika kategori bukan "detil"
+            if ($('#kategori').val() !== 'detil') {
+                $('#kode').prop('disabled', false);
+            }
+            // Reset form modal
+            $('#usulanLain-modal form').trigger("reset");
+        });
+
     }
 </script>
 @endsection

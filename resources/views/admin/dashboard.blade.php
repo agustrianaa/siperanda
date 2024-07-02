@@ -8,13 +8,13 @@
             <div class="card-body">
                 <div class="row align-items-start">
                     <div class="col-8">
-                        <h5 class="card-title mb-3 fw-semibold">Jumlah Anggaran</h5>
-                        <h4 class="fw-semibold mb-3">$6,820</h4>
+                        <h5 class="card-title mb-9 fw-semibold">Jumlah Unit</h5>
+                        <h4 class="fw-semibold mb-3"> {{$totalUnit}}</h4>
                     </div>
                     <div class="col-4">
                         <div class="d-flex justify-content-end">
                             <div class="text-white bg-secondary rounded-circle p-3 d-flex align-items-center justify-content-center">
-                                <i class="ti ti-currency-dollar fs-6"></i>
+                                <i class="fa fa-users fs-6"></i>
                             </div>
                         </div>
                     </div>

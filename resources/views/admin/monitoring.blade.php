@@ -133,7 +133,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <table class="table table-bordered">
+                        <table class="table table-bordered" style="width:100%">
                             <thead>
                                 <tr>
                                     <th class="text-center">Bulan Realisasi</th>
@@ -165,7 +165,7 @@
                 </div>
                 <div class="modal-body">
                     <!-- <div class="row"> -->
-                    <table class="table table-bordered">
+                    <table class="table table-bordered" style="width:100%">
                         <thead>
                             <tr>
                                 <th class="text-center"><input type="checkbox" id="selectAll"></th>
@@ -198,7 +198,7 @@
                 </div>
                 <div class="modal-body">
                     <!-- <div class="row"> -->
-                    <table class="table table-bordered">
+                    <table class="table table-bordered" style="width:100%">
                         <thead>
                             <tr>
                                 <th class="text-center">Bulan RPD</th>
@@ -330,7 +330,6 @@
             if (typeof num !== 'number') {
                 num = parseFloat(num);
             }
-
             // Format angka dengan pemisah ribuan
             return num.toLocaleString('id-ID', {
                 minimumFractionDigits: 0,
@@ -466,7 +465,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Success',
-                        text: 'Data realisasi berhasil dihapus'
+                        text: 'Data realisasi berhasil di update'
                     });
                 },
             error: function(error) {

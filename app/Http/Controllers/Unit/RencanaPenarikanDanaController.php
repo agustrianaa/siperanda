@@ -41,30 +41,35 @@ class RencanaPenarikanDanaController extends Controller
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
                 ->where('rencana.unit_id', $unit->id)
+                ->whereIn('rencana.tahun', function ($query) use ($unit) {
+                    $query->select(DB::raw('MAX(tahun)'))
+                        ->from('rencana')
+                        ->where('unit_id', $unit->id);
+                })
+                ->orderBy('rencana.tahun', 'desc')
                 ->get();
 
-                foreach ($rpd as $rencana) {
-                    $rencana->rpds = RPD::where('detail_rencana_id', $rencana->idRencana)->get();
-                }
+            foreach ($rpd as $rencana) {
+                $rencana->rpds = RPD::where('detail_rencana_id', $rencana->idRencana)->get();
+            }
 
             return datatables()->of($rpd)
-            ->addColumn('bulan_rpd', function ($row) {
-                $bulans = [];
-                // Memastikan properti rpds adalah sebuah array
-                if (!is_null($row->rpds)) {
-                    foreach ($row->rpds as $rpd) {
-                        $bulans[] = $rpd->bulan_rpd;
+                ->addColumn('bulan_rpd', function ($row) {
+                    $data = [];
+                    // Memastikan properti rpds adalah sebuah array
+                    if (!is_null($row->rpds)) {
+                        foreach ($row->rpds as $rpd) {
+                            $data[] = $rpd->bulan_rpd . ' ( ' . number_format($rpd->jumlah, 0, ',', '.') . ')';
+                        }
                     }
-                }
-                return implode(', ', $bulans);
-            })
+                    return implode(', ', $data);
+                })
                 ->addColumn('action', function ($row) {
                     $id = $row->idRencana;
                     $action = '<a href="javascript:void(0)" onClick="tambahRPD(' . $id . ')" class="tambah btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
-                    $action .= '<a href="javascript:void(0)" onClick="lihatRPD(' . $id . ')" class="tambah btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>';
                     return $action;
                 })
-                ->rawColumns(['bulan_rpd','action'])
+                ->rawColumns(['bulan_rpd', 'action'])
                 ->make(true);
         }
         return view('unit.rencana.rpd');

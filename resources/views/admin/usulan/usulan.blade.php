@@ -81,6 +81,7 @@
                                     <th>Unit</th>
                                     <th>Anggaran</th>
                                     <th>Tahun</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -234,6 +235,7 @@
                     {
                         data: 'volume',
                         name: 'volume',
+                        className: 'text-center',
                     },
                     {
                         data: 'satuan',
@@ -278,10 +280,18 @@
                     {
                         data: 'anggaran',
                         name: 'anggaran',
+                        render: function(data, type, row) {
+                            return formatNumber(data);
+                        }
                     },
                     {
                         data: 'tahun',
                         name: 'tahun',
+                    },
+                    {
+                        data: 'status',
+                        name: 'status',
+                        className: 'text-center',
                     },
                     {
                         data: 'action',
@@ -313,7 +323,16 @@
         })
 
         function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            // Ubah ke tipe number jika num bukan number
+            if (typeof num !== 'number') {
+                num = parseFloat(num);
+            }
+            // Format angka dengan pemisah ribuan
+            return num.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+
+            });
         }
     });
 

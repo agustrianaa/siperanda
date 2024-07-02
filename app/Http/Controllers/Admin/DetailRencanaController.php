@@ -71,6 +71,17 @@ class DetailRencanaController extends Controller
                 ->make(true);
         }
     }
+    public function checkStatus(Request $request)
+    {
+        $rencanaId = $request->query('id');
+        $rencana = Rencana::find($rencanaId);
+
+        if ($rencana) {
+            return response()->json(['status' => $rencana->status]);
+        }
+
+        return response()->json(['status' => 'not found'], 404);
+    }
 
     public function editLrencana(Request $request){
         $id = $request->id;
@@ -123,6 +134,16 @@ class DetailRencanaController extends Controller
         return Response()->json($rencana,);
     }
 
+    // untuk menghapus usulan yang ada di halaman lengkapi usulan
+    public function destroy(Request $request){
+        $detailRencana = DetailRencana::findOrFail($request->id);
+
+        // Hapus detail rencana
+        $detailRencana->delete();
+
+        return response()->json($detailRencana);
+    }
+
     public function editRencAwal(Request $request)
     {
         $id = array('id' => $request->id);
@@ -153,4 +174,5 @@ class DetailRencanaController extends Controller
         $rencana->save();
         return response()->json($rencana);
     }
+
 }

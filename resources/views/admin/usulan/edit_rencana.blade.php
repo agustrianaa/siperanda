@@ -9,12 +9,13 @@
             <div class="card-body">
                 <h3 class="card-title mb-3">Rencana Awal</h3>
                 <div class="row">
-                    <table class="table table-bordered" id="editRencAwal">
+                    <table class="table table-bordered" id="editRencAwal" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Nama Unit</th>
                                 <th>Anggaran</th>
                                 <th>Tahun</th>
+                                <th>Status</th>
                                 <th>Edit</th>
                             </tr>
                         </thead>
@@ -34,7 +35,7 @@
                 <div class="card-body">
                     <h3 class="card-title mb-3">Detail Rencana Unit</h3>
                     <div class="row">
-                        <table class="table table-bordered" id="tabelUsulan">
+                        <table class="table table-bordered" id="tabelUsulan" style="width:100%">
                             <input type="hidden" id="rencana_id" value="{{ $rencana->id }}">
                             <thead>
                                 <tr>
@@ -172,278 +173,345 @@
             </div>
         </div>
     </div>
+</div>
 
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            var rencanaId = $('#rencana_id').val();
-            $('#tabelUsulan').DataTable({
-                processing: true,
-                serverSide: true,
-                destroy: true,
-                ajax: {
-                    url: "{{ route('admin.tabeldetail') }}",
-                    type: 'GET',
-                    data: {
-                        id: rencanaId
-                    },
-                    dataSrc: function(json) {
-                        console.log(json); // Log the data received from server
-                        return json.data;
-                    }
-                },
-                columns: [{
-                        data: 'allkode',
-                        name: 'allkode',
-                        render: function(data, type, row) {
-                            return data ? data : '';
-                        }
-                    },
-                    {
-                        data: 'uraian',
-                        name: 'uraian',
-                        render: function(data, type, row) {
-                            if (row.uraian_kode_komponen) {
-                                return row.uraian_kode_komponen;
-                            } else {
-                                return row.uraian_rencana;
-                            }
-                        }
-                    },
-                    {
-                        data: 'volume',
-                        name: 'volume',
-                    },
-                    {
-                        data: 'satuan',
-                        name: 'satuan',
-                    },
-                    {
-                        data: 'harga',
-                        name: 'harga',
-                        render: function(data, type, row) {
-                            return formatNumber(data);
-                        }
-                    },
-                    {
-                        data: 'total',
-                        name: 'total',
-                        render: function(data, type, row) {
-                            return formatNumber(data);
-                        }
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        className: 'text-center ',
-                        searchable: false,
-                        orderable: false,
-                    },
-                ]
-            });
-
-            $('#editRencAwal').DataTable({
-                "dom": 't',
-                processing: true,
-                serverSide: true,
-                destroy: true,
-                ajax: {
-                    url: "{{ route('admin.tabeleditRA') }}",
-                    type: 'GET',
-                    data: {
-                        id: rencanaId
-                    },
-                    dataSrc: function(json) {
-                        console.log(json); // Log the data received from server
-                        return json.data;
-                    }
-                },
-                columns: [{
-                        data: 'unit_id',
-                        name: 'unit_id',
-                    },
-                    {
-                        data: 'anggaran',
-                        name: 'anggaran',
-                    },
-                    {
-                        data: 'tahun',
-                        name: 'tahun',
-                    },
-                    {
-                        data: 'action',
-                        name: 'action',
-                        className: 'text-center',
-                        searchable: false,
-                        orderable: false,
-                    },
-                ]
-            });
-
-            function formatNumber(num) {
-                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+<script type="text/javascript">
+    $(document).ready(function() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-
-            // untuk mencari kode
-            $('#kode').on('input', function() {
-                let searchValue = $(this).val();
-                if (searchValue.length > 0) {
-                    $.ajax({
-                        url: '/admin/search/code',
-                        method: 'GET',
-                        data: {
-                            search: searchValue
-                        },
-                        success: function(data) {
-                            console.log('Data received:', data);
-                            let results = $('#kode-results');
-                            results.empty();
-                            if (data.length > 0) {
-                                $.each(data, function(index, item) {
-                                    results.append(`<div class="dropdown-item" data-id="${item.id}" data-kode="${item.kode}" data-uraian="${item.uraian || ''}">${item.kode}.${item.kode_parent|| ''} - ${item.uraian || 'Uraian Kosong'}</div>`);
-                                });
-                                results.show();
-                            } else {
-                                results.hide();
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.log('Error:', error);
+        });
+        var rencanaId = $('#rencana_id').val();
+        $('#tabelUsulan').DataTable({
+            processing: true,
+            serverSide: true,
+            destroy: true,
+            ajax: {
+                url: "{{ route('admin.tabeldetail') }}",
+                type: 'GET',
+                data: {
+                    id: rencanaId
+                },
+                dataSrc: function(json) {
+                    console.log(json); // Log the data received from server
+                    return json.data;
+                }
+            },
+            columns: [{
+                    data: 'allkode',
+                    name: 'allkode',
+                    render: function(data, type, row) {
+                        return data ? data : '';
+                    }
+                },
+                {
+                    data: 'uraian',
+                    name: 'uraian',
+                    render: function(data, type, row) {
+                        if (row.uraian_kode_komponen) {
+                            return row.uraian_kode_komponen;
+                        } else {
+                            return row.uraian_rencana;
                         }
-                    });
-                } else {
-                    $('#kode-results').hide();
-                }
-            });
-
-
-            // Handle click on search results
-            $(document).on('click', '#kode-results .dropdown-item', function() {
-                let selectedId = $(this).data('id');
-                let selectedKode = $(this).data('kode');
-                let selectedUraian = $(this).data('uraian');
-                $('#kode').val(`${selectedKode} - ${selectedUraian}`);
-                $('#kode_komponen_id').val(selectedId);
-                $('#kode-results').hide();
-            });
-
-            // Hide results when clicking outside
-            $(document).on('click', function(event) {
-                if (!$(event.target).closest('#kode').length && !$(event.target).closest('#kode-results').length) {
-                    $('#kode-results').hide();
-                }
-            });
+                    }
+                },
+                {
+                    data: 'volume',
+                    name: 'volume',
+                },
+                {
+                    data: 'satuan',
+                    name: 'satuan',
+                },
+                {
+                    data: 'harga',
+                    name: 'harga',
+                    render: function(data, type, row) {
+                        return formatNumber(data);
+                    }
+                },
+                {
+                    data: 'total',
+                    name: 'total',
+                    render: function(data, type, row) {
+                        return formatNumber(data);
+                    }
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    className: 'text-center ',
+                    searchable: false,
+                    orderable: false,
+                },
+            ]
         });
 
-        function KompletRencana() {
-            var rencanaId = $('#rencana_id').val();
-            $('#lengkapiUsulan-modal').modal('show');
-            console.log('id rencana adalah', rencanaId)
+        $('#editRencAwal').DataTable({
+            "dom": 't',
+            processing: true,
+            serverSide: true,
+            destroy: true,
+            ajax: {
+                url: "{{ route('admin.tabeleditRA') }}",
+                type: 'GET',
+                data: {
+                    id: rencanaId
+                },
+                dataSrc: function(json) {
+                    console.log(json); // Log the data received from server
+                    return json.data;
+                }
+            },
+            columns: [{
+                    data: 'unit_id',
+                    name: 'unit_id',
+                },
+                {
+                    data: 'anggaran',
+                    name: 'anggaran',
+                },
+                {
+                    data: 'tahun',
+                    name: 'tahun',
+                },
+                {
+                    data: 'status',
+                    name: 'status',
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    className: 'text-center',
+                    searchable: false,
+                    orderable: false,
+                },
+            ]
+        });
 
+        function formatNumber(num) {
+            // Ubah ke tipe number jika num bukan number
+        if (typeof num !== 'number') {
+                num = parseFloat(num);
+            }
+            // Format angka dengan pemisah ribuan
+            return num.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+
+            });
         }
 
-        // submit
+        // untuk mencari kode
+        $('#kode').on('input', function() {
+            let searchValue = $(this).val();
+            if (searchValue.length > 0) {
+                $.ajax({
+                    url: '/admin/search/code',
+                    method: 'GET',
+                    data: {
+                        search: searchValue
+                    },
+                    success: function(data) {
+                        console.log('Data received:', data);
+                        let results = $('#kode-results');
+                        results.empty();
+                        if (data.length > 0) {
+                            $.each(data, function(index, item) {
+                                results.append(`<div class="dropdown-item" data-id="${item.id}" data-kode="${item.kode}" data-uraian="${item.uraian || ''}">${item.kode}.${item.kode_parent|| ''} - ${item.uraian || 'Uraian Kosong'}</div>`);
+                            });
+                            results.show();
+                        } else {
+                            results.hide();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error:', error);
+                    }
+                });
+            } else {
+                $('#kode-results').hide();
+            }
+        });
+
+
+        // Handle click on search results
+        $(document).on('click', '#kode-results .dropdown-item', function() {
+            let selectedId = $(this).data('id');
+            let selectedKode = $(this).data('kode');
+            let selectedUraian = $(this).data('uraian');
+            $('#kode').val(`${selectedKode} - ${selectedUraian}`);
+            $('#kode_komponen_id').val(selectedId);
+            $('#kode-results').hide();
+        });
+
+        // Hide results when clicking outside
+        $(document).on('click', function(event) {
+            if (!$(event.target).closest('#kode').length && !$(event.target).closest('#kode-results').length) {
+                $('#kode-results').hide();
+            }
+        });
+    });
+
+    function KompletRencana() {
         var rencanaId = $('#rencana_id').val();
-        $('#lengkapiUsulan-form').off('submit').on('submit', function(e) {
-                e.preventDefault();
-                var formData = new FormData(this);
-                formData.append('rencana_id', rencanaId);
+        $.ajax({
+            type: "GET",
+            url: "{{ route('rencana.checkStatus') }}",
+            data: {
+                id: rencanaId
+            },
+            success: function(response) {
+                if (response.status === 'approved') {
+                    $('#lengkapiUsulan-modal').modal('show');
+                    console.log('id rencana adalah', rencanaId);
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: ' Data belum disetujui',
+                        text: 'Tidak dapat melengkapi.'
+                    });
+                }
+            },
+            error: function(error) {
+                alert('Error: Tidak dapat memeriksa status.');
+                console.error(error);
+            }
+        });
+    }
+
+    // submit
+    var rencanaId = $('#rencana_id').val();
+    $('#lengkapiUsulan-form').off('submit').on('submit', function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        formData.append('rencana_id', rencanaId);
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.simpan_rencanaLengkap')}}",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: (data) => {
+                $("#lengkapiUsulan-modal").modal('hide');
+                var oTable = $('#tabelUsulan').DataTable();
+                oTable.ajax.reload();
+                $("#btn-save").html('Submit');
+                $("#btn-save").attr("disabled", false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.success
+                });
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        })
+    });
+
+    function editRenc(id) {
+        console.log(id);
+        $.ajax({
+            type: "GET",
+            url: "{{ route('admin.edit_Lrencana')}}",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(res) {
+                $('#lengkapiUsulan-modal .modal-title').html("Edit Rencana");
+                $('#lengkapiUsulan-modal').modal('show');
+                $('#id').val(res.id);
+                $('#kode').val(res.kode_uraian); // Mengisi input dengan gabungan kode dan uraian
+                $('#kode_komponen_id').val(res.kode_komponen_id); // Isi input tersembunyi
+                $('#volume').val(res.volume);
+                $('#satuan_id').val(res.satuan_id); // Pilih satuan yang sesuai di dropdown
+                $('#harga').val(res.harga);
+            }
+        });
+    }
+
+    function editRencAwal(id) {
+        $.ajax({
+            type: "GET",
+            url: "{{ route('admin.editRencAwal')}}",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(res) {
+                $('#editRencanaAwal .modal-title').html("Edit Rencana Awal");
+                $('#editRencanaAwal').modal('show');
+                $('#editRencanaAwal #id').val(res.id);
+                $('#editRencanaAwal #unit_id').val(res.unit_id);
+                $('#editRencanaAwal #anggaran').val(res.anggaran);
+                $('#editRencanaAwal #tahun').val(res.tahun.substring(0, 4));
+            }
+        });
+    }
+
+    $('#editRencanaAwalForm').submit(function(e) {
+        e.preventDefault();
+        var formData = new FormData(this);
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.simpan_RA')}}",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: (data) => {
+                $("#editRencanaAwal").modal('hide');
+                var oTable = $('#editRencAwal').DataTable();
+                oTable.ajax.reload();
+                $("#btn-simpan").html('Submit');
+                $("#btn-simpan").attr("disabled", false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.success
+                });
+            },
+            error: function(data) {
+                console.log(data);
+            }
+        })
+    });
+
+    function hapusRenc(id) {
+        Swal.fire({
+            title: 'Delete Record?',
+            text: "Anda yakin ingin menghapus data ini?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Ajax request
                 $.ajax({
                     type: "POST",
-                    url: "{{ route('admin.simpan_rencanaLengkap')}}",
-                    data: formData,
-                    cache: false,
-                    contentType: false,
-                    processData: false,
-                    success: (data) => {
-                        $("#lengkapiUsulan-modal").modal('hide');
+                    url: "{{ route('admin.hapus_usulan')}}",
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(res) {
                         var oTable = $('#tabelUsulan').DataTable();
                         oTable.ajax.reload();
-                        $("#btn-save").html('Submit');
-                        $("#btn-save").attr("disabled", false);
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: data.success
-                        });
-                    },
-                    error: function(data) {
-                        console.log(data);
+                        Swal.fire(
+                            'Terhapus!',
+                            'Data berhasil dihapus.',
+                            'success'
+                        );
                     }
-                })
-            });
-
-        function editRenc(id) {
-            console.log(id);
-            $.ajax({
-                type: "GET",
-                url: "{{ route('admin.edit_Lrencana')}}",
-                data: {
-                    id: id
-                },
-                dataType: 'json',
-                success: function(res) {
-                    $('#lengkapiUsulan-modal .modal-title').html("Edit Rencana");
-                    $('#lengkapiUsulan-modal').modal('show');
-                    $('#id').val(res.id);
-                    $('#kode').val(res.kode_uraian); // Mengisi input dengan gabungan kode dan uraian
-                    $('#kode_komponen_id').val(res.kode_komponen_id); // Isi input tersembunyi
-                    $('#volume').val(res.volume);
-                    $('#satuan_id').val(res.satuan_id); // Pilih satuan yang sesuai di dropdown
-                    $('#harga').val(res.harga);
-                }
-            });
-        }
-
-        function editRencAwal(id) {
-            $.ajax({
-                type: "GET",
-                url: "{{ route('admin.editRencAwal')}}",
-                data: {
-                    id: id
-                },
-                dataType: 'json',
-                success: function(res) {
-                    $('#editRencanaAwal .modal-title').html("Edit Rencana Awal");
-                    $('#editRencanaAwal').modal('show');
-                    $('#editRencanaAwal #id').val(res.id);
-                    $('#editRencanaAwal #unit_id').val(res.unit_id);
-                    $('#editRencanaAwal #anggaran').val(res.anggaran);
-                    $('#editRencanaAwal #tahun').val(res.tahun.substring(0, 4));
-                }
-            });
-        }
-
-        $('#editRencanaAwalForm').submit(function(e) {
-            e.preventDefault();
-            var formData = new FormData(this);
-            $.ajax({
-                type: "POST",
-                url: "{{ route('admin.simpan_RA')}}",
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                success: (data) => {
-                    $("#editRencanaAwal").modal('hide');
-                    var oTable = $('#editRencAwal').DataTable();
-                    oTable.ajax.reload();
-                    $("#btn-simpan").html('Submit');
-                    $("#btn-simpan").attr("disabled", false);
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: data.success
-                    });
-                },
-                error: function(data) {
-                    console.log(data);
-                }
-            })
+                });
+            }
         });
-    </script>
-    @endsection
+    }
+</script>
+@endsection

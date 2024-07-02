@@ -4,17 +4,24 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\DetailRencana;
+use App\Models\Kategori;
 use App\Models\KodeKomponen;
 use App\Models\Realisasi;
 use App\Models\RPD;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class RPDanaController extends Controller
 {
-    public function rpd()
+    public function rpd(Request $request)
     {
+        $unit = Unit::all();
+        $kategoris = Kategori::all();
         if (request()->ajax()) {
+            $funit = $request->unit_id;
+            $fkategori = $request->kategori_id;
+            $ftahun = $request->tahun;
             $rencana = DetailRencana::select(
                 'detail_rencana.id as idRencana',
                 'detail_rencana.volume',
@@ -28,43 +35,48 @@ class RPDanaController extends Controller
             )
             ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
             ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
-            ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-            ->get();
+            ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id');
 
-            foreach ($rencana as $rpd) {
+            if ($funit) {
+                $rencana->where('rencana.unit_id', $funit);
+            }
+
+            if ($fkategori) {
+                $rencana->where('kode_komponen.kategori_id', $fkategori);
+            }
+            if ($ftahun) {
+                $ftahunFormat = $ftahun . '-01-01';
+                $rencana->where('rencana.tahun', $ftahunFormat);
+            }
+            $dataRencana = $rencana->get();
+
+            foreach ($dataRencana as $rpd) {
                 $rpd->rpds = RPD::where('detail_rencana_id', $rpd->idRencana)->get();
             }
-                return datatables()->of($rencana)
+                return datatables()->of($dataRencana)
                 ->addColumn('bulan_rpd', function ($row) {
-                    $bulans = [];
+                    $data = [];
                     // Memastikan properti rpds adalah sebuah array
                     if (!is_null($row->rpds)) {
                         foreach ($row->rpds as $rpd) {
-                            $bulans[] = $rpd->bulan_rpd;
+                            $data[] = $rpd->bulan_rpd . ' ( ' . number_format($rpd->jumlah, 0, ',', '.' ) . ')';
                         }
                     }
-                    return implode(', ', $bulans);
+                    return implode(', ', $data);
                 })
                 ->addColumn('action', function ($row) {
-                    $id = $row->id_detail; // Ambil ID dari baris data
-                    $action = '<div class="edit btn btn-success m-1 btn-sm disabled">Keterangan</div>';
-                    return $action;
-                    // if($row->realisasi === 'disetujui'){
-                    //     $action =  '<div class="edit btn btn-success m-1 btn-sm disabled">Disetujui</div>';
-                    // } else if($row->realisasi === 'pending') {
-                    //     $action =  '<div class="edit btn btn-warning m-1 btn-sm disabled">Pending</div>';
-                    // } else if($row->realisasi === 'tidakdisetujui'){
-                    //     $action =  '<div class="edit btn btn-danger m-1 btn-sm disabled">Tidak Disetujui</div>';
+                    // if ($row->rpds->isEmpty()){
+                    //     $action = '<div class="edit btn btn-danger m-1 btn-sm disabled">tak tau</div>';
                     // } else {
-                    //     $action =  '<a href="javascript:void(0)" onClick="validasiUsulan(' . $id . ')" class="validasi btn btn-primary btn-sm"><i class="fas fa-plus"></i>  Validasi</a>';
+                    //     $action = '<div class="edit btn btn-success m-1 btn-sm disabled">Proses</div>';
                     // }
-
+                    $action = '<div class="info btn btn-success m-1 btn-sm disabled">Proses</div>';
+                    return $action;
                 })
-
                 ->rawColumns(['bulan_rpd','action'])
                 ->make(true);
         }
-        return view('admin.usulan.rpd');
+        return view('admin.usulan.rpd',  compact('unit', 'kategoris'));
     }
 
     public function storevalidasi(Request $request)
@@ -82,5 +94,5 @@ class RPDanaController extends Controller
         return response()->json($realisasi);
     }
 
-    
+
 }

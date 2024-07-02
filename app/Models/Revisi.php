@@ -18,6 +18,7 @@ class Revisi extends Model
         'volume',
         'harga',
         'total',
+        'uraian',
         'status',
         'revision'
     ];

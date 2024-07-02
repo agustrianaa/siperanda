@@ -93,7 +93,9 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
 
     // LENGKAPI RENCANA NYA UNIT
     Route::post('/admin/simpan-rencanaLengkap', [DetailRencanaController::class, 'storelengkapiRencana'])->name('admin.simpan_rencanaLengkap');
+    Route::get('/rencana/check-status', [DetailRencanaController::class, 'checkStatus'])->name('rencana.checkStatus');
     Route::get('/admin/edit-lrencana',  [DetailRencanaController::class, 'editLrencana'])->name('admin.edit_Lrencana');
+    Route::post('/admin/hapus-usulan', [DetailRencanaController::class, 'destroy'])->name('admin.hapus_usulan');
     // RENCANA AWAL
     Route::post('/admin/buka-rencana', [AdminUsulanController::class, 'store'])->name('admin.bukaRencana');
     Route::post('/admin/simpan-RA', [DetailRencanaController::class, 'storeEditRA'])->name('admin.simpan_RA');
@@ -146,6 +148,7 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     Route::post('/unit/simpan-skedul', [UnitRencanaPenarikanDanaController::class, 'storeRPD'])->name('unit.simpan_skedul');
     // MONITORING RPD
     Route::get('/unit/monitoring', [UnitMonitoringController::class, 'index'])->name('unit.monitoring');
+    Route::get('/unit/show-realisasi', [UnitMonitoringController::class, 'getRealisasi'])->name('unit.getRealisasi');
     // PROFILE
     Route::get('/unit/profile', [UnitProfileController::class, 'index'])->name('unit.profile');
 });

@@ -158,8 +158,7 @@ class UsulanController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $unitId = $user->unit->id; // Asumsi user memiliki satu unit
-
+        $unitId = $user->unit->id;
         $rencanaId = $request->id;
 
         $rencana = Rencana::updateOrCreate(
@@ -168,7 +167,7 @@ class UsulanController extends Controller
             ],
             [
                 'tahun' => $request->input('tahun') . '-01-01',
-                'unit_id' => $unitId, // Sertakan unit_id
+                'unit_id' => $unitId,
             ]
         );
 
@@ -176,50 +175,56 @@ class UsulanController extends Controller
     }
 
 
-    public function store2(Request $request, $id = null)
-    {
-        $usulan = Rencana::findOrFail($request->rencana_id);
+public function store2(Request $request, $id = null)
+{
+    $request->validate([
+        'volume' => 'required|numeric',
+        'harga' => 'required|numeric',
+        'satuan_id' => 'required',
+    ]);
 
-        $detailRencanaId = $request->input('id');
-        $kodeKomponenId = $request->input('kode_komponen_id');
-        $satuanId = $request->input('satuan_id');
-        $noparentId = $request->input('noparent_id');
-
-        $rencana = DetailRencana::updateOrCreate(
-            [
-                'id' => $detailRencanaId,
-
-            ],
-            [
-                'rencana_id' => $usulan->id,
-                'noparent_id' => $noparentId,
-                'satuan_id' => $satuanId,
-                'volume' => $request->input('volume'),
-                'harga' => $request->input('harga'),
-                'created_by' => $request->input('created_by'),
-                'total' => $request->input('harga') * $request->input('volume'),
-            ]
-
-        );
-
-        if ($request->kategori === 'detil') {
-            $request->validate([
-                'uraian' => 'required|string|max:255',
-            ]);
-            $rencana['uraian'] = $request->uraian;
-        } else {
-            $request->validate([
-                'kode_komponen_id' => 'required',
-            ]);
-            $rencana['kode_komponen_id'] = $request->kode_komponen_id;
-        }
-
-        $jumlah = $rencana->harga * $rencana->volume;
-        $rencana->total = $jumlah;
-        $rencana->save();
-
-        return Response()->json($rencana,);
+    if ($request->kategori === 'detil') {
+        $request->validate([
+            'uraian' => 'required|string|max:255',
+        ]);
+    } else {
+        $request->validate([
+            'kode_komponen_id' => 'required|exists:kode_komponen,id',  // Pastikan kode_komponen_id tidak null dan ada di tabel kode_komponen
+        ]);
     }
+
+    $usulan = Rencana::findOrFail($request->rencana_id);
+
+    $detailRencanaId = $request->input('id');
+    $kodeKomponenId = $request->input('kode_komponen_id');
+    $satuanId = $request->input('satuan_id');
+    $noparentId = $request->input('noparent_id');
+
+    $rencana = DetailRencana::updateOrCreate(
+        [
+            'id' => $detailRencanaId,
+        ],
+        [
+            'rencana_id' => $usulan->id,
+            'noparent_id' => $noparentId,
+            'satuan_id' => $satuanId,
+            'volume' => $request->input('volume'),
+            'harga' => $request->input('harga'),
+            'created_by' => $request->input('created_by'),
+            'total' => $request->input('harga') * $request->input('volume'),
+            'uraian' => $request->kategori === 'detil' ? $request->uraian : null, // Simpan uraian hanya jika kategori detil
+            'kode_komponen_id' => $request->kategori === 'detil' ? null : $request->kode_komponen_id, // Simpan kode_komponen_id hanya jika kategori bukan detil
+        ]
+    );
+
+    $jumlah = $rencana->harga * $rencana->volume;
+    $rencana->total = $jumlah;
+    $rencana->save();
+
+    return response()->json($rencana);
+}
+
+
 
     public function searchByCode(Request $request)
     {
@@ -268,11 +273,8 @@ class UsulanController extends Controller
     if ($detailRencana->kodeKomponen) {
         $detailRencana->kode_uraian = $detailRencana->kodeKomponen->kode . '.' . $detailRencana->kodeKomponen->kode_parent . ' - ' . $detailRencana->kodeKomponen->uraian;
     } else {
-        $detailRencana->kode_uraian = 'N/A'; // Atau nilai default lainnya
+        $detailRencana->kode_uraian = ''; // Atau nilai default lainnya
     }
-
-    $detailRencana->tahun = $rencana->tahun;
-    $detailRencana->status = $rencana->status;
 
     // Kembalikan respons JSON dengan data DetailRencana yang diedit
     return response()->json($detailRencana);
@@ -283,11 +285,10 @@ class UsulanController extends Controller
     public function update(Request $request, $id)
     {
         $detailRencana = DetailRencana::with('rencana')->findOrFail($id);
-
         if($detailRencana->rencana->status == 'revisi'){
             Revisi::create([
                 'rencana_id' => $detailRencana->rencana_id,
-                'kode_komponen_id'  => $detailRencana->kode_komponen_id,
+                'kode_komponen_id'  => $detailRencana->kode_komponen_id  ? : null,
                 'volume'    => $detailRencana->volume,
                 'satuan_id' => $detailRencana->satuan_id,
                 'harga' => $detailRencana->harga,
@@ -302,10 +303,11 @@ class UsulanController extends Controller
         }
 
         // Update DetailRencana
-        $detailRencana->kode_komponen_id = $request->kode_komponen_id;
+        $detailRencana->kode_komponen_id = $request->kode_komponen_id ? : null;
         $detailRencana->volume = $request->volume;
         $detailRencana->satuan_id = $request->satuan_id;
         $detailRencana->harga = $request->harga;
+        $detailRencana->uraian = $request->uraian;
         $detailRencana->total =  $request->volume * $request->harga;
         $detailRencana->save();
 
@@ -320,6 +322,6 @@ class UsulanController extends Controller
         // Hapus detail rencana
         $detailRencana->delete();
 
-        return response()->json(['success' => 'Detail rencana (dan rencana terkait jika tidak ada detail rencana lain) berhasil dihapus.']);
+        return response()->json($detailRencana);
     }
 }

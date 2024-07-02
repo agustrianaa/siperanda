@@ -12,7 +12,7 @@
                     <h5 class="card-title mb-9 fw-semibold">Jumlah Rencana Anggaran</h5>
                     <div class="row align-items-center">
                         <div class="col-8">
-                            <h4 class="fw-semibold mb-3">{{number_format($totalAnggaran, 0, ',', '.')}}</h4>
+                            <h4 class="fw-semibold mb-3">Rp. {{number_format($totalAnggaran, 0, ',', '.')}}</h4>
                             <div class="d-flex align-items-center mb-3">
 
                             </div>
