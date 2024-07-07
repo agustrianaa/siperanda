@@ -21,7 +21,7 @@
                                     <th>Harga/sat</th>
                                     <th>Jumlah</th>
                                     <th width="15%">RPD</th>
-                                    <th>Action</th>
+                                    <th width="10%">Action</th>
                                 </tr>
                             </thead>
                         </table>
@@ -80,6 +80,38 @@
             </div>
         </div>
     </div>
+
+    <!-- EDIT RPD MODAL -->
+    <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form id="editForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">Edit RPD</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Bulan RPD</th>
+                                    <th class="text-center">Anggaran</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data RPD akan diisi melalui JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- END EDIT RPD MODAL -->
 </div>
 
 <script type="text/javascript">
@@ -202,5 +234,100 @@
             }
         });
     });
+
+    function editRPD(id) {
+        $.ajax({
+            type: "GET",
+            url: "{{ route('unit.getRealisasi') }}",
+            data: {
+                id: id
+            },
+            success: function(data) {
+                $('#editModal tbody').empty();
+                const rpdData = data.rpd || [];
+
+                const bulanOptions = `
+                    <option value="">-Pilih Bulan-</option>
+                    <option value="Januari">Januari</option>
+                    <option value="Februari">Februari</option>
+                    <option value="Maret">Maret</option>
+                    <option value="April">April</option>
+                    <option value="Mei">Mei</option>
+                    <option value="Juni">Juni</option>
+                    <option value="Juli">Juli</option>
+                    <option value="Agustus">Agustus</option>
+                    <option value="September">September</option>
+                    <option value="Oktober">Oktober</option>
+                    <option value="November">November</option>
+                    <option value="Desember">Desember</option>
+                `;
+
+                if (rpdData.length > 0) {
+                    rpdData.forEach(function(item) {
+                        const selectedBulan = item.bulan_rpd || '';
+
+                        $('#editModal tbody').append(
+                            '<tr>' +
+                            '<td>' +
+                            '<div class="form-group mb-3">' +
+                            '<label for="bulan_rpd">Bulan RPD</label>' +
+                            '<select name="bulan_rpd[]" class="form-select" required>' +
+                            bulanOptions +
+                            '</select>' +
+                            '</div>' +
+                            '</td>' +
+                            '<td>' +
+                            '<div class="form-group mb-3">' +
+                            '<label for="jumlah">Jumlah</label>' +
+                            '<input type="number" name="jumlah[]" value="' + (item.jumlah || '') + '" class="form-control">' +
+                            '</div>' +
+                            '</td>' +
+                            '<input type="hidden" name="id[]" value="' + item.id + '">' +
+
+                            '</tr>'
+                        );
+
+                        $('select[name="bulan_rpd[]"]').last().val(selectedBulan);
+                    });
+                } else {
+                    $('#editModal tbody').append(
+                        '<tr>' +
+                        '<td colspan="2" class="text-center">Tidak ada data rpd</td>' +
+                        '</tr>'
+                    );
+                }
+
+                $('#editModal').modal('show');
+            },
+            error: function(error) {
+                console.error(error);
+                alert('Terjadi kesalahan saat mengambil data rpd');
+            }
+        });
+    }
+
+    $('#editForm').submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: "{{ route('unit.updateRPD') }}",
+            data: $(this).serialize(),
+            success: function(response) {
+                $('#editModal').modal('hide');
+                var oTable = $('#RPD').DataTable();
+                    oTable.ajax.reload(null, false);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Data RPD berhasil di update'
+                    });
+                },
+            error: function(error) {
+                console.error(error);
+                alert('Terjadi kesalahan saat mengupdate data RPD');
+            }
+        });
+    });
+
 </script>
 @endsection

@@ -68,6 +68,7 @@ class RencanaPenarikanDanaController extends Controller
                 ->addColumn('action', function ($row) {
                     $id = $row->idRencana;
                     $action = '<a href="javascript:void(0)" onClick="tambahRPD(' . $id . ')" class="tambah btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
+                    $action .= '<a href="javascript:void(0)" onClick="editRPD(' . $id . ')" class="edit btn btn-info btn-sm"><i class="fas fa-edit"></i></a>';
                     return $action;
                 })
                 ->rawColumns(['bulan_rpd', 'action'])
@@ -136,10 +137,23 @@ class RencanaPenarikanDanaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
+    public function updateRPD(Request $request)
+{
+    $ids = $request->input('id');
+    $bulanRpd = $request->input('bulan_rpd');
+    $jumlah = $request->input('jumlah');
+
+    foreach ($ids as $index => $id) {
+        DB::table('RPD')
+            ->where('id', $id)
+            ->update([
+                'bulan_rpd' => $bulanRpd[$index] ?? '',
+                'jumlah' => $jumlah[$index] ?? 0
+            ]);
     }
+
+    return response()->json(['success' => 'Data realisasi berhasil diupdate']);
+}
 
     /**
      * Remove the specified resource from storage.

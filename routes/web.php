@@ -157,6 +157,7 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     // CRUD RPD
     Route::get('/unit/rpd', [UnitRencanaPenarikanDanaController::class, 'index'])->name('unit.rpd');
     Route::post('/unit/simpan-skedul', [UnitRencanaPenarikanDanaController::class, 'storeRPD'])->name('unit.simpan_skedul');
+    Route::post('/unit/update-realisasi', [UnitRencanaPenarikanDanaController::class, 'updateRPD'])->name('unit.updateRPD');
     // MONITORING RPD
     Route::get('/unit/monitoring', [UnitMonitoringController::class, 'index'])->name('unit.monitoring');
     Route::get('/unit/show-realisasi', [UnitMonitoringController::class, 'getRealisasi'])->name('unit.getRealisasi');
