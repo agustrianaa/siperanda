@@ -27,6 +27,8 @@ class ProfileController extends Controller
     }
 
     public function index(){
-        return view('super_admin.profile');
+        $user = Auth::user();
+        $profileSA = $user->super_admin;
+        return view('super_admin.profile', compact('profileSA'));
     }
 }
