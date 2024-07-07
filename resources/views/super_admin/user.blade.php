@@ -222,7 +222,7 @@
             success: function(res) {
                 $('#UserModal').html("Edit User");
                 $('#user-modal').modal('show');
-                $('#id').val(res.id);
+                $('#user_id').val(res.id);
                 $('#name').val(res.admin_name || res.unit_name || res.super_admin_name || res.direksi_name || res.name);
                 $('#email').val(res.email);
                 $('#role').val(res.role);

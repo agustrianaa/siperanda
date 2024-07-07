@@ -45,8 +45,7 @@ Route::get('/', function () {
 });
 
 Route::get('/login',[AuthLoginController::class, 'index'])->name('login')->middleware('guest');
-Route::post('/login',[AuthLoginController::class, 'postlogin'])->name('login');
-Route::get('/logout',[AuthLoginController::class, 'logout'])->name('logout');
+Route::get('/logout',[AuthLoginController::class, 'logout'])->name('logout1');
 
 Auth::routes();
 // REDIRECT HOME

@@ -8,7 +8,6 @@
     <link rel="shortcut icon" type="image/png" href="../assets/images/logos/polindra.png" />
     <link rel="stylesheet" href="../assets/css/styles.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .password-input-container {
             position: relative;
@@ -42,8 +41,6 @@
                                 <a href="{{ url('/') }}" class="text-nowrap logo-img text-center d-block py-3 w-100">
                                     <img src="../assets/images/logos/logo2.png" width="180" alt="">
                                 </a>
-                                <!-- <p class="text-center">Your Social Campaigns</p> -->
-                                <!-- <h2  class="text-center d-block py-3 w-100"> SIPERANDA</h2> -->
                                 <form method="POST" action="{{ route('login') }}">
                                 @csrf
                                     <div class="mb-3">
@@ -56,7 +53,6 @@
                                         <i class="fa fa-eye toggle-password" id="togglePassword" onclick="togglePassword()"></i>
                                     </div>
                                     <button class="btn btn-primary w-100 py-8 fs-4 mb-4 rounded-2" type="submit">Log In</button>
-                                    <!-- <a href="./index.html" >Sign In</a> -->
                                     <div class="d-flex align-items-center justify-content-center">
                                     </div>
                                 </form>
@@ -69,6 +65,7 @@
     </div>
     <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
     <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
         function togglePassword() {
             var passwordField = document.getElementById("password");
@@ -84,6 +81,25 @@
             }
         }
     </script>
+     @if(session('success'))
+    <script>
+        Swal.fire({
+            title: 'Success',
+            text: "{{ session('success') }}",
+            icon: 'success'
+        });
+    </script>
+    @endif
+
+    @if(session('error'))
+    <script>
+        Swal.fire({
+            title: 'Error',
+            text: "{{ session('error') }}",
+            icon: 'error'
+        });
+    </script>
+    @endif
 </body>
 
 </html>

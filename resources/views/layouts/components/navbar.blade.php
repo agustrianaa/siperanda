@@ -43,7 +43,7 @@
                                 <p class="mb-0 fs-3">My Profile</p>
                             </a>
 
-                            <a href="{{ route('logout') }}" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                            <a href="{{ url('/logout') }}" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
                         </div>
                     </div>
                 </li>

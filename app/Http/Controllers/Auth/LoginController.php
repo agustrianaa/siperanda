@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
+
 use RealRashid\SweetAlert\Facades\Alert;
 
 use App\Http\Controllers\Controller;
@@ -45,19 +46,21 @@ class LoginController extends Controller
         Auth::logout();
         return redirect('/');
     }
-    public function postlogin(Request $request)
-    {
-        $input = $request->all();
-        $this->validate($request, [
-            'email' => ['required', 'string', 'email', 'max:255'],
-            'password' => ['required', 'min:8'],
-        ]);
-        if (auth()->attempt(array('email' => $input['email'], 'password' => $input['password']))) {
-            // alert()->toast('Hello '. '<b>'.Auth::user()->email .'</b>' .', selamat datang kembali!', 'success')->position('top-end');
-            return redirect()->route('dashboard');
-        } else {
-            return redirect()->route('login')
-            ->withErrors('Email atau Password Salah');
-        }
+
+    public function login(Request $request)
+{
+    $input = $request->all();
+    $this->validate($request, [
+        'email' => ['required', 'string', 'email', 'max:255'],
+        'password' => ['required', 'min:8'],
+    ]);
+
+    if (auth()->attempt(['email' => $input['email'], 'password' => $input['password']])) {
+        Alert::toast('Hello ' . auth()->user()->email . ', selamat datang kembali!', 'success')->position('top-end');
+        return redirect()->route('dashboard')->with('success', 'Hello ' . auth()->user()->email . ', selamat datang kembali!');
+    } else {
+        Alert::error('Error', 'Email atau Password Salah');
+        return redirect()->route('login')->with('error', 'Email atau Password Salah');
     }
+}
 }
