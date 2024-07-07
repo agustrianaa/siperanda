@@ -35,10 +35,11 @@ class RencanaPenarikanDanaController extends Controller
                 'satuan.satuan',
                 'detail_rencana.total as jumlahUsulan',
                 'detail_rencana.uraian as uraian_rencana',
-                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
+                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(parent.kode, '')) as allkode")
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+                ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
                 ->where('rencana.unit_id', $unit->id)
                 ->whereIn('rencana.tahun', function ($query) use ($unit) {

@@ -43,27 +43,30 @@
                         <h5 class="card-title fw-semibold mb-3">Anggaran : Rp. {{number_format($rencanaId->anggaran, 0, ',', '.')}}</h5>
                     </div>
                 </div>
-                <table class="table table-bordered" id="usulan" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th width="3px">No</th>
-                            <th>Kode</th>
-                            <th width="30%">Uraian</th>
-                            <th>Volume</th>
-                            <th>Satuan</th>
-                            <th>Harga</th>
-                            <th width="15%">Jumlah</th>
-                            <th width="15%">Action</th>
-                        </tr>
-                    </thead>
-                    <tfoot>
-                        <tr>
-                            <th colspan="6" style="text-align:right">Total:</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </tfoot>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="usulan" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th width="3px">No</th>
+                                <th>Kode</th>
+                                <th width="30%">Uraian</th>
+                                <th>Volume</th>
+                                <th>Satuan</th>
+                                <th>Harga</th>
+                                <th width="15%">Jumlah</th>
+                                <th width="15%">Action</th>
+                            </tr>
+                        </thead>
+                        <tfoot>
+                            <tr>
+                                <th colspan="6" style="text-align:right">Total:</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
             </div>
         </div>
     </div>
@@ -71,19 +74,22 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-3">Usulan Lama</h5>
-                <table class="table table-bordered" id="last">
-                    <thead>
-                        <tr>
-                            <!-- <th width="3px">No</th> -->
-                            <th>Kode</th>
-                            <th width="30%">Uraian</th>
-                            <th>Volume</th>
-                            <th>Satuan</th>
-                            <th>Harga</th>
-                            <th width="15%">Jumlah</th>
-                        </tr>
-                    </thead>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="last">
+                        <thead>
+                            <tr>
+                                <!-- <th width="3px">No</th> -->
+                                <th>Kode</th>
+                                <th width="30%">Uraian</th>
+                                <th>Volume</th>
+                                <th>Satuan</th>
+                                <th>Harga</th>
+                                <th width="15%">Jumlah</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
             </div>
         </div>
     </div>

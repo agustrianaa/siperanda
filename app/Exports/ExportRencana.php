@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\DetailRencana;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -12,23 +13,36 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 
-class AllRencanaExport implements FromCollection, WithHeadings, WithMapping, WithCustomStartCell, WithEvents
+class ExportRencana implements FromCollection, WithHeadings, WithMapping, WithCustomStartCell, WithEvents
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
+    protected $unitId;
     protected $tahun;
-    public function __construct($tahun)
+
+    public function __construct($tahun, $unitId = null)
     {
-        $this->tahun =  $tahun . '-01-01';
+        $this->unitId = $unitId;
+        $this->tahun = $tahun;
     }
     public function collection()
     {
-        return DetailRencana::with(['kodeKomponen', 'satuan', 'realisasi'])
+        $query = DetailRencana::with(['kodeKomponen', 'satuan', 'rencana'])
             ->whereHas('rencana', function ($query) {
-                $query->where('tahun', $this->tahun);
-            })->get();
+                $query->whereYear('tahun', $this->tahun)
+                ->where('status', 'approved');
+
+                if (!is_null($this->unitId) && $this->unitId != '') {
+                    $query->where('unit_id', $this->unitId);
+                }
+            });
+
+        $result = $query->get();
+
+        return $result;
     }
+
 
     public function headings(): array
     {
@@ -83,7 +97,7 @@ class AllRencanaExport implements FromCollection, WithHeadings, WithMapping, Wit
     public function registerEvents(): array
     {
         return [
-            AfterSheet::class => function(AfterSheet $event) {
+            AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
 
                 // Merging cells for custom header

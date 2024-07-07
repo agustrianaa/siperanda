@@ -18,35 +18,40 @@ class RencanaUnitExport implements FromCollection, WithHeadings, WithMapping, Wi
      * @return \Illuminate\Support\Collection
      */
     protected $unitId;
+    protected $tahun;
 
-    public function __construct($unitId)
+    public function __construct($tahun, $unitId)
     {
         $this->unitId = $unitId;
+        $this->tahun = $tahun;
     }
+
     public function collection()
     {
-        return DetailRencana::with(['kodeKomponen', 'satuan', 'realisasi'])
+        return DetailRencana::with(['kodeKomponen', 'satuan', 'rencana'])
             ->whereHas('rencana', function ($query) {
-                $query->where('unit_id', $this->unitId);
+                $query->whereYear('tahun', $this->tahun)
+                    ->where('unit_id', $this->unitId)
+                    ->where('status', 'approved'); // Filter based on status if needed
             })->get();
     }
 
     public function headings(): array
-{
-    $bulanNames = [
-        'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-    ];
+    {
+        $bulanNames = [
+            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
 
-    return [
-        'Kode',
-        'Uraian',
-        'Volume',
-        'Satuan',
-        'Harga',
-        'Jumlah Biaya',
-        ...$bulanNames
-    ];
-}
+        return [
+            'Kode',
+            'Uraian',
+            'Volume',
+            'Satuan',
+            'Harga',
+            'Jumlah Biaya',
+            ...$bulanNames
+        ];
+    }
 
 
     public function map($rencana): array
@@ -85,7 +90,7 @@ class RencanaUnitExport implements FromCollection, WithHeadings, WithMapping, Wi
     public function registerEvents(): array
     {
         return [
-            AfterSheet::class => function(AfterSheet $event) {
+            AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
 
                 // Merging cells for custom header
@@ -114,5 +119,4 @@ class RencanaUnitExport implements FromCollection, WithHeadings, WithMapping, Wi
             }
         ];
     }
-
 }

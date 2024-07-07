@@ -21,26 +21,36 @@ class UserController extends Controller
             return datatables()->of(
                 User::select(
                     'users.*',
-                    // 'super_admin.*',
-                    // 'admin.*',
-                    // 'direksi.*',
-                    // 'unit.*',
-                    // 'unit.nama_unit as name',
-                    // 'direksi.name as direksi_name',
-                    // 'admin.name as admin_name',
-                    // 'super_admin.name as superadmin_name',
+                    'admin.name as admin_name',
+                    'unit.name as unit_name',
+                    'super_admin.name as super_admin_name',
+                    'direksi.name as direksi_name'
                 )
-                    // ->leftJoin('super_admin', 'users.id', '=', 'super_admin.user_id')
-                    // ->leftJoin('admin', 'users.id', '=', 'admin.user_id')
-                    // ->leftJoin('direksi', 'users.id', '=', 'direksi.user_id')
-                    // ->leftJoin('unit', 'users.id', '=', 'unit.user_id')
+                    ->leftJoin('admin', 'users.id', '=', 'admin.user_id')
+                    ->leftJoin('unit', 'users.id', '=', 'unit.user_id')
+                    ->leftJoin('super_admin', 'users.id', '=', 'super_admin.user_id')
+                    ->leftJoin('direksi', 'users.id', '=', 'direksi.user_id')
                     ->get()
             )
                 ->addIndexColumn()
+                ->addColumn('name', function ($row) {
+                    if ($row->admin_name) {
+                        return $row->admin_name;
+                    } elseif ($row->unit_name) {
+                        return $row->unit_name;
+                    } elseif ($row->super_admin_name) {
+                        return $row->super_admin_name;
+                    } elseif ($row->direksi_name) {
+                        return $row->direksi_name;
+                    } else {
+                        return $row->name; // Fallback to users.name if no role-specific name found
+                    }
+                })
                 ->addColumn('action', function ($row) {
                     $id = $row->id; // Ambil ID dari baris data
                     $action =  '<a href="javascript:void(0)" onClick="editUser(' . $id . ')" class="edit btn btn-success btn-sm"><i class="fas fa-edit"></i></a>';
                     $action .= '<a href="javascript:void(0)" onClick="hapusUser(' . $id . ')" class="delete btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                    $action .= '<a href="javascript:void(0)" onClick="ResetPass(' . $id . ')" class="reset btn btn-dark btn-sm">Reset Pass</i></a>';
                     return $action;
                 })
                 ->rawColumns(['action'])
@@ -95,53 +105,53 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-        public function store(Request $request)
-        {
-            $request->validate([
-                'email' => 'required|email|unique:users,email,' . $request->input('id'),
-                'name' => 'required',
-            ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|unique:users,email,' . $request->input('id'),
+            'name' => 'required',
+        ]);
 
-            // Simpan atau perbarui data pengguna
-            $user = User::updateOrCreate(
-                ['id' => $request->id],
-                [
-                    'email' => $request->email,
-                    'password' => Hash::make($request->password),
-                    'role' => $request->role,
-                ]
-            );
+        // Simpan atau perbarui data pengguna
+        $user = User::updateOrCreate(
+            ['id' => $request->id],
+            [
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => $request->role,
+            ]
+        );
 
-            if ($user) {
-                // Simpan atau perbarui data terkait sesuai dengan peran pengguna
-                $userId = $user->id;
-                if ($user->role == 'super_admin') {
-                    SuperAdmin::updateOrCreate(
-                        ['user_id' => $userId],
-                        ['name' => $request->name],
-                    );
-                } else if ($user->role == 'admin') {
-                    Admin::updateOrCreate(
-                        ['user_id' => $userId],
-                        ['name' => $request->name]
-                    );
-                } else if ($user->role == 'direksi') {
-                    Direksi::updateOrCreate(
-                        ['user_id' => $userId],
-                        ['name' => $request->name]
-                    );
-                } else if ($user->role == 'unit') {
-                    Unit::updateOrCreate(
-                        ['user_id' => $userId],
-                        ['name' => $request->input('name')]
-                    );
-                }
-
-                return response()->json(['success' => 'Data pengguna berhasil disimpan.']);
-            } else {
-                return response()->json(['error' => 'Gagal menyimpan data pengguna.']);
+        if ($user) {
+            // Simpan atau perbarui data terkait sesuai dengan peran pengguna
+            $userId = $user->id;
+            if ($user->role == 'super_admin') {
+                SuperAdmin::updateOrCreate(
+                    ['user_id' => $userId],
+                    ['name' => $request->name],
+                );
+            } else if ($user->role == 'admin') {
+                Admin::updateOrCreate(
+                    ['user_id' => $userId],
+                    ['name' => $request->name]
+                );
+            } else if ($user->role == 'direksi') {
+                Direksi::updateOrCreate(
+                    ['user_id' => $userId],
+                    ['name' => $request->name]
+                );
+            } else if ($user->role == 'unit') {
+                Unit::updateOrCreate(
+                    ['user_id' => $userId],
+                    ['name' => $request->name]
+                );
             }
+
+            return response()->json(['success' => 'Data pengguna berhasil disimpan.']);
+        } else {
+            return response()->json(['error' => 'Gagal menyimpan data pengguna.']);
         }
+    }
 
 
 
@@ -158,12 +168,28 @@ class UserController extends Controller
      */
     public function edit(Request $request)
     {
-        $id = array('id' => $request->id);
-        $user  = User::where($id)->first();
-        // $user = User::find($id);
+        $id = $request->id;
+        $roles = ['unit', 'direksi', 'admin', 'super_admin']; // Array of roles
 
-        return Response()->json($user);
+        // Find the user with the given id and role
+        $user = User::select(
+            'users.*',
+            'admin.name as admin_name',
+            'unit.name as unit_name',
+            'super_admin.name as super_admin_name',
+            'direksi.name as direksi_name'
+        )
+            ->leftJoin('admin', 'users.id', '=', 'admin.user_id')
+            ->leftJoin('unit', 'users.id', '=', 'unit.user_id')
+            ->leftJoin('super_admin', 'users.id', '=', 'super_admin.user_id')
+            ->leftJoin('direksi', 'users.id', '=', 'direksi.user_id')
+            ->whereIn('role', $roles)
+            ->where('users.id', $id)
+            ->first();
+
+        return response()->json($user);
     }
+
 
     /**
      * Update the specified resource in storage.

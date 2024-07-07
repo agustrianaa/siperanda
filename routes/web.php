@@ -11,17 +11,21 @@ use App\Http\Controllers\Admin\SatuanController as AdminSatuanController;
 use App\Http\Controllers\Admin\MonitoringController as AdminMonitoringController;
 use App\Http\Controllers\Admin\UsulanController as AdminUsulanController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
-use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\ReportController as AdminReportController;
 use App\Http\Controllers\Admin\RPDanaController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Unit\RencanaPenarikanDanaController as UnitRencanaPenarikanDanaController;
 use App\Http\Controllers\Direksi\MonitoringController as DireksiMonitoringController;
 use App\Http\Controllers\Direksi\ProfileController as DireksiProfileController;
+use App\Http\Controllers\Direksi\ReportController as DireksiReportController;
 use App\Http\Controllers\Unit\HistoriController;
 use App\Http\Controllers\Unit\UsulanController as UnitUsulanController;
 use App\Http\Controllers\Unit\MonitoringController as UnitMonitoringController;
 use App\Http\Controllers\Unit\ProfileController as UnitProfileController;
+use App\Http\Controllers\Unit\ReportController as UnitReportController;
 use App\Http\Controllers\UserController;
 use App\Models\DetailRencana;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -53,10 +57,11 @@ Route::get('/profile', [App\Http\Controllers\SuperAdmin\ProfileController::class
 
 Route::middleware(['auth', 'user-access:super_admin'])->group(function () {
     Route::get('/superadmin/dashboard', [HomeController::class, 'superadminHome'])->name('superadmin.dashboard');
-    Route::get('/user',  [UserController::class, 'index'])->name('superadmin.tambah_user');
-    Route::post('/tambah-user', [UserController::class, 'store'])->name('superadmin.tambah_user');
-    Route::post('/edit-user', [UserController::class, 'edit'])->name('superadmin.edit_user');
-    Route::post('/hapus-user', [UserController::class, 'destroy'])->name('superadmin.hapus_user');
+    Route::get('/superadmin/user',  [UserController::class, 'index'])->name('superadmin.user');
+    Route::post('/superadmin/tambah-user', [UserController::class, 'store'])->name('superadmin.tambah_user');
+    Route::post('/superadmin/edit-user', [UserController::class, 'edit'])->name('superadmin.edit_user');
+    Route::post('/superadmin/hapus-user', [UserController::class, 'destroy'])->name('superadmin.hapus_user');
+    Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->name('reset-password');
     Route::get('/superadmin/profile', [SuperAdminProfileController::class, 'index'])->name('superadmin.profile');
 });
 
@@ -115,19 +120,25 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     // PROFILE
     Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
     // REPORT
-    Route::get('/admin/report', [ReportController::class, 'index'])->name('admin.report');
+    Route::get('/admin/report', [AdminReportController::class, 'index'])->name('admin.report');
     Route::get('/admin/report/export-kode', [AdminKodeController::class, 'export_kode'])->name('admin.export_kode');
-    Route::post('/admin/report/export-rencana-unit', [ReportController::class, 'exportRencanaUnit'])->name('admin.export_rencanaUnit');
-    Route::post('/admin/report/export-all-rencana', [ReportController::class, 'exportRencana'])->name('admin.export_allRencana');
+    Route::GET('/admin/report/export-rencana', [AdminReportController::class, 'exportRencana'])->name('admin.export_Rencana');
 });
 
 
 Route::middleware(['auth', 'user-access:direksi'])->group(function () {
+    // dashboard
     Route::get('/direksi/dashboard', [HomeController::class, 'direksiHome'])->name('direksi.dashboard');
+    // monitoring
     Route::get('/direksi/monitoring', [DireksiMonitoringController::class, 'index'])->name('direksi.monitoring');
+    Route::get('/direksi/show-realisasi', [DireksiMonitoringController::class, 'getRealisasi'])->name('direksi.getRealisasi');
+    // profile
     Route::get('/direksi/profile', [DireksiProfileController::class, 'index'])->name('direksi.profile');
+    // report
+    Route::get('/direksi/report', [DireksiReportController::class, 'index'])->name('direksi.report');
+    Route::post('/direksi/report/export-rencana-unit', [DireksiReportController::class, 'exportRencanaUnit'])->name('direksi.export_rencanaUnit');
+    Route::GET('/direksi/report/export-rencana', [DireksiReportController::class, 'exportRencana'])->name('direksi.export_Rencana');
 });
-
 
 Route::middleware(['auth', 'user-access:unit'])->group(function () {
     Route::get('/unit/dashboard', [HomeController::class, 'unitHome'])->name('unit.dashboard');
@@ -151,5 +162,7 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     Route::get('/unit/show-realisasi', [UnitMonitoringController::class, 'getRealisasi'])->name('unit.getRealisasi');
     // PROFILE
     Route::get('/unit/profile', [UnitProfileController::class, 'index'])->name('unit.profile');
+    // REPORT
+    Route::get('/unit/report', [UnitReportController::class, 'index'])->name('unit.report');
+    Route::get('/unit/report-rencana', [UnitReportController::class, 'exportRencana'])->name('unit.export_rencana');
 });
-

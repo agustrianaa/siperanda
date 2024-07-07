@@ -9,6 +9,7 @@ use App\Models\KodeKomponen;
 use App\Models\Realisasi;
 use App\Models\RPD;
 use App\Models\Satuan;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,8 @@ class MonitoringController extends Controller
         $user = Auth::user();
         $kategoris = Kategori::all();
         $fkategori = $request->kategori_id;
+        $funit = $request->unit_id;
+        $unit = Unit::all();
         $ftahun = $request->tahun;
         if (request()->ajax()) {
             $unit = $user->unit;
@@ -38,12 +41,17 @@ class MonitoringController extends Controller
                 'kode_komponen.uraian as uraian_kode_komponen',
                 'satuan.*',
                 'satuan.satuan as satuan',
-                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(kode_komponen.kode_parent, '')) as allkode")
+                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(parent.kode, '')) as allkode")
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+                ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-                ->where('rencana.unit_id', $unit->id);
+                ->where('rencana.status', '=', 'approved');
+
+            if ($funit) {
+                $rencana->where('rencana.unit_id', $funit);
+            }
 
             if ($fkategori) {
                 $rencana->where('kode_komponen.kategori_id', $fkategori);
@@ -92,7 +100,7 @@ class MonitoringController extends Controller
                 ->rawColumns(['action', 'ket'])
                 ->make(true);
         }
-        return view('unit.monitoring', compact('kategoris'));
+        return view('unit.monitoring', compact('kategoris', 'unit'));
     }
 
     public function getRealisasi(Request $request)

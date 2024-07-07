@@ -57,6 +57,7 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
+                    <div class="table-responsive">
                     <table class="table table-bordered" id="monitoringfromAdmin" style="width:100%">
                         <thead>
                             <tr>
@@ -71,6 +72,8 @@
                             </tr>
                         </thead>
                     </table>
+                    </div>
+
                 </div>
                 <!-- <p class="mb-0">This is a sample page </p> -->
             </div>

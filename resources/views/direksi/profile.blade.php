@@ -1,4 +1,7 @@
 @extends('template')
+@section('page-title')
+<h4 class="fw-semibold">Profile</h4>
+@endsection
 @section('content')
 
 <div class="row">

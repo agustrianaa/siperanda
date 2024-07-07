@@ -39,7 +39,7 @@
                     <span class="hide-menu">Manajemen</span>
                 </li>
                 <li class="sidebar-item">
-                    <a class="sidebar-link" href="{{url("/user")}}" aria-expanded="false">
+                    <a class="sidebar-link" href="{{route('superadmin.user')}}" aria-expanded="false">
                         <span>
                             <i class="ti ti-users"></i>
                         </span>
@@ -169,6 +169,18 @@
                         <span class="hide-menu">Monitoring</span>
                     </a>
                 </li>
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Report</span>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route("direksi.report")}}" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-article"></i>
+                        </span>
+                        <span class="hide-menu">Report</span>
+                    </a>
+                </li>
             </ul>
         </nav>
         @endif
@@ -224,6 +236,18 @@
                             <i class="ti ti-typography"></i>
                         </span>
                         <span class="hide-menu">Monitoring</span>
+                    </a>
+                </li>
+                <li class="nav-small-cap">
+                    <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                    <span class="hide-menu">Report</span>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route("unit.report")}}" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-article"></i>
+                        </span>
+                        <span class="hide-menu">Report</span>
                     </a>
                 </li>
             </ul>

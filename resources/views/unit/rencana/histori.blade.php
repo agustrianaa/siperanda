@@ -43,18 +43,21 @@
     <div class="row">
         <div class="card">
             <div class="card-body">
-                <table class="table table-bordered" id="histori">
-                    <thead>
-                    <tr>
-                            <th>Kode</th>
-                            <th width="30%">Uraian</th>
-                            <th>Volume</th>
-                            <th>Satuan</th>
-                            <th>Harga</th>
-                            <th width="15%">Jumlah</th>
-                        </tr>
-                    </thead>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="histori">
+                        <thead>
+                            <tr>
+                                <th>Kode</th>
+                                <th width="30%">Uraian</th>
+                                <th>Volume</th>
+                                <th>Satuan</th>
+                                <th>Harga</th>
+                                <th width="15%">Jumlah</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+
             </div>
         </div>
     </div>
@@ -92,8 +95,8 @@
                         name: 'allkode',
                         className: 'text-center',
                         render: function(data, type, row) {
-                        return data ? data : '';
-                    }
+                            return data ? data : '';
+                        }
                     },
                     {
                         data: 'uraian',

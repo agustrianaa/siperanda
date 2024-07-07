@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Direksi;
 
 use App\Exports\AllRencanaExport;
 use App\Exports\ExportRencana;
@@ -14,9 +14,17 @@ class ReportController extends Controller
 {
     public function index(){
         $units = Unit::all();
-        return view('admin.report', compact('units'));
+        return view('direksi.report', compact('units'));
     }
-    
+
+    public function exportRencanaUnit(Request $request){
+        $request->validate([
+            'unit_id' => 'required|exists:unit,id',
+        ]);
+        $unitId = $request->input('unit_id');
+        return Excel::download(new RencanaUnitExport($unitId), 'rencana_unit.xlsx');
+    }
+
     public function exportRencana(Request $request){
         $request->validate([
             'tahun' => 'required|digits:4',

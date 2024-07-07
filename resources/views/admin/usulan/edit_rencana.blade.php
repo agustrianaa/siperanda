@@ -9,17 +9,20 @@
             <div class="card-body">
                 <h3 class="card-title mb-3">Rencana Awal</h3>
                 <div class="row">
-                    <table class="table table-bordered" id="editRencAwal" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Nama Unit</th>
-                                <th>Anggaran</th>
-                                <th>Tahun</th>
-                                <th>Status</th>
-                                <th>Edit</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="editRencAwal" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Nama Unit</th>
+                                    <th>Anggaran</th>
+                                    <th>Tahun</th>
+                                    <th>Status</th>
+                                    <th>Edit</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -35,6 +38,7 @@
                 <div class="card-body">
                     <h3 class="card-title mb-3">Detail Rencana Unit</h3>
                     <div class="row">
+                        <div class="table-responsive">
                         <table class="table table-bordered" id="tabelUsulan" style="width:100%">
                             <input type="hidden" id="rencana_id" value="{{ $rencana->id }}">
                             <thead>
@@ -44,11 +48,19 @@
                                     <th>Volume</th>
                                     <th>Satuan</th>
                                     <th>Harga</th>
-                                    <th>Jumlah</th>
+                                    <th width="15%">Jumlah</th>
                                     <th width="10%">Action</th>
                                 </tr>
                             </thead>
+                            <tfoot>
+                            <tr>
+                                <th colspan="5" style="text-align:right">Total:</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
                         </table>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -219,6 +231,7 @@
                 {
                     data: 'volume',
                     name: 'volume',
+                    className : "text-center"
                 },
                 {
                     data: 'satuan',
@@ -245,7 +258,44 @@
                     searchable: false,
                     orderable: false,
                 },
-            ]
+            ],
+            order: [
+                [0, 'desc']
+            ],
+            footerCallback: function(row, data, start, end, display) {
+                var api = this.api();
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function(i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+
+                // Total over all pages
+                total = api
+                    .column(5)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Total over this page
+                pageTotal = api
+                    .column(5, {
+                        page: 'current'
+                    })
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $(api.column(5).footer()).html(
+                    'Rp ' + formatNumber(pageTotal, 0)
+                );
+            }
         });
 
         $('#editRencAwal').DataTable({
@@ -292,7 +342,7 @@
 
         function formatNumber(num) {
             // Ubah ke tipe number jika num bukan number
-        if (typeof num !== 'number') {
+            if (typeof num !== 'number') {
                 num = parseFloat(num);
             }
             // Format angka dengan pemisah ribuan

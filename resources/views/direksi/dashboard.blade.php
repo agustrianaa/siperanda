@@ -1,9 +1,12 @@
 @extends('template')
+@section('page-title')
+<h4 class="fw-semibold">Dashboard</h4>
+@endsection
 @section('content')
 
 <!--  Row 1 -->
 <div class="row">
-    <div class="col-lg-4 mb-4">
+    <!-- <div class="col-lg-4 mb-4">
         <div class="card h-100">
             <div class="card-body">
                 <div class="row align-items-start">
@@ -21,7 +24,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <div class="col-lg-4 mb-4">
         <div class="card h-100">
             <div class="card-body">

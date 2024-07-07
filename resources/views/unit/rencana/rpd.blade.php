@@ -9,21 +9,24 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <table class="table table-bordered" id="RPD">
-                        <thead>
-                            <tr>
-                                <!-- <th width="5px">No</th> -->
-                                <th>Kode</th>
-                                <th>Program/Kegiatan/KRO/RO/dsb</th>
-                                <th>Volume</th>
-                                <th>Satuan</th>
-                                <th>Harga/sat</th>
-                                <th>Jumlah</th>
-                                <th width="15%">RPD</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="RPD">
+                            <thead>
+                                <tr>
+                                    <!-- <th width="5px">No</th> -->
+                                    <th>Kode</th>
+                                    <th>Program/Kegiatan/KRO/RO/dsb</th>
+                                    <th>Volume</th>
+                                    <th>Satuan</th>
+                                    <th>Harga/sat</th>
+                                    <th>Jumlah</th>
+                                    <th width="15%">RPD</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+
                 </div>
                 <!-- <p class="mb-0">This is a sample page </p> -->
             </div>

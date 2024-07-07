@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DetailRencana;
 use App\Models\Rencana;
 use App\Models\Unit;
+use App\Models\User;
 use Illuminate\Http\Request;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +32,8 @@ class HomeController extends Controller
     }
 
     public function superadminHome(){
-        return view('super_admin.dashboard');
+        $totalUser = User::count('id');
+        return view('super_admin.dashboard', compact('totalUser'));
     }
 
     public function adminHome(){
@@ -42,7 +44,7 @@ class HomeController extends Controller
     }
 
     public function direksiHome(){
-        $totalAnggaran = Rencana::sum('jumlah');
+        $totalAnggaran = DetailRencana::sum('total');
         $totalRKA = Rencana::count('id');
         return view('direksi.dashboard', compact('totalAnggaran', 'totalRKA'));
     }

@@ -12,6 +12,19 @@
                 <div class="card-body">
                     <h5 class="card-title fw-semibold">Filter</h5>
                     <div class="row">
+                    <div class="col-lg-3 mb-2">
+                            <!-- <label for="unit">Pilih Unit </label> -->
+                            <select name="funit" id="funit" class="form-select">
+                                <option value="#" disabled selected>- Pilih Unit -</option>
+                                @if($unit->isEmpty())
+                                <option disabled>Tidak ada Unit</option>
+                                @else
+                                @foreach($unit as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                @endforeach
+                                @endif
+                            </select>
+                        </div>
                         <div class="col-lg-3 mb-2">
                             <select name="fkategori" id="fkategori" class="form-select">
                                 <option value="#" disabled selected> - Pilih Kategori - </option>
@@ -45,21 +58,24 @@
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-4">Seluruh Perencanaan</h5>
                 <div class="row">
-                    <table class="table table-bordered" id="monitoringfromUnit" style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <!-- <th width="5px">No</th> -->
-                                <th>Kode</th>
-                                <th>Program/Kegiatan/KRO/RO/dsb</th>
-                                <th>Volume</th>
-                                <th>Satuan</th>
-                                <th>Harga</th>
-                                <th>Jumlah</th>
-                                <th>RPD</th>
-                                <th>Realisasi</th>
-                                <th>Ket</th>
-                            </tr>
-                        </thead>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="monitoringfromUnit" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <!-- <th width="5px">No</th> -->
+                                    <th>Kode</th>
+                                    <th>Program/Kegiatan/KRO/RO/dsb</th>
+                                    <th>Volume</th>
+                                    <th>Satuan</th>
+                                    <th>Harga</th>
+                                    <th>Jumlah</th>
+                                    <th>RPD</th>
+                                    <th>Realisasi</th>
+                                    <th>Ket</th>
+                                </tr>
+                            </thead>
+                    </div>
+
                     </table>
                 </div>
                 <!-- <p class="mb-0">This is a sample page </p> -->
@@ -77,19 +93,22 @@
                 </div>
                 <div class="modal-body">
                     <!-- <div class="row"> -->
-                    <table class="table table-bordered" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th class="text-center">Bulan RPD</th>
-                                <th class="text-center">Anggaran</th>
-                                <th class="text-center">Bulan Realisasi</th>
-                                <th class="text-center">Anggaran</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- dari js -->
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Bulan RPD</th>
+                                    <th class="text-center">Anggaran</th>
+                                    <th class="text-center">Bulan Realisasi</th>
+                                    <th class="text-center">Anggaran</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- dari js -->
+                            </tbody>
+                        </table>
+                    </div>
+
                     <!-- </div> -->
                 </div>
                 <div class="modal-footer">
@@ -103,9 +122,6 @@
 </div>
 
 <script type="text/javascript">
-    function formatNumber(num) {
-        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
     $(document).ready(function() {
         $.ajaxSetup({
             headers: {
@@ -117,6 +133,7 @@
         function dataRencana() {
             var fkategori = $('#fkategori').val();
             var ftahun = $('#ftahun').val();
+            var funit = $('#funit').val();
             $('#monitoringfromUnit').DataTable({
                 processing: true,
                 serverSide: true,
@@ -125,6 +142,7 @@
                     url: "{{route('unit.monitoring')}}",
                     type: 'GET',
                     data: {
+                        unit_id: funit,
                         kategori_id: fkategori,
                         tahun: ftahun,
                     }
@@ -161,14 +179,20 @@
                         data: 'harga',
                         name: 'harga',
                         render: function(data, type, row) {
-                            return formatNumber(data);
+                            if (type === 'display') {
+                                return new Intl.NumberFormat('id-ID').format(data);
+                            }
+                            return data;
                         }
                     },
                     {
                         data: 'jumlahUsulan',
                         name: 'jumlahUsulan',
                         render: function(data, type, row) {
-                            return formatNumber(data);
+                            if (type === 'display') {
+                                return new Intl.NumberFormat('id-ID').format(data);
+                            }
+                            return data;
                         }
                     },
                     {
