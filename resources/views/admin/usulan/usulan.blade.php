@@ -79,7 +79,7 @@
                             <thead>
                                 <tr>
                                     <th>Unit</th>
-                                    <th>Anggaran</th>
+                                    <th>Pagu</th>
                                     <th>Tahun</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -152,7 +152,7 @@
                             <label for="tahun">Tahun</label>
                             <select name="tahun" id="tahun" class="form-select" required="Pilih Tahun">
                                 <option disabled selected>-Pilih Tahun-</option>
-                                @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
+                                @for ($year = 2020; $year <= 9999; $year++) <option value="{{$year}}">{{$year}}</option>
                                     @endfor
                             </select>
                             @if ($errors->has('year'))

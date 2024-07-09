@@ -55,7 +55,7 @@
                             <div class="col-sm-12">
                                 <input type="text" class="form-control" id="kode_parent_display" placeholder="Cari Kode Parent" maxlength="50" >
                                 <input type="hidden" id="kode_parent" name="kode_parent" >
-                                <div id="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;" required=""></div>
+                                <div id="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;"></div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -124,6 +124,7 @@
                     data: 'nama_kategori',
                     name: 'nama_kategori',
                     className: 'text-center',
+                    orderable: false,
                 },
                 {
                     data: 'uraian',

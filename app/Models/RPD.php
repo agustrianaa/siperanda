@@ -13,7 +13,7 @@ class RPD extends Model
     protected $fillable = [
         'detail_rencana_id',
         'bulan_rpd',
-        'jumlah_rpd',
+        'jumlah',
     ];
 
     public function detailRencana(){

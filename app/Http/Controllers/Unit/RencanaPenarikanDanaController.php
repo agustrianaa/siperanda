@@ -50,20 +50,13 @@ class RencanaPenarikanDanaController extends Controller
                 ->orderBy('rencana.tahun', 'desc')
                 ->get();
 
-            foreach ($rpd as $rencana) {
-                $rencana->rpds = RPD::where('detail_rencana_id', $rencana->idRencana)->get();
-            }
-
             return datatables()->of($rpd)
-                ->addColumn('bulan_rpd', function ($row) {
-                    $data = [];
-                    // Memastikan properti rpds adalah sebuah array
-                    if (!is_null($row->rpds)) {
-                        foreach ($row->rpds as $rpd) {
-                            $data[] = $rpd->bulan_rpd . ' ( ' . number_format($rpd->jumlah, 0, ',', '.') . ')';
-                        }
-                    }
-                    return implode(', ', $data);
+                ->addColumn('rpd', function ($row) {
+                    $id = $row->idRencana;
+                    $hasRpd = RPD::where('detail_rencana_id', $id)->exists();
+                $icon = $hasRpd ? 'fa-eye' : 'fa-eye-slash';
+                $rpd = '<a href="javascript:void(0)" onClick="showRPD(' . $id . ')" class="tambah btn btn-warning btn-sm"><i class="fas ' . $icon . '"></i></a>';
+                    return $rpd;
                 })
                 ->addColumn('action', function ($row) {
                     $id = $row->idRencana;
@@ -71,7 +64,7 @@ class RencanaPenarikanDanaController extends Controller
                     $action .= '<a href="javascript:void(0)" onClick="editRPD(' . $id . ')" class="edit btn btn-info btn-sm"><i class="fas fa-edit"></i></a>';
                     return $action;
                 })
-                ->rawColumns(['bulan_rpd', 'action'])
+                ->rawColumns(['rpd', 'action'])
                 ->make(true);
         }
         return view('unit.rencana.rpd');
@@ -104,17 +97,23 @@ class RencanaPenarikanDanaController extends Controller
 
     public function storeRPD(Request $request)
     {
-        // $id = $request->id;
-        // $rencana = DetailRencana::findOrFail($id);
+        $request->validate([
+            'detail_rencana_id' => 'required|integer',
+            'jumlah' => 'required|array',
+        ]);
 
-        // if (!empty($request->bulan_rpd)) {
-        $rpd = new Rpd();
-        $rpd->detail_rencana_id = $request->detail_rencana_id;
-        $rpd->bulan_rpd = $request->bulan_rpd;
-        $rpd->jumlah = $request->jumlah;
-        $rpd->save();
-        // }
-        return response()->json($rpd);
+        $jumlahData = $request->input('jumlah');
+
+        foreach ($jumlahData as $monthName => $jumlah) {
+            if (!empty($jumlah)) {
+                Rpd::updateOrCreate(
+                    ['detail_rencana_id' => $request->detail_rencana_id, 'bulan_rpd' => $monthName],
+                    ['jumlah' => $jumlah]
+                );
+            }
+        }
+
+        return response()->json(['success' => 'RPD berhasil disimpan.']);
     }
 
 
@@ -129,31 +128,43 @@ class RencanaPenarikanDanaController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request)
     {
-        //
+        $detailRencanaId = $request->id;
+        $rpdData = Rpd::where('detail_rencana_id', $detailRencanaId)->get();
+
+        $data = [
+            'detail_rencana_id' => $detailRencanaId,
+            'jumlah' => []
+        ];
+
+        foreach ($rpdData as $rpd) {
+            $data['jumlah'][$rpd->bulan_rpd] = $rpd->jumlah;
+        }
+
+        return response()->json($data);
     }
 
     /**
      * Update the specified resource in storage.
      */
     public function updateRPD(Request $request)
-{
-    $ids = $request->input('id');
-    $bulanRpd = $request->input('bulan_rpd');
-    $jumlah = $request->input('jumlah');
+    {
+        $ids = $request->input('id');
+        $bulanRpd = $request->input('bulan_rpd');
+        $jumlah = $request->input('jumlah');
 
-    foreach ($ids as $index => $id) {
-        DB::table('RPD')
-            ->where('id', $id)
-            ->update([
-                'bulan_rpd' => $bulanRpd[$index] ?? '',
-                'jumlah' => $jumlah[$index] ?? 0
-            ]);
+        foreach ($ids as $index => $id) {
+            DB::table('RPD')
+                ->where('id', $id)
+                ->update([
+                    'bulan_rpd' => $bulanRpd[$index] ?? '',
+                    'jumlah' => $jumlah[$index] ?? 0
+                ]);
+        }
+
+        return response()->json(['success' => 'Data realisasi berhasil diupdate']);
     }
-
-    return response()->json(['success' => 'Data realisasi berhasil diupdate']);
-}
 
     /**
      * Remove the specified resource from storage.

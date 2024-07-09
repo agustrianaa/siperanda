@@ -50,7 +50,6 @@ class KodeController extends Controller
         $kodeId = $request->id;
         $request->validate([
             'kode' => 'required',
-            'kode_parent' => 'required',
             'kategori_id' => 'required',
             'uraian' => 'required',
         ]);

@@ -18,6 +18,11 @@ class DetailRencana extends Model
         'volume',
         'harga',
         'status',
+        'uraian',
+        'is_revised',
+        'is_revised2',
+        'is_revised3',
+        'revisi_keterangan',
         'created_by',
     ];
 

@@ -24,6 +24,10 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
+                    <div class="col"></div>
+                <div class="col-auto">
+                        <h5 class="card-title fw-semibold mb-3">Pagu : Rp. {{number_format($rencana->anggaran, 0, ',', '.')}}</h5>
+                    </div>
                     <table class="table table-bordered" id="detail" style="width:100%">
                         <input type="hidden" id="rencana_id" value="{{ $rencana->id }}">
                         <thead>

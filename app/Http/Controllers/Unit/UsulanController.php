@@ -33,8 +33,9 @@ class UsulanController extends Controller
         if($rencanaId){
             $noteRev = RevisiNote::where('rencana_id', $rencanaId->id)->orderBy('created_at', 'desc')->first();
         }
+        $total = DetailRencana::where('rencana_id', $rencanaId->id)->sum('total');
 
-        return view('unit.rencana.usulan', compact('satuan','rencanaId', 'is_rev', 'noteRev'));
+        return view('unit.rencana.usulan', compact('satuan','rencanaId', 'is_rev', 'noteRev', 'total'));
     }
 
     public function tabel1(Request $request)
@@ -265,20 +266,17 @@ public function store2(Request $request, $id = null)
 {
     $id = $request->id;
 
-    // Ambil data DetailRencana dengan ID yang sesuai
     $detailRencana = DetailRencana::with('kodeKomponen')->findOrFail($id);
 
-    // Ambil data Rencana yang sesuai dengan DetailRencana
     $rencana = Rencana::findOrFail($detailRencana->rencana_id);
 
-    // Gabungkan kode dan uraian untuk dikirim ke view
     if ($detailRencana->kodeKomponen) {
         $detailRencana->kode_uraian = $detailRencana->kodeKomponen->kode . '.' . $detailRencana->kodeKomponen->kode_parent . ' - ' . $detailRencana->kodeKomponen->uraian;
     } else {
-        $detailRencana->kode_uraian = ''; // Atau nilai default lainnya
+        $detailRencana->kode_uraian = '';
     }
+    $detailRencana->status = $rencana->status;
 
-    // Kembalikan respons JSON dengan data DetailRencana yang diedit
     return response()->json($detailRencana);
 }
 
@@ -326,4 +324,24 @@ public function store2(Request $request, $id = null)
 
         return response()->json($detailRencana);
     }
+
+    public function checkAnggaran(Request $request)
+{
+    $detailRencanaId = $request->input('detail_rencana_id');
+    $detailRencana = DetailRencana::find($detailRencanaId);
+
+    if ($detailRencana) {
+        $rencana = $detailRencana->rencana; // Mengambil tabel rencana dari detail rencana
+        $pagu = $rencana ? $rencana->anggaran : 0;
+
+        // Menghitung total anggaran berdasarkan detail_rencana_id
+        $totalAnggaran = DetailRencana::where('rencana_id', $rencana->id)->sum('total');
+
+        return response()->json(['pagu' => $pagu, 'total_anggaran' => $totalAnggaran]);
+    }
+
+    return response()->json(['pagu' => null, 'total_anggaran' => 0], 404);
+}
+
+
 }

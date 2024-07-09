@@ -32,6 +32,13 @@
                     <a class="btn btn-success m-1" onclick="tambahRencana()" href="javascript:void(0)"><i class="ti ti-plus"></i> Rencana</a>
                 </div>
             </div>
+            @if($total > $rencanaId->anggaran)
+            <div class="row">
+                <div id="alert-warning d-none" class="alert alert-warning">
+                    Anggaran melebihi Pagu
+                </div>
+            </div>
+            @endif
         </div>
         <div class="card">
             <div class="card-body">
@@ -40,7 +47,7 @@
                         <h5 class="card-title fw-semibold mb-3">Detail Rencana</h5>
                     </div>
                     <div class="col-auto">
-                        <h5 class="card-title fw-semibold mb-3">Anggaran : Rp. {{number_format($rencanaId->anggaran, 0, ',', '.')}}</h5>
+                        <h5 class="card-title fw-semibold mb-3">Pagu : Rp. {{number_format($rencanaId->anggaran, 0, ',', '.')}}</h5>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -447,6 +454,7 @@
         $('.status-btn').on('click', function() {
             $('#showKet').modal('show');
         });
+
     });
 
     // untuk menambahkan detail usulan
@@ -538,7 +546,10 @@
                     $('#last-div').removeClass('d-none');
                     var lastTable = $('#last').DataTable();
                     lastTable.ajax.reload();
-                }
+                };
+                // if (data.total > data.paguAnggaran){
+                //     $('#alert-warning').removeClass('d-none');
+                // }
             },
             error: function(data) {
                 console.log(data);

@@ -10,7 +10,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="RPD">
+                        <table class="table table-bordered" id="RPD" style="width: 100%">
                             <thead>
                                 <tr>
                                     <!-- <th width="5px">No</th> -->
@@ -20,22 +20,28 @@
                                     <th>Satuan</th>
                                     <th>Harga/sat</th>
                                     <th>Jumlah</th>
-                                    <th width="15%">RPD</th>
+                                    <th width="5%">RPD</th>
                                     <th width="10%">Action</th>
                                 </tr>
                             </thead>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="5" style="text-align:right">Total:</th>
+                                    <th id="totalUsulan"></th>
+                                    <th id="totalRPD"></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
-
                 </div>
-                <!-- <p class="mb-0">This is a sample page </p> -->
             </div>
         </div>
     </div>
 
     <!-- modal untuk rencana penarikan dana -->
     <div class="modal fade" id="rpd-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Rencana Penarikan Dana</h5>
@@ -44,74 +50,68 @@
                 <div class="modal-body">
                     <form action="javascript:void(0)" id="rpdForm" name="rpdForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="detail_rencana_id" id="detail_rencana_id">
-                        <div class="form-group">
-                            <label for="name" class="col-sm-4 control-label">Skedul</label>
-                            <div class="col-sm-12 mb-4">
-                                <select name="bulan_rpd" id="bulan_rpd" class="form-select" required>
-                                    <option value="">-Pilih Bulan</option>
-                                    <option value="Januari">Januari</option>
-                                    <option value="Februari">Februari</option>
-                                    <option value="Maret">Maret</option>
-                                    <option value="April">April</option>
-                                    <option value="Mei">Mei</option>
-                                    <option value="Juni">Juni</option>
-                                    <option value="Juli">Juli</option>
-                                    <option value="Agustus">Agustus</option>
-                                    <option value="September">September</option>
-                                    <option value="Oktober">Oktober</option>
-                                    <option value="November">November</option>
-                                    <option value="Desember">Desember</option>
-                                </select>
+                        <div class="row">
+                            <div class="col-md-6">
+                                @for ($month = 1; $month <= 6; $month++) <div class="mb-3">
+                                    <label for="jumlah_{{ $month }}" class="form-label">{{ DateTime::createFromFormat('!m', $month)->format('F') }}</label>
+                                    <input type="number" class="form-control jumlah-input" id="jumlah_{{ $month }}" name="jumlah[{{ DateTime::createFromFormat('!m', $month)->format('F') }}]" placeholder="Masukkan anggaran untuk bulan {{ DateTime::createFromFormat('!m', $month)->format('F') }}">
                             </div>
+                            @endfor
                         </div>
-                        <div class="form-group">
-                            <label for="jumlah">Jumlah Duit nya</label>
-                            <div class="col-sm-12 mb-4">
-                                <input type="text" class="form-control" id="jumlah" name="jumlah" placeholder="Masukkan Jumlah duit nya" required>
-                            </div>
+                        <div class="col-md-6">
+                            @for ($month = 7; $month <= 12; $month++) <div class="mb-3">
+                                <label for="jumlah_{{ $month }}" class="form-label">{{ DateTime::createFromFormat('!m', $month)->format('F') }}</label>
+                                <input type="number" class="form-control jumlah-input" id="jumlah_{{ $month }}" name="jumlah[{{ DateTime::createFromFormat('!m', $month)->format('F') }}]" placeholder="Masukkan anggaran untuk bulan {{ DateTime::createFromFormat('!m', $month)->format('F') }}">
                         </div>
-                        <div class="col-sm-8 offset-sm-8"><br />
-                            <button type="button" class="btn btn-danger mr-2" data-bs-dismiss="modal">Tutup</button>
-                            <button type="submit" class="btn btn-primary" id="btn-save">Simpan</button>
-                        </div>
-                    </form>
+                        @endfor
                 </div>
-                <div class="modal-footer"></div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <h4>Total: <span id="totalJumlah">0</span></h4>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary float-end">Submit</button>
+            </form>
         </div>
+        <div class="modal-footer"></div>
     </div>
+</div>
+</div>
 
-    <!-- EDIT RPD MODAL -->
-    <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <form id="editForm">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editModalLabel">Edit RPD</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <table class="table table-bordered" style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">Bulan RPD</th>
-                                    <th class="text-center">Anggaran</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Data RPD akan diisi melalui JavaScript -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
-                        <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
-                    </div>
-                </form>
+<!-- modal untuk show -->
+<div class="modal fade" id="showModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Detail RPD</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- <div class="row"> -->
+                <table class="table table-bordered" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Bulan RPD</th>
+                            <th class="text-center">Anggaran</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- dari js -->
+                    </tbody>
+                </table>
+                <!-- </div> -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
-    <!-- END EDIT RPD MODAL -->
+</div>
+<!-- end modal show -->
+
+
+
 </div>
 
 <script type="text/javascript">
@@ -168,15 +168,9 @@
                     }
                 },
                 {
-                    data: 'bulan_rpd',
-                    name: 'bulan_rpd',
-                    render: function(data, type, row) {
-                        if (data) {
-                            return data; // Jika data tidak kosong, kembalikan nilainya
-                        } else {
-                            return ''; // Jika data kosong, kembalikan string kosong
-                        }
-                    }
+                    data: 'rpd',
+                    name: 'rpd',
+                    className: 'text-center',
                 },
                 {
                     data: 'action',
@@ -187,14 +181,57 @@
             ],
             order: [
                 [0, 'desc']
-            ]
+            ],
+            footerCallback: function(row, data, start, end, display) {
+                var api = this.api(),
+                    data;
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function(i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                        i : 0;
+                };
+
+                // Total over all pages for jumlahUsulan
+                totalUsulan = api
+                    .column(5)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                // Update footer
+                $(api.column(5).footer()).html(formatNumber(totalUsulan));
+            }
         });
+    });
 
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
+    function formatNumber(num) {
+        // Ubah ke tipe number jika num bukan number
+        if (typeof num !== 'number') {
+                num = parseFloat(num);
+            }
+            // Format angka dengan pemisah ribuan
+            return num.toLocaleString('id-ID', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
 
+            });
+    }
 
+    function calculateTotal() {
+        let total = 0;
+        $('.jumlah-input').each(function() {
+            let val = $(this).val();
+            if (val) {
+                total += parseFloat(val);
+            }
+        });
+        $('#totalJumlah').text(total);
+    }
+    $(document).on('input', '.jumlah-input', function() {
+        calculateTotal();
     });
 
     var id;
@@ -204,12 +241,14 @@
         console.log('Menjalankan fungsi tambahRPD() dengan id:', id);
         $('#rpd-modal').modal('show');
         $('#rpdForm').trigger("reset");
+        $('#detail_rencana_id').val(id);
     }
 
     $('#rpdForm').off('submit').on('submit', function(e) {
         e.preventDefault();
         var formData = new FormData(this);
-        formData.append('detail_rencana_id', id);
+        var detailRencanaId = parseInt($('#detail_rencana_id').val()); // Pastikan ini integer
+        formData.set('detail_rencana_id', detailRencanaId);
         $.ajax({
             type: "POST",
             url: "{{ route('unit.simpan_skedul')}}",
@@ -238,70 +277,21 @@
     function editRPD(id) {
         $.ajax({
             type: "GET",
-            url: "{{ route('unit.getRealisasi') }}",
+            url: "{{ route('unit.editRPD') }}",
             data: {
                 id: id
             },
             success: function(data) {
-                $('#editModal tbody').empty();
-                const rpdData = data.rpd || [];
-
-                const bulanOptions = `
-                    <option value="">-Pilih Bulan-</option>
-                    <option value="Januari">Januari</option>
-                    <option value="Februari">Februari</option>
-                    <option value="Maret">Maret</option>
-                    <option value="April">April</option>
-                    <option value="Mei">Mei</option>
-                    <option value="Juni">Juni</option>
-                    <option value="Juli">Juli</option>
-                    <option value="Agustus">Agustus</option>
-                    <option value="September">September</option>
-                    <option value="Oktober">Oktober</option>
-                    <option value="November">November</option>
-                    <option value="Desember">Desember</option>
-                `;
-
-                if (rpdData.length > 0) {
-                    rpdData.forEach(function(item) {
-                        const selectedBulan = item.bulan_rpd || '';
-
-                        $('#editModal tbody').append(
-                            '<tr>' +
-                            '<td>' +
-                            '<div class="form-group mb-3">' +
-                            '<label for="bulan_rpd">Bulan RPD</label>' +
-                            '<select name="bulan_rpd[]" class="form-select" required>' +
-                            bulanOptions +
-                            '</select>' +
-                            '</div>' +
-                            '</td>' +
-                            '<td>' +
-                            '<div class="form-group mb-3">' +
-                            '<label for="jumlah">Jumlah</label>' +
-                            '<input type="number" name="jumlah[]" value="' + (item.jumlah || '') + '" class="form-control">' +
-                            '</div>' +
-                            '</td>' +
-                            '<input type="hidden" name="id[]" value="' + item.id + '">' +
-
-                            '</tr>'
-                        );
-
-                        $('select[name="bulan_rpd[]"]').last().val(selectedBulan);
+                $('#rpd-modal').modal('show');
+                $('#id').val(data.id);
+                $('#detail_rencana_id').val(data.detail_rencana_id);
+                for (let month = 1; month <= 12; month++) {
+                    let monthName = new Date(0, month - 1).toLocaleString('default', {
+                        month: 'long'
                     });
-                } else {
-                    $('#editModal tbody').append(
-                        '<tr>' +
-                        '<td colspan="2" class="text-center">Tidak ada data rpd</td>' +
-                        '</tr>'
-                    );
+                    $('#jumlah_' + month).val(data.jumlah[monthName] || '');
                 }
-
-                $('#editModal').modal('show');
-            },
-            error: function(error) {
-                console.error(error);
-                alert('Terjadi kesalahan saat mengambil data rpd');
+                calculateTotal();
             }
         });
     }
@@ -315,13 +305,13 @@
             success: function(response) {
                 $('#editModal').modal('hide');
                 var oTable = $('#RPD').DataTable();
-                    oTable.ajax.reload(null, false);
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: 'Data RPD berhasil di update'
-                    });
-                },
+                oTable.ajax.reload(null, false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: 'Data RPD berhasil di update'
+                });
+            },
             error: function(error) {
                 console.error(error);
                 alert('Terjadi kesalahan saat mengupdate data RPD');
@@ -329,5 +319,59 @@
         });
     });
 
+    function showRPD(id) {
+        console.log(id);
+        $.ajax({
+            type: "GET",
+            url: "{{ route('unit.getRealisasi',) }}",
+            data: {
+                id: id
+            },
+            success: function(data) {
+                // Kosongkan tabel sebelum mengisi data baru
+                $('#showModal tbody').empty();
+
+                const rpdData = data.rpd;
+                const maxLength = Math.max(rpdData.length);
+                let totalRpdAnggaran = 0;
+
+                for (let i = 0; i < maxLength; i++) {
+                    const rpdItem = rpdData[i] || {};
+
+                    const rpdAnggaran = parseFloat(rpdItem.jumlah || 0);
+
+                    totalRpdAnggaran += rpdAnggaran;
+
+                    $('#showModal tbody').append(
+                        '<tr>' +
+                        '<td class="text-center">' + (rpdItem.bulan_rpd || '-') + '</td>' +
+                        '<td class="text-center">' + (rpdAnggaran.toLocaleString('id-ID') || '-') + '</td>' +
+                        '</tr>'
+                    );
+                }
+
+                if (maxLength === 0) {
+                    $('#showModal tbody').append(
+                        '<tr>' +
+                        '<td colspan="4" class="text-center">Tidak ada data</td>' +
+                        '</tr>'
+                    );
+                }
+
+                // Tambahkan baris untuk total anggaran
+                $('#showModal tbody').append(
+                    '<tr>' +
+                    '<td class="text-center fw-semibold">Total</td>' +
+                    '<td class="text-center font-weight-bold">' + totalRpdAnggaran.toLocaleString('id-ID') + '</td>' +
+                    '</tr>'
+                );
+                $('#showModal').modal('show');
+            },
+            error: function(error) {
+                console.error(error);
+                alert('Terjadi kesalahan saat mengambil data realisasi');
+            }
+        });
+    }
 </script>
 @endsection

@@ -15,6 +15,7 @@ class Rencana extends Model
         'tahun',
         'jumlah',
         'anggaran',
+        'status',
     ];
 
     public function unit(){

@@ -73,6 +73,14 @@
                     <span class="hide-menu">Perencanaan</span>
                 </li>
                 <li class="sidebar-item">
+                    <a class="sidebar-link" href="{{route("admin.anggaran")}}" aria-expanded="false">
+                        <span>
+                            <i class="ti ti-article"></i>
+                        </span>
+                        <span class="hide-menu">Anggaran</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("admin.usulan")}}" aria-expanded="false">
                         <span>
                             <i class="ti ti-article"></i>

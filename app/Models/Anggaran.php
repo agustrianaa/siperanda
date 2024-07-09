@@ -9,12 +9,13 @@ class Anggaran extends Model
 {
     use HasFactory;
 
-    protected $table = 'anggran';
+    protected $table = 'anggaran';
 
     protected $fillable = [
-        'all_anggran',
+        'all_anggaran',
         'unit_id',
         'anggaran_perunit',
+        'tahun',
     ];
 
     public function unit(){
