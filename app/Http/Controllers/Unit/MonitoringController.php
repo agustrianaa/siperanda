@@ -42,7 +42,7 @@ class MonitoringController extends Controller
                 'kode_komponen.uraian as uraian_kode_komponen',
                 'satuan.*',
                 'satuan.satuan as satuan',
-                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(parent.kode, '')) as allkode")
+                KodeKomponen::raw("CONCAT(parent.kode, '.', COALESCE(kode_komponen.kode, '')) as allkode")
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')

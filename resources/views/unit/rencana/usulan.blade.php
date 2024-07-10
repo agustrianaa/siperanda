@@ -403,35 +403,40 @@
         });
 
         $('#kode').on('input', function() {
-            let searchValue = $(this).val();
-            if (searchValue.length > 0) {
-                $.ajax({
-                    url: '/unit/search/code',
-                    method: 'GET',
-                    data: {
-                        search: searchValue
-                    },
-                    success: function(data) {
-                        console.log('Data received:', data);
-                        let results = $('#kode-results');
-                        results.empty();
-                        if (data.length > 0) {
-                            $.each(data, function(index, item) {
-                                results.append(`<div class="dropdown-item" data-id="${item.id}" data-kode="${item.kode}" data-uraian="${item.uraian || ''}">${item.kode}.${item.kode_parent|| ''} - ${item.uraian || 'Uraian Kosong'}</div>`);
-                            });
-                            results.show();
-                        } else {
-                            results.hide();
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        console.log('Error:', error);
-                    }
-                });
-            } else {
-                $('#kode-results').hide();
+    let searchValue = $(this).val();
+    if (searchValue.length > 0) {
+        $.ajax({
+            url: '/unit/search/code',
+            method: 'GET',
+            data: {
+                search: searchValue
+            },
+            success: function(data) {
+                console.log('Data received:', data);
+                let results = $('#kode-results');
+                results.empty();
+                if (data.length > 0) {
+                    $.each(data, function(index, item) {
+                        let kodeParent = item.kode_parent ? item.kode_parent : ''; // Jika tidak ada kode_parent, berikan string kosong
+                        results.append(`
+                            <div class="dropdown-item" data-id="${item.id}" data-kode="${item.kode}" data-uraian="${item.uraian || ''}">
+                                ${item.kode}.${kodeParent} - ${item.uraian || 'Uraian Kosong'}
+                            </div>
+                        `);
+                    });
+                    results.show();
+                } else {
+                    results.hide();
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('Error:', error);
             }
         });
+    } else {
+        $('#kode-results').hide();
+    }
+});
 
 
         // Handle click on search results

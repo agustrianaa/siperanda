@@ -64,7 +64,7 @@ class UsulanController extends Controller
                 'rencana.tahun as tahun',
                 'kode_komponen.*',
                 'satuan.*',
-                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(parent.kode, '')) as allkode")
+                KodeKomponen::raw("CONCAT(parent.kode, '.', COALESCE(kode_komponen.kode, '')) as allkode")
             )
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
@@ -116,7 +116,7 @@ class UsulanController extends Controller
                 'rencana.tahun as tahun',
                 'kode_komponen.*',
                 'satuan.*',
-                KodeKomponen::raw("CONCAT(kode_komponen.kode, '.', COALESCE(parent.kode, '')) as allkode")
+                KodeKomponen::raw("CONCAT(parent.kode, '.', COALESCE(kode_komponen.kode, '')) as allkode")
             )
                 ->join('rencana', 'revisi.rencana_id', '=', 'rencana.id')
                 ->leftJoin('kode_komponen', 'revisi.kode_komponen_id', '=', 'kode_komponen.id')
@@ -229,19 +229,19 @@ public function store2(Request $request, $id = null)
 
 
 
-    public function searchByCode(Request $request)
-    {
-        Log::info('searchByCode: ');
-        $search = $request->input('search');
-        Log::info('Search: ' . $search);
+public function searchByCode(Request $request)
+{
+    $search = $request->input('search');
 
-        $results = KodeKomponen::where('kode', 'LIKE', "%{$search}%")
-            ->orWhere('uraian', 'LIKE', "%{$search}%")
-            ->get();
-        Log::info('Results: ' . $results);
+    $results = KodeKomponen::leftJoin('kode_komponen as parents', 'kode_komponen.kode_parent', '=', 'parents.id')
+        ->select('kode_komponen.*', 'parents.kode as kode_parent')
+        ->where('kode_komponen.kode', 'LIKE', "%{$search}%")
+        ->orWhere('kode_komponen.uraian', 'LIKE', "%{$search}%")
+        ->get();
 
-        return response()->json($results);
-    }
+    return response()->json($results);
+}
+
 
 
     private function buildHierarchy($usulan, $parentId = null, $prefix = '')

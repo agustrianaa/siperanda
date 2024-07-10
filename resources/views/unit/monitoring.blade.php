@@ -26,18 +26,6 @@
                             </select>
                         </div>
                         <div class="col-lg-3 mb-2">
-                            <select name="fkategori" id="fkategori" class="form-select">
-                                <option value="#" disabled selected> - Pilih Kategori - </option>
-                                @if($kategoris->isEmpty())
-                                <option disabled>Tidak ada kategori</option>
-                                @else
-                                @foreach($kategoris as $item)
-                                <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
-                                @endforeach
-                                @endif
-                            </select>
-                        </div>
-                        <div class="col-lg-3 mb-2">
                             <select name="fkategori" id="ftahun" class="form-select">
                                 <option value="#" disabled selected> - Pilih Tahun - </option>
                                 @for ($year = 2020; $year <= 9999; $year++) <option value="{{$year}}">{{$year}}</option>
@@ -141,12 +129,10 @@
         });
         dataRencana()
 
-        function dataRencana() {
-            var fkategori = $('#fkategori').val();
+        function dataRencana() {     
             var ftahun = $('#ftahun').val();
             var funit = $('#funit').val();
             $('#dataAnggaran').DataTable({
-                "dom": 't',
                 processing: true,
                 serverSide: true,
                 destroy: true,
@@ -204,7 +190,6 @@
             })
 
             $('#all_anggaran').DataTable({
-                "dom": 't',
                 processing: true,
                 serverSide: true,
                 destroy: true,

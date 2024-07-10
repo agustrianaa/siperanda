@@ -45,7 +45,10 @@ class DetailRencanaController extends Controller
                     $action .= '<a href="javascript:void(0)" onClick="hapusRenc(' . $id . ')" class="edit btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
                     return $action;
                 } else {
-                    return '<button class="btn btn-danger btn-sm" disabled><i class="fa fa-times"></i></button>';
+                    $id = $row->idRencana;
+                    $action = '<a href="javascript:void(0)" onClick="editParent(' . $id . ')" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i>Parent</a>';
+                    $action .= '<button class="btn btn-danger btn-sm" disabled><i class="fa fa-times"></i></button>';
+                    return $action;
                 }
                 })
                 ->rawColumns(['action'])

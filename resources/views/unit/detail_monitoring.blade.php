@@ -1,6 +1,6 @@
 @extends('template')
 @section('page-title')
-<h4 class="fw-semibold">Monitoring</h4>
+<h4 class="fw-semibold">Detail Monitoring</h4>
 @endsection
 @section('content')
 
@@ -162,7 +162,7 @@
         console.log(id);
         $.ajax({
             type: "GET",
-            url: "{{ route('unit.getRealisasi',) }}",
+            url: "{{ route('unit.getRealisasi') }}",
             data: {
                 id: id
             },
@@ -214,6 +214,18 @@
                     '<td class="text-center font-weight-bold">' + totalRealisasiAnggaran.toLocaleString('id-ID') + '</td>' +
                     '</tr>'
                 );
+
+                // Hitung sisa anggaran
+                const sisaAnggaran = totalRpdAnggaran - totalRealisasiAnggaran;
+
+                // Tambahkan baris untuk sisa anggaran
+                $('#showModal tbody').append(
+                    '<tr>' +
+                    '<td class="text-center fw-semibold">Sisa Anggaran</td>' +
+                    '<td colspan="3" class="text-center font-weight-bold">' + sisaAnggaran.toLocaleString('id-ID') + '</td>' +
+                    '</tr>'
+                );
+
                 $('#showModal').modal('show');
             },
             error: function(error) {
