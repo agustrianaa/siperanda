@@ -49,7 +49,7 @@ class UsulanController extends Controller
             return datatables()->of($usulan)
             ->addColumn('action', function ($row) {
                 $id = $row->idRencana1;
-                $action =  '<a href="javascript:void(0)" onClick="showUsulan(' . $id . ')" class="add btn btn-success btn-sm mr-2"><i class="fas fa-eye"></i></a>';
+                $action =  '<a href="javascript:void(0)" onClick="showUsulan(' . $id . ')" class="add btn btn-warning btn-sm mr-2">Validasi</i></a>';
                 $action .=  '<a href="javascript:void(0)" onClick="editUsulan(' . $id . ')" class="add btn btn-success btn-sm mr-2"><i class="fas fa-edit"></i></a>';
                 $action .= '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm mr-2"><i class="fas fa-trash"></i></a>';
                 return $action;
@@ -155,7 +155,11 @@ class UsulanController extends Controller
         $rencana = Rencana::findorFail($id);
         $satuan = Satuan::all();
         $unit = Unit::all();
-        return view('admin.usulan.edit_rencana', compact('rencana', 'satuan', 'unit'));
+        $parent = DetailRencana::select('kode_komponen.*', 'detail_rencana.id as detail_rencana_id')
+        ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+        ->where('detail_rencana.rencana_id', $id)
+        ->get();
+        return view('admin.usulan.edit_rencana', compact('rencana', 'satuan', 'unit', 'parent'));
     }
 
     // untuk mencari kode/uraian dari db Kode Komponen

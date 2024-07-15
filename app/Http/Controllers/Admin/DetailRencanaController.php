@@ -36,20 +36,20 @@ class DetailRencanaController extends Controller
                 ->where('rencana.id', $id)
                 ->get();
 
-                $currentUser = Auth::user();
+            $currentUser = Auth::user();
             return datatables()->of($rencana)
                 ->addColumn('action', function ($row) use ($currentUser) {
                     if ($currentUser->role == 'admin' && $row->created_by == 'admin') {
-                    $id = $row->idRencana;
-                    $action = '<a href="javascript:void(0)" onClick="editRenc(' . $id . ')" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>';
-                    $action .= '<a href="javascript:void(0)" onClick="hapusRenc(' . $id . ')" class="edit btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
-                    return $action;
-                } else {
-                    $id = $row->idRencana;
-                    $action = '<a href="javascript:void(0)" onClick="editParent(' . $id . ')" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i>Parent</a>';
-                    $action .= '<button class="btn btn-danger btn-sm" disabled><i class="fa fa-times"></i></button>';
-                    return $action;
-                }
+                        $id = $row->idRencana;
+                        $action = '<a href="javascript:void(0)" onClick="editRenc(' . $id . ')" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>';
+                        $action .= '<a href="javascript:void(0)" onClick="hapusRenc(' . $id . ')" class="edit btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                        return $action;
+                    } else {
+                        $id = $row->idRencana;
+                        $action = '<a href="javascript:void(0)" onClick="editParent(' . $id . ')" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i>Parent</a>';
+                        // $action .= '<button class="btn btn-danger btn-sm" disabled><i class="fa fa-times"></i></button>';
+                        return $action;
+                    }
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -86,10 +86,11 @@ class DetailRencanaController extends Controller
         return response()->json(['status' => 'not found'], 404);
     }
 
-    public function editLrencana(Request $request){
+    public function editLrencana(Request $request)
+    {
         $id = $request->id;
-    // Ambil data DetailRencana dengan ID yang sesuai
-    $detailRencana = DetailRencana::with('kodeKomponen')->findOrFail($id);
+        // Ambil data DetailRencana dengan ID yang sesuai
+        $detailRencana = DetailRencana::with('kodeKomponen')->findOrFail($id);
         $rencana = Rencana::findOrFail($detailRencana->rencana_id);
 
         // Gabungkan kode dan uraian untuk dikirim ke view
@@ -138,7 +139,8 @@ class DetailRencanaController extends Controller
     }
 
     // untuk menghapus usulan yang ada di halaman lengkapi usulan
-    public function destroy(Request $request){
+    public function destroy(Request $request)
+    {
         $detailRencana = DetailRencana::findOrFail($request->id);
 
         // Hapus detail rencana
@@ -176,6 +178,28 @@ class DetailRencanaController extends Controller
         $rencana->tahun = $request->input('tahun') . '-01-01';
         $rencana->save();
         return response()->json($rencana);
+    }
+
+    public function storeParent(Request $request) {
+        // Validasi input
+        $request->validate([
+            'noparent_id' => 'required|exists:detail_rencana,id',
+            // Validasi lainnya jika diperlukan
+        ]);
+
+        // Simpan data
+        $detailRencanaId = $request->input('id');
+        $detailRencana = DetailRencana::find($detailRencanaId);
+        if ($detailRencana) {
+            // Misal menyimpan noparent_id ke dalam suatu field, sesuaikan dengan kebutuhan Anda
+            $detailRencana->noparent_id = $request->input('noparent_id');
+            // Set field lainnya sesuai kebutuhan
+            $detailRencana->save();
+
+            return response()->json(['success' => 'Data berhasil diperbarui']);
+        } else {
+            return response()->json(['error' => 'Data tidak ditemukan'], 404);
+        }
     }
 
 }

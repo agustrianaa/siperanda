@@ -24,11 +24,14 @@
                         </div>
                         <div class="form-group">
                             <label for="tahun">Pilih Tahun:</label>
-                            <select name="tahun" id="tahun" class="form-control" required="">
-                                <option value="#" disabled selected> -- Tahun -- </option>
-                                @for($i = 2020; $i <= date('Y'); $i++) <option value="{{ $i }}">{{ $i }}</option>
+                            <select name="tahun" id="tahun" class="form-select" required="Pilih Tahun">
+                                <option disabled selected>-Pilih Tahun-</option>
+                                @for ($year = 2020; $year <= 9999; $year++) <option value="{{$year}}">{{$year}}</option>
                                     @endfor
                             </select>
+                            @if ($errors->has('year'))
+                            <span class="text-danger">{{$errors->first('year')}}</span>
+                            @endif
                         </div>
                         <button type="submit" class="btn btn-info mt-3 float-end">Export Data</button>
                     </form>

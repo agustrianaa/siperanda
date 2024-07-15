@@ -1,52 +1,17 @@
 @extends('template')
 @section('page-title')
-<h4 class="fw-semibold">Monitoring</h4>
+<h4 class="fw-semibold">Detail Monitoring</h4>
 @endsection
 @section('content')
 
 <div class="container-fluid">
-    <div class="row">
-        <!-- filter -->
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title fw-semibold">Filter</h5>
-                    <div class="row">
-                    <div class="col-lg-3 mb-2">
-                            <select name="fkategori" id="fkategori" class="form-select">
-                                <option value="#" disabled selected> - Pilih Kategori - </option>
-                                @if($kategoris->isEmpty())
-                                <option disabled>Tidak ada kategori</option>
-                                @else
-                                @foreach($kategoris as $item)
-                                <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
-                                @endforeach
-                                @endif
-                            </select>
-                        </div>
-                        <div class="col-lg-3 mb-2">
-                            <select name="ftahun" id="ftahun" class="form-select">
-                                <option value="#" disabled selected> - Pilih Tahun - </option>
-                                @for ($year = 2020; $year <= 9999; $year++) <option value="{{$year}}">{{$year}}</option>
-                                    @endfor
-                            </select>
-                        </div>
-                        <div class="col-lg-1 mb-1">
-                            <button class="btn btn-dark" id="resetFilter">Reset</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- end filter -->
-    </div>
     <div class="row">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-4">Seluruh Perencanaan</h5>
                 <div class="row">
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="monitoringfromUnit" style="width: 100%;">
+                        <table class="table table-bordered" id="monitoringfromDireksi" style="width: 100%;">
                             <thead>
                                 <tr>
                                     <!-- <th width="5px">No</th> -->
@@ -115,21 +80,12 @@
         dataRencana()
 
         function dataRencana() {
-            var fkategori = $('#fkategori').val();
-            var ftahun = $('#ftahun').val();
-            var funit = $('#funit').val();
-            $('#monitoringfromUnit').DataTable({
+            $('#monitoringfromDireksi').DataTable({
                 processing: true,
                 serverSide: true,
                 destroy: true,
                 ajax: {
-                    url: "{{route('unit.monitoring')}}",
-                    type: 'GET',
-                    data: {
-                        unit_id: funit,
-                        kategori_id: fkategori,
-                        tahun: ftahun,
-                    }
+                    url: "{{route('direksi.monitoring')}}",
                 },
                 columns: [{
                         data: 'allkode',
@@ -191,32 +147,13 @@
                 ]
             });
         }
-
-        $('#funit').on('change', function() {
-            dataRencana();
-        });
-
-        $('#fkategori').on('change', function() {
-            dataRencana();
-        });
-
-        $('#ftahun').on('change', function() {
-            dataRencana();
-        });
-
-        $('#resetFilter').click(function() {
-            $('#funit').val("#").trigger('change');
-            $('#fkategori').val("#").trigger('change');
-            $('#ftahun').val("#").trigger('change');
-            dataRencana();
-        })
     });
 
     function show(id) {
         console.log(id);
         $.ajax({
             type: "GET",
-            url: "{{ route('unit.getRealisasi') }}",
+            url: "{{ route('direksi.getRealisasi') }}",
             data: {
                 id: id
             },

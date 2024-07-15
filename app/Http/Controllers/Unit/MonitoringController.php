@@ -48,7 +48,8 @@ class MonitoringController extends Controller
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-                ->where('rencana.status', '=', 'approved');
+                ->where('rencana.status', '=', 'approved')
+                ->where('rencana.unit_id', $unit->id);
 
             if ($funit) {
                 $rencana->where('rencana.unit_id', $funit);

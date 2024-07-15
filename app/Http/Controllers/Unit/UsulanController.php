@@ -26,6 +26,7 @@ class UsulanController extends Controller
 
         $is_rev = 0;
         $noteRev ='';
+        $total='';
 
         if ($rencanaId) {
             $is_rev = DetailRencana::where('rencana_id', $rencanaId->id)->where('is_revised', true)->count();
@@ -33,7 +34,10 @@ class UsulanController extends Controller
         if($rencanaId){
             $noteRev = RevisiNote::where('rencana_id', $rencanaId->id)->orderBy('created_at', 'desc')->first();
         }
-        $total = DetailRencana::where('rencana_id', $rencanaId->id)->sum('total');
+        if($rencanaId){
+            $total = DetailRencana::where('rencana_id', $rencanaId->id)->sum('total');
+        }
+
 
         return view('unit.rencana.usulan', compact('satuan','rencanaId', 'is_rev', 'noteRev', 'total'));
     }

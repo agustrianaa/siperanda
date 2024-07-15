@@ -26,19 +26,20 @@
                 </div>
             </div>
         </div>
-        <div class="row mb-2">
-            <div class="col">
-            </div>
-            <div class="col-auto">
-                <a href="javascript:void(0)" onclick="KompletRencana()" class="btn btn-info">Lengkapi Usulan</a>
-            </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col">
         </div>
-        <div class="row">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title mb-3">Detail Rencana Unit</h3>
-                    <div class="row">
-                        <div class="table-responsive">
+        <div class="col-auto">
+            <a href="javascript:void(0)" onclick="KompletRencana()" class="btn btn-info">Lengkapi Usulan</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title mb-3">Detail Rencana Unit</h3>
+                <div class="row">
+                    <div class="table-responsive">
                         <table class="table table-bordered" id="tabelUsulan" style="width:100%">
                             <input type="hidden" id="rencana_id" value="{{ $rencana->id }}">
                             <thead>
@@ -53,138 +54,174 @@
                                 </tr>
                             </thead>
                             <tfoot>
-                            <tr>
-                                <th colspan="5" style="text-align:right">Total:</th>
-                                <th></th>
-                            </tr>
-                        </tfoot>
+                                <tr>
+                                    <th colspan="5" style="text-align:right">Total:</th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
                         </table>
-                        </div>
+                    </div>
 
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- modal untuk menambahkan keterangan usulan -->
-        <div class="modal fade" id="lengkapiUsulan-modal" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Tambahkan Rencana</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="javascript:void(0)" id="lengkapiUsulan-form" name="lengkapiUsulan-form" class="form-horizontal" method="POST" enctype="multipart/form-data">
-                            <input type="hidden" name="id" id="id">
-                            <input type="hidden" name="noparent_id" id="noparent_id">
-                            <input type="hidden" name="created_by" id="created_bye" value="admin">
-                            <div class="form-group mb-2" id="uraian-group" style="display:none;">
-                                <label for="uraian" class="col-sm-4 control-label">Uraian</label>
-                                <div class="col-sm-12">
-                                    <textarea name="uraian" id="uraian" class="form-control" placeholder="Masukkan uraian" maxlength="255"></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group mb-2">
-                                <label for="name" class="col-sm-4 control-label">Kode</label>
-                                <div class="col-sm-12">
-                                    <input type="text" class="form-control" id="kode" name="kode" placeholder="Masukkan kode" maxlength="50" required="">
-                                    <input type="hidden" id="kode_komponen_id" name="kode_komponen_id">
-                                    <div id="kode-results" name="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;"></div>
-                                </div>
-                            </div>
-                            <div class="form-group mb-2">
-                                <label for="name" class="col-sm-4 control-label">Volume</label>
-                                <div class="col-sm-12">
-                                    <input type="number" class="form-control" id="volume" name="volume" placeholder="Masukkan volume" maxlength="50" required="">
-                                </div>
-                            </div>
-                            <div class="form-group mb-2">
-                                <label for="name" class="col-sm-4 control-label">Satuan</label>
-                                <select name="satuan_id" id="satuan_id" class="form-control">
-                                    <option disabled selected>-Pilih Satuan-</option>
-                                    @foreach ($satuan as $item )
-                                    <option value="{{$item->id}}">{{$item->satuan}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="form-group mb-2">
-                                <label for="name" class="col-sm-4 control-label">Harga</label>
-                                <div class="col-sm-12">
-                                    <input type="numbe" class="form-control" id="harga" name="harga" placeholder="Masukkan Harga" maxlength="50" required="">
-                                </div>
-                            </div>
-                            <div class="col-sm-8 offset-sm-8"><br />
-                                <button type="button" class="btn btn-danger mr-2" data-bs-dismiss="modal">Tutup</button>
-                                <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- modal untul mengedit data rencana awal -->
-        <div class="modal fade" id="editRencanaAwal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Awal Rencana</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form action="javascript:void(0)" id="editRencanaAwalForm" name="editRencanaAwalForm" class="form-horizontal" method="POST" enctype="multipart/form-data" class="needs-validation">
-                            <input type="hidden" id="id" name="id">
-                            <div class="form-group mb-2">
-                                <label for="unit_id">Unit</label>
-                                <select name="unit_id" id="unit_id" class="form-select" required="Harus diisi">
-                                    <option disabled selected>- Pilih Unit -</option>
-                                    @if($unit->isEmpty())
-                                    <option disabled>Tidak ada Unit</option>
-                                    @else
-                                    @foreach ($unit as $data )
-                                    <option value="{{$data->id}}">{{$data->name}}</option>
-                                    @endforeach
-                                    @endif
-                                </select>
-                                <div class="invalid-feedback">
-                                    Unit Harus Dipilih
-                                </div>
-                                <div class="valid-feedback">
-                                    Good Job!
-                                </div>
-                            </div>
-                            <div class="form-group mb-2">
-                                <label for="tahun">Tahun</label>
-                                <select name="tahun" id="tahun" class="form-select" required="Pilih Tahun">
-                                    <option disabled selected>-Pilih Tahun-</option>
-                                    @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
-                                        @endfor
-                                </select>
-                                @if ($errors->has('year'))
-                                <span class="text-danger">{{$errors->first('year')}}</span>
-                                @endif
-                            </div>
-                            <div class="form-group mb-2">
-                                <label for="note">Anggaran</label>
-                                <div class="col-sm-12">
-                                    <input type="number" name="anggaran" id="anggaran" class="form-control" placeholder="Masukkan Anggaran"></input>
-                                </div>
-                            </div>
-                            <div class="col-sm-8 offset-sm-8"><br />
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
-                                <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- modal untuk menambahkan keterangan usulan -->
+    <div class="modal fade" id="lengkapiUsulan-modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambahkan Rencana</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="javascript:void(0)" id="lengkapiUsulan-form" name="lengkapiUsulan-form" class="form-horizontal" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" name="id" id="id">
+                        <input type="hidden" name="noparent_id" id="noparent_id">
+                        <input type="hidden" name="created_by" id="created_bye" value="admin">
+                        <div class="form-group mb-2" id="uraian-group" style="display:none;">
+                            <label for="uraian" class="col-sm-4 control-label">Uraian</label>
+                            <div class="col-sm-12">
+                                <textarea name="uraian" id="uraian" class="form-control" placeholder="Masukkan uraian" maxlength="255"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="name" class="col-sm-4 control-label">Kode</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="kode" name="kode" placeholder="Masukkan kode" maxlength="50" required="">
+                                <input type="hidden" id="kode_komponen_id" name="kode_komponen_id">
+                                <div id="kode-results" name="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="name" class="col-sm-4 control-label">Volume</label>
+                            <div class="col-sm-12">
+                                <input type="number" class="form-control" id="volume" name="volume" placeholder="Masukkan volume" maxlength="50" required="">
+                            </div>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="name" class="col-sm-4 control-label">Satuan</label>
+                            <select name="satuan_id" id="satuan_id" class="form-control">
+                                <option disabled selected>-Pilih Satuan-</option>
+                                @foreach ($satuan as $item )
+                                <option value="{{$item->id}}">{{$item->satuan}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="name" class="col-sm-4 control-label">Harga</label>
+                            <div class="col-sm-12">
+                                <input type="numbe" class="form-control" id="harga" name="harga" placeholder="Masukkan Harga" maxlength="50" required="">
+                            </div>
+                        </div>
+                        <div class="col-sm-8 offset-sm-8"><br />
+                            <button type="button" class="btn btn-danger mr-2" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal untul mengedit data rencana awal -->
+    <div class="modal fade" id="editRencanaAwal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Awal Rencana</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="javascript:void(0)" id="editRencanaAwalForm" name="editRencanaAwalForm" class="form-horizontal" method="POST" enctype="multipart/form-data" class="needs-validation">
+                        <input type="hidden" id="id" name="id">
+                        <div class="form-group mb-2">
+                            <label for="unit_id">Unit</label>
+                            <select name="unit_id" id="unit_id" class="form-select" required="Harus diisi">
+                                <option disabled selected>- Pilih Unit -</option>
+                                @if($unit->isEmpty())
+                                <option disabled>Tidak ada Unit</option>
+                                @else
+                                @foreach ($unit as $data )
+                                <option value="{{$data->id}}">{{$data->name}}</option>
+                                @endforeach
+                                @endif
+                            </select>
+                            <div class="invalid-feedback">
+                                Unit Harus Dipilih
+                            </div>
+                            <div class="valid-feedback">
+                                Good Job!
+                            </div>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="tahun">Tahun</label>
+                            <select name="tahun" id="tahun" class="form-select" required="Pilih Tahun">
+                                <option disabled selected>-Pilih Tahun-</option>
+                                @for ($year = 2020; $year <= 9999; $year++) <option value="{{$year}}">{{$year}}</option>
+                                    @endfor
+                            </select>
+                            @if ($errors->has('year'))
+                            <span class="text-danger">{{$errors->first('year')}}</span>
+                            @endif
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="note">Anggaran</label>
+                            <div class="col-sm-12">
+                                <input type="number" name="anggaran" id="anggaran" class="form-control" placeholder="Masukkan Anggaran"></input>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 offset-sm-8"><br />
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- modal untuk menambahkan parent -->
+    <div class="modal fade" id="editParent" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Tambahkan Awal Rencana</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="javascript:void(0)" id="editParentForm" name="editParentForm" class="form-horizontal" method="POST" enctype="multipart/form-data" class="needs-validation">
+                        <input type="hidden" id="id" name="id">
+                        <div class="form-group mb-2">
+                            <label for="noparent_id">Parent</label>
+                            <select name="noparent_id" id="noparent_id" class="form-select" required="Harus diisi">
+                                <option disabled selected>- Pilih Parent -</option>
+                                @if($unit->isEmpty())
+                                <option disabled>Tidak ada Unit</option>
+                                @else
+                                @foreach ($parent as $data )
+                                <option value="{{$data->detail_rencana_id }}">{{$data->kode_parent}} . {{$data->kode}} . {{$data->uraian}}</option>
+                                @endforeach
+                                @endif
+                            </select>
+                        </div>
+                        <div class="col-sm-8 offset-sm-8"><br />
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary" id="btn-simpan">Simpan</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end modal -->
 </div>
 
 <script type="text/javascript">
@@ -215,7 +252,8 @@
                     name: 'allkode',
                     render: function(data, type, row) {
                         return data ? data : '';
-                    }
+                    },
+                    orderable :false,
                 },
                 {
                     data: 'uraian',
@@ -226,12 +264,13 @@
                         } else {
                             return row.uraian_rencana;
                         }
-                    }
+                    },
+                    orderable :false,
                 },
                 {
                     data: 'volume',
                     name: 'volume',
-                    className : "text-center"
+                    className: "text-center"
                 },
                 {
                     data: 'satuan',
@@ -483,6 +522,47 @@
             }
         });
     }
+
+    function editParent(id) {
+    console.log(id);
+    $('#editParent').modal('show');
+
+    $('#editParentForm').off('submit').on('submit', function(e) {
+        e.preventDefault(); // Mencegah form submit default
+
+        var formData = new FormData(this);
+        formData.append('id', id); // Menambahkan ID ke form data
+
+        $.ajax({
+            type: "POST",
+            url: "{{ route('admin.simpan_parent') }}",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                $("#editParent").modal('hide');
+                var oTable = $('#editRencAwal').DataTable();
+                oTable.ajax.reload();
+                $("#btn-simpan").html('Submit');
+                $("#btn-simpan").attr("disabled", false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.success
+                });
+            },
+            error: function(data) {
+                console.log(data);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Terjadi kesalahan saat menyimpan data'
+                });
+            }
+        });
+    });
+}
 
     function editRencAwal(id) {
         $.ajax({

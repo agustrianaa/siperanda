@@ -105,6 +105,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::get('/rencana/check-status', [DetailRencanaController::class, 'checkStatus'])->name('rencana.checkStatus');
     Route::get('/admin/edit-lrencana',  [DetailRencanaController::class, 'editLrencana'])->name('admin.edit_Lrencana');
     Route::post('/admin/hapus-usulan', [DetailRencanaController::class, 'destroy'])->name('admin.hapus_usulan');
+    Route::post('/admin/simpan-parent', [DetailRencanaController::class, 'storeParent'])->name('admin.simpan_parent');
     // RENCANA AWAL
     Route::post('/admin/buka-rencana', [AdminUsulanController::class, 'store'])->name('admin.bukaRencana');
     Route::post('/admin/simpan-RA', [DetailRencanaController::class, 'storeEditRA'])->name('admin.simpan_RA');
@@ -121,6 +122,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::post('/admin/delete-realisasi', [AdminMonitoringController::class, 'deleteRealisasi'])->name('admin.deleteRealisasi');
     Route::get('/admin/show-realisasi', [AdminMonitoringController::class, 'getRealisasi'])->name('admin.getRealisasi');
 
+
     // PROFILE
     Route::get('/admin/profile', [AdminProfileController::class, 'index'])->name('admin.profile');
     // REPORT
@@ -136,6 +138,9 @@ Route::middleware(['auth', 'user-access:direksi'])->group(function () {
     // monitoring
     Route::get('/direksi/monitoring', [DireksiMonitoringController::class, 'index'])->name('direksi.monitoring');
     Route::get('/direksi/show-realisasi', [DireksiMonitoringController::class, 'getRealisasi'])->name('direksi.getRealisasi');
+    Route::get('/direksi/all-anggaran', [DireksiMonitoringController::class, 'allAnggaran'])->name('direksi.allAnggaran');
+    Route::get('/direksi/data-anggaran', [DireksiMonitoringController::class, 'dataAnggaran'])->name('direksi.dataAnggaran');
+    Route::get('/direksi/detail-monitoring', [DireksiMonitoringController::class, 'show'])->name('direksi.show_monitoring');
     // profile
     Route::get('/direksi/profile', [DireksiProfileController::class, 'index'])->name('direksi.profile');
     // report
