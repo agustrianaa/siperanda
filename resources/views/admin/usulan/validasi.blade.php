@@ -100,6 +100,7 @@
         });
         var rencanaId = $('#rencana_id').val();
         $('#detail').DataTable({
+            "dom": 't',
             processing: true,
             serverSide: true,
             destroy: true,
@@ -226,8 +227,7 @@
                 processData: false,
                 success: function(data) {
                     $("#ketUsulan").modal('hide');
-                    var oTable = $('#rencanaTabel').DataTable();
-                    oTable.ajax.reload();
+                    location.reload();
                     $("#btn-save").html('Submit');
                     $("#btn-save").attr("disabled", false);
                     Swal.fire({

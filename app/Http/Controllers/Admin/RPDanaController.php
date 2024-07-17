@@ -51,29 +51,16 @@ class RPDanaController extends Controller
             $dataRencana = $rencana->get();
 
             foreach ($dataRencana as $rpd) {
-                $rpd->rpds = RPD::where('detail_rencana_id', $rpd->idRencana)->get();
+                $rpdData = RPD::where('detail_rencana_id', $rpd->idRencana)->get();
+                $totalRPD = $rpdData->sum('jumlah');
+                $rpd->total_rpd = $totalRPD;
             }
                 return datatables()->of($dataRencana)
-                ->addColumn('bulan_rpd', function ($row) {
-                    $data = [];
-                    // Memastikan properti rpds adalah sebuah array
-                    if (!is_null($row->rpds)) {
-                        foreach ($row->rpds as $rpd) {
-                            $data[] = $rpd->bulan_rpd . ' ( ' . number_format($rpd->jumlah, 0, ',', '.' ) . ')';
-                        }
-                    }
-                    return implode(', ', $data);
-                })
                 ->addColumn('action', function ($row) {
-                    // if ($row->rpds->isEmpty()){
-                    //     $action = '<div class="edit btn btn-danger m-1 btn-sm disabled">tak tau</div>';
-                    // } else {
-                    //     $action = '<div class="edit btn btn-success m-1 btn-sm disabled">Proses</div>';
-                    // }
                     $action = '<div class="info btn btn-success m-1 btn-sm disabled">Proses</div>';
                     return $action;
                 })
-                ->rawColumns(['bulan_rpd','action'])
+                ->rawColumns(['action'])
                 ->make(true);
         }
         return view('admin.usulan.rpd',  compact('unit', 'kategoris'));

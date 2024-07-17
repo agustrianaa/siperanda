@@ -21,4 +21,8 @@ class Anggaran extends Model
     public function unit(){
         return $this->belongsTo(Unit::class);
     }
+    public function getTahunAttribute()
+    {
+        return \Carbon\Carbon::parse($this->attributes['tahun'])->format('Y');
+    }
 }

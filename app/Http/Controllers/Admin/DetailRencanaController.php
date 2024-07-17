@@ -24,7 +24,6 @@ class DetailRencanaController extends Controller
                 'rencana.unit_id as unit_id',
                 'rencana.jumlah as jumlahUsulan',
                 'kode_komponen.*',
-                // 'kode_komponen.kode as kodeUsulan',
                 'kode_komponen.uraian as uraian_kode_komponen',
                 'satuan.*',
                 'satuan.satuan as satuan',
@@ -33,23 +32,16 @@ class DetailRencanaController extends Controller
                 ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-                ->where('rencana.id', $id)
-                ->get();
+                ->where('rencana.id', $id);
+                $dataRencana = $rencana->get();
+                $usulanData = $this->buildHierarchy($dataRencana);
 
-            $currentUser = Auth::user();
-            return datatables()->of($rencana)
-                ->addColumn('action', function ($row) use ($currentUser) {
-                    if ($currentUser->role == 'admin' && $row->created_by == 'admin') {
+                return datatables()->of(collect($usulanData))
+                ->addColumn('action', function ($row) {
                         $id = $row->idRencana;
                         $action = '<a href="javascript:void(0)" onClick="editRenc(' . $id . ')" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>';
                         $action .= '<a href="javascript:void(0)" onClick="hapusRenc(' . $id . ')" class="edit btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
                         return $action;
-                    } else {
-                        $id = $row->idRencana;
-                        $action = '<a href="javascript:void(0)" onClick="editParent(' . $id . ')" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i>Parent</a>';
-                        // $action .= '<button class="btn btn-danger btn-sm" disabled><i class="fa fa-times"></i></button>';
-                        return $action;
-                    }
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -60,7 +52,8 @@ class DetailRencanaController extends Controller
     {
         if ($request->ajax()) {
             $id = $request->query('id');
-            $rencana = Rencana::select('*')
+            $rencana = Rencana::select('rencana.*', 'unit.name as nama_unit')
+            ->leftJoin('unit', 'rencana.unit_id', '=', 'unit.id')
                 ->where('rencana.id', $id)
                 ->get();
 
@@ -73,6 +66,22 @@ class DetailRencanaController extends Controller
                 ->rawColumns(['action'])
                 ->make(true);
         }
+    }
+
+    private function buildHierarchy($data, $parentId = null, $prefix = '')
+    {
+        $result = [];
+        $counter = 1;
+        foreach ($data as $item) {
+            if ($item->noparent_id == $parentId) {
+                $item->numbering = $prefix ? "{$prefix}.{$counter}" : (string)$counter;
+                $result[] = $item;
+                $children = $this->buildHierarchy($data, $item->idRencana, $item->numbering . '.');
+                $result = array_merge($result, $children);
+                $counter++;
+            }
+        }
+        return $result;
     }
     public function checkStatus(Request $request)
     {
@@ -92,9 +101,12 @@ class DetailRencanaController extends Controller
         // Ambil data DetailRencana dengan ID yang sesuai
         $detailRencana = DetailRencana::with('kodeKomponen')->findOrFail($id);
         $rencana = Rencana::findOrFail($detailRencana->rencana_id);
-
+        if ($detailRencana->kodeKomponen) {
+            $detailRencana->kode_uraian = $detailRencana->kodeKomponen->kode . '.' . $detailRencana->kodeKomponen->kode_parent . ' - ' . $detailRencana->kodeKomponen->uraian;
+        } else {
+            $detailRencana->kode_uraian = '';
+        }
         // Gabungkan kode dan uraian untuk dikirim ke view
-        $detailRencana->kode_uraian = $detailRencana->kodeKomponen->kode . '.' . $detailRencana->kodeKomponen->kode_parent . ' - ' . $detailRencana->kodeKomponen->uraian;
         $detailRencana->tahun = $rencana->tahun;
 
         // Kembalikan respons JSON dengan data DetailRencana yang diedit
@@ -104,38 +116,51 @@ class DetailRencanaController extends Controller
     public function storelengkapiRencana(Request $request)
     {
         $request->validate([
-            'rencana_id' => 'required',
+            'volume' => 'required|numeric',
+            'harga' => 'required|numeric',
             'satuan_id' => 'required',
-            'volume' => 'required',
-            'harga' => 'required',
-            'kode_komponen_id' => 'required',
-            'created_by' => 'required',
         ]);
-        $idrencana = $request->rencana_id;
-        $p = Rencana::findOrFail($idrencana);
+
+        if ($request->kategori === 'detil') {
+            $request->validate([
+                'uraian' => 'required|string|max:255',
+            ]);
+        } else {
+            $request->validate([
+                'kode_komponen_id' => 'required|exists:kode_komponen,id',  // Pastikan kode_komponen_id tidak null dan ada di tabel kode_komponen
+            ]);
+        }
+
+        $usulan = Rencana::findOrFail($request->rencana_id);
 
         $detailRencanaId = $request->input('id');
         $kodeKomponenId = $request->input('kode_komponen_id');
         $satuanId = $request->input('satuan_id');
+        $noparentId = $request->input('noparent_id');
+
         $rencana = DetailRencana::updateOrCreate(
             [
                 'id' => $detailRencanaId,
-
             ],
             [
-                'rencana_id' => $p->id,
+                'rencana_id' => $usulan->id,
+                'noparent_id' => $noparentId,
                 'satuan_id' => $satuanId,
                 'volume' => $request->input('volume'),
                 'harga' => $request->input('harga'),
-                'kode_komponen_id' => $kodeKomponenId,
                 'created_by' => $request->input('created_by'),
+                'total' => $request->input('harga') * $request->input('volume'),
+                'uraian' => $request->kategori === 'detil' ? $request->uraian : null, // Simpan uraian hanya jika kategori detil
+                'kode_komponen_id' => $request->kategori === 'detil' ? null : $request->kode_komponen_id, // Simpan kode_komponen_id hanya jika kategori bukan detil
             ]
         );
+
         $jumlah = $rencana->harga * $rencana->volume;
         $rencana->total = $jumlah;
+        $rencana->noparent_id = $noparentId;
         $rencana->save();
 
-        return Response()->json($rencana,);
+        return response()->json($rencana);
     }
 
     // untuk menghapus usulan yang ada di halaman lengkapi usulan

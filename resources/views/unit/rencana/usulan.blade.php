@@ -44,7 +44,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col">
-                        <h5 class="card-title fw-semibold mb-3">Detail Rencana</h5>
+                        <h5 class="card-title fw-semibold mb-3">Detail Rencana Anggaran {{$rencanaId->tahun}}</h5>
                     </div>
                     <div class="col-auto">
                         <h5 class="card-title fw-semibold mb-3">Pagu : Rp. {{number_format($rencanaId->anggaran, 0, ',', '.')}}</h5>
@@ -403,40 +403,40 @@
         });
 
         $('#kode').on('input', function() {
-    let searchValue = $(this).val();
-    if (searchValue.length > 0) {
-        $.ajax({
-            url: '/unit/search/code',
-            method: 'GET',
-            data: {
-                search: searchValue
-            },
-            success: function(data) {
-                console.log('Data received:', data);
-                let results = $('#kode-results');
-                results.empty();
-                if (data.length > 0) {
-                    $.each(data, function(index, item) {
-                        let kodeParent = item.kode_parent ? item.kode_parent : ''; // Jika tidak ada kode_parent, berikan string kosong
-                        results.append(`
+            let searchValue = $(this).val();
+            if (searchValue.length > 0) {
+                $.ajax({
+                    url: '/unit/search/code',
+                    method: 'GET',
+                    data: {
+                        search: searchValue
+                    },
+                    success: function(data) {
+                        console.log('Data received:', data);
+                        let results = $('#kode-results');
+                        results.empty();
+                        if (data.length > 0) {
+                            $.each(data, function(index, item) {
+                                let kodeParent = item.kode_parent ? item.kode_parent : ''; // Jika tidak ada kode_parent, berikan string kosong
+                                results.append(`
                             <div class="dropdown-item" data-id="${item.id}" data-kode="${item.kode}" data-uraian="${item.uraian || ''}">
                                 ${item.kode}.${kodeParent} - ${item.uraian || 'Uraian Kosong'}
                             </div>
                         `);
-                    });
-                    results.show();
-                } else {
-                    results.hide();
-                }
-            },
-            error: function(xhr, status, error) {
-                console.log('Error:', error);
+                            });
+                            results.show();
+                        } else {
+                            results.hide();
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error:', error);
+                    }
+                });
+            } else {
+                $('#kode-results').hide();
             }
         });
-    } else {
-        $('#kode-results').hide();
-    }
-});
 
 
         // Handle click on search results
@@ -464,17 +464,45 @@
 
     // untuk menambahkan detail usulan
     function tambahRencana() {
-        $('#rencana2Form').trigger("reset");
-        $('#usulanLain-modal').modal('show');
-        $('#parent_id').val('');
-        $('#id').val('');
+    var rencanaId = $('#rencana_id').val(); // Ambil ID rencana dari hidden input
 
-        if ($('#kategori').val() === 'detil') {
-            $('#kode').prop('disabled', true);
-        } else {
-            $('#kode').prop('disabled', false);
+    $.ajax({
+        type: "GET",
+        url: "{{ route('unit.checkStatus') }}", // Sesuaikan dengan URL endpoint Anda untuk memeriksa status
+        data: {
+            id: rencanaId
+        },
+        dataType: 'json',
+        success: function(res) {
+            if (res.status === 'approved') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Rencana sudah disetujui dan tidak bisa ditambahkan lagi'
+                });
+            } else {
+                // Tampilkan modal jika status bukan 'approved'
+                $('#rencana2Form').trigger("reset");
+                $('#usulanLain-modal').modal('show');
+                $('#parent_id').val('');
+                $('#id').val('');
+
+                if ($('#kategori').val() === 'detil') {
+                    $('#kode').prop('disabled', true);
+                } else {
+                    $('#kode').prop('disabled', false);
+                }
+            }
+        },
+        error: function(xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Terjadi kesalahan saat memeriksa status rencana'
+            });
         }
-    }
+    });
+}
 
     function tambahRencanaLain(parentId) {
         $('#rencana2Form').trigger("reset");
@@ -510,7 +538,16 @@
                             'Data berhasil dihapus.',
                             'success'
                         );
+                    },
+                    error: function(xhr, status, error) {
+                        var res = xhr.responseJSON;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: res.message || 'Terjadi kesalahan saat menghapus data'
+                        });
                     }
+
                 });
             }
         });
@@ -552,9 +589,9 @@
                     var lastTable = $('#last').DataTable();
                     lastTable.ajax.reload();
                 };
-                // if (data.total > data.paguAnggaran){
-                //     $('#alert-warning').removeClass('d-none');
-                // }
+                if (data.total > data.paguAnggaran){
+                    $('#alert-warning').removeClass('d-none');
+                }
             },
             error: function(data) {
                 console.log(data);

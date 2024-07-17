@@ -25,6 +25,44 @@
             </div>
         </div>
     </div>
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="row align-items-start">
+                    <div class="col-8">
+                        <h6 class="card-title mb-3 fw-semibold">Jumlah Realisasi Anggaran</h6>
+                        <h5 class="fw-semibold mb-3">Rp. {{number_format($totalRealisasi, 0, ',', '.')}}</h5>
+                    </div>
+                    <div class="col-4">
+                        <div class="d-flex justify-content-end">
+                            <div class="text-white bg-secondary rounded-circle p-3 d-flex align-items-center justify-content-center">
+                                <i class="ti ti-currency-dollar fs-6"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="row align-items-start">
+                    <div class="col-8">
+                        <h6 class="card-title mb-3 fw-semibold">Sisa Anggaran</h6>
+                        <h5 class="fw-semibold mb-3">Rp. {{number_format($sisaAnggaran, 0, ',', '.')}}</h5>
+                    </div>
+                    <div class="col-4">
+                        <div class="d-flex justify-content-end">
+                            <div class="text-white bg-secondary rounded-circle p-3 d-flex align-items-center justify-content-center">
+                                <i class="ti ti-currency-dollar fs-6"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="col-lg-4">
         <div class="card  h-100">
             <div class="card-body">

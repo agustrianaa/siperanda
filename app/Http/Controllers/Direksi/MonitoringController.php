@@ -20,11 +20,7 @@ class MonitoringController extends Controller
         $unit = Unit::all();
         $kategoris = Kategori::all();
         if (request()->ajax()) {
-
-            // Pastikan unit ditemukan
-            if (!$unit) {
-                return response()->json(['data' => []]);
-            }
+            $id = $request->query('id');
             $rencana = DetailRencana::select(
                 'detail_rencana.*',
                 'detail_rencana.id as idRencana',
@@ -41,49 +37,49 @@ class MonitoringController extends Controller
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
+                ->where('rencana.id', $id)
                 ->where('rencana.status', '=', 'approved');
 
-            $dataRencana = $rencana->get();
+                $dataRencana = $rencana->get();
+
             foreach ($dataRencana as $data) {
-                $data->rpds = RPD::where('detail_rencana_id', $data->idRencana)->get();
+                $realisasi = Realisasi::where('detail_rencana_id', $data->idRencana)->get();
+                $totalRealisasi = $realisasi->sum('jumlah');
+                $sisaAnggaran = $data->jumlahUsulan - $totalRealisasi;
+                $data->total_realisasi = $totalRealisasi;
+                $data->sisa_anggaran = $sisaAnggaran;
             }
-            foreach ($dataRencana as $data) {
-                $data->realisasi = Realisasi::where('detail_rencana_id', $data->idRencana)->get();
-            }
 
+            $hierarkiData = $this->buildHierarchy($dataRencana);
 
-            return datatables()->of($dataRencana)
-                ->addColumn('bulan_rpd', function ($row) {
-                    $bulans = [];
-                    // Memastikan properti rpds adalah sebuah array
-                    if (!is_null($row->rpds)) {
-                        foreach ($row->rpds as $rpd) {
-                            $bulans[] = $rpd->bulan_rpd;
-                        }
-                    }
-                    return implode(', ', $bulans);
-                })
-                ->addColumn('bulan_realisasi', function ($row) {
-                    $bulans = [];
-                    // Memastikan properti rpds adalah sebuah array
-                    if (!is_null($row->realisasi)) {
-                        foreach ($row->realisasi as $data) {
-                            $bulans[] = $data->bulan_realisasi;
-                        }
-                    }
-                    return implode(', ', $bulans);
-                })
-
+            return datatables()->of(collect($hierarkiData))
                 ->addColumn('ket', function ($row) {
                     $id = $row->idRencana; // Ambil ID dari baris data
                     $action =  '<a href="javascript:void(0)" onClick="show(' . $id . ')" class="show btn btn-primary btn-sm"><i class="fas fa-eye"></i></a>';
                     return $action;
                 })
-                ->rawColumns(['action', 'ket'])
+                ->rawColumns(['ket'])
                 ->make(true);
         }
         return view('direksi.monitoring', compact('unit', 'kategoris'));
     }
+
+    private function buildHierarchy($data, $parentId = null, $prefix = '')
+{
+    $result = [];
+    $counter = 1;
+    foreach ($data as $item) {
+        if ($item->noparent_id == $parentId) {
+            $item->numbering = $prefix ? "{$prefix}.{$counter}" : (string)$counter;
+            $result[] = $item;
+            $children = $this->buildHierarchy($data, $item->idRencana, $item->numbering . '.');
+            $result = array_merge($result, $children);
+            $counter++;
+        }
+    }
+    return $result;
+}
+
 
     public function getRealisasi(Request $request)
     {
@@ -179,7 +175,7 @@ class MonitoringController extends Controller
 
     public function show(Request $request){
         $id = $request->query('id');
-        $rencana = Rencana::findorFail($id);
+        $rencana = Rencana::with('unit')->findOrFail($id);
         return view('direksi.detail_monitoring', compact('rencana'));
     }
 }

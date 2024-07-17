@@ -147,7 +147,7 @@ class UsulanController extends Controller
     public function show(Request $request){
         $id = $request->query('id');
         $rencana = Rencana::findorFail($id);
-        return view('admin.usulan.detail', compact('rencana'));
+        return view('admin.usulan.validasi', compact('rencana'));
     }
 
     public function edit(Request $request){

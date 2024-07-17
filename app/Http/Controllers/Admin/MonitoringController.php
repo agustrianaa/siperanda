@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\DetailRencana;
+use App\Models\Rencana;
 use App\Models\Kategori;
 use App\Models\KodeKomponen;
 use App\Models\Realisasi;
@@ -19,9 +20,7 @@ class MonitoringController extends Controller
         $unit = Unit::all();
         $kategoris = Kategori::all();
         if (request()->ajax()) {
-            $funit = $request->unit_id;
-            $fkategori = $request->kategori_id;
-            $ftahun = $request->tahun;
+            $id = $request->query('id');
             $rencana = DetailRencana::select(
                 'detail_rencana.*',
                 'detail_rencana.id as idRencana',
@@ -39,47 +38,21 @@ class MonitoringController extends Controller
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
+                ->where('rencana.id', $id)
                 ->where('rencana.status', '=', 'approved');
-            if ($funit) {
-                $rencana->where('rencana.unit_id', $funit);
-            }
-
-            if ($fkategori) {
-                $rencana->where('kode_komponen.kategori_id', $fkategori);
-            }
-            if ($ftahun) {
-                $ftahunFormat = $ftahun . '-01-01';
-                $rencana->where('rencana.tahun', $ftahunFormat);
-            }
             $dataRencana = $rencana->get();
 
             foreach ($dataRencana as $data) {
-                $data->rpds = RPD::where('detail_rencana_id', $data->idRencana)->get();
+                $realisasi = Realisasi::where('detail_rencana_id', $data->idRencana)->get();
+                $totalRealisasi = $realisasi->sum('jumlah');
+                $sisaAnggaran = $data->jumlahUsulan - $totalRealisasi;
+                $data->total_realisasi = $totalRealisasi;
+                $data->sisa_anggaran = $sisaAnggaran;
             }
-            foreach ($dataRencana as $data) {
-                $data->realisasi = Realisasi::where('detail_rencana_id', $data->idRencana)->get();
-            }
-            return datatables()->of($dataRencana)
-                ->addColumn('bulan_rpd', function ($row) {
-                    $bulans = [];
-                    // Memastikan properti rpds adalah sebuah array
-                    if (!is_null($row->rpds)) {
-                        foreach ($row->rpds as $rpd) {
-                            $bulans[] = $rpd->bulan_rpd;
-                        }
-                    }
-                    return implode(', ', $bulans);
-                })
-                ->addColumn('bulan_realisasi', function ($row) {
-                    $bulans = [];
-                    // Memastikan properti rpds adalah sebuah array
-                    if (!is_null($row->realisasi)) {
-                        foreach ($row->realisasi as $data) {
-                            $bulans[] = $data->bulan_realisasi;
-                        }
-                    }
-                    return implode(', ', $bulans);
-                })
+
+            $hierarkiData = $this->buildHierarchy($dataRencana);
+
+            return datatables()->of(collect($hierarkiData))
                 ->addColumn('action', function ($row) {
                     $id = $row->idRencana; // Ambil ID dari baris data
                     $action =  '<a href="javascript:void(0)" onClick="tambahRealisasi(' . $id . ')" class="realisasi btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
@@ -98,7 +71,74 @@ class MonitoringController extends Controller
         }
         return view('admin.monitoring', compact('unit', 'kategoris'));
     }
+    public function dataAnggaran(Request $request)
+    {
+        $funit = $request->unit_id;
+        $ftahun = $request->tahun;
 
+        if (request()->ajax()) {
+            $rencana = Rencana::select(
+                'rencana.*',
+                'rencana.id as idRencana',
+                'unit.name as unit'
+            )
+                ->leftJoin('unit', 'rencana.unit_id', '=', 'unit.id');
+
+            if ($funit) {
+                $rencana->where('rencana.unit_id', $funit);
+            }
+
+            if ($ftahun) {
+                $ftahunFormat = $ftahun . '-01-01';
+                $rencana->where('rencana.tahun', $ftahunFormat);
+            }
+
+            $dataRencana = $rencana->get();
+
+            // Menghitung jumlah realisasi dan sisa anggaran secara manual
+            foreach ($dataRencana as $data) {
+                $detailRencanaIds = DetailRencana::where('rencana_id', $data->id)->pluck('id');
+                $jumlahRealisasi = Realisasi::whereIn('detail_rencana_id', $detailRencanaIds)->sum('jumlah');
+                $data->jumlahRealisasi = $jumlahRealisasi;
+                $data->sisaAnggaran = $data->anggaran - $jumlahRealisasi;
+            }
+
+            return datatables()->of($dataRencana)
+                ->addColumn('jumlahRealisasi', function ($row) {
+                    return $row->jumlahRealisasi;
+                })
+                ->addColumn('sisaAnggaran', function ($row) {
+                    return $row->sisaAnggaran;
+                })
+                ->addColumn('action', function ($row) {
+                    return '<a href="javascript:void(0)" onClick="show(' . $row->idRencana . ')" class="tambah btn btn-warning btn-sm"><i class="fas fa-eye"></i></a>';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+    }
+    private function buildHierarchy($data, $parentId = null, $prefix = '')
+{
+    $result = [];
+    $counter = 1;
+    foreach ($data as $item) {
+        if ($item->noparent_id == $parentId) {
+            $item->numbering = $prefix ? "{$prefix}.{$counter}" : (string)$counter;
+            $result[] = $item;
+            $children = $this->buildHierarchy($data, $item->idRencana, $item->numbering . '.');
+            $result = array_merge($result, $children);
+            $counter++;
+        }
+    }
+    return $result;
+}
+
+    public function show(Request $request)
+    {
+        $id = $request->query('id');
+        $rencana = Rencana::with('unit')->findOrFail($id);
+        return view('admin.detail_monitor', compact('rencana'));
+    }
     public function store(Request $request)
     {
         $detailRencanaId = $request->input('detail_rencana_id');
@@ -117,22 +157,22 @@ class MonitoringController extends Controller
     }
 
     public function updateRealisasi(Request $request)
-{
-    $ids = $request->input('id');
-    $bulanRealisasi = $request->input('bulan_realisasi');
-    $jumlah = $request->input('jumlah');
+    {
+        $ids = $request->input('id');
+        $bulanRealisasi = $request->input('bulan_realisasi');
+        $jumlah = $request->input('jumlah');
 
-    foreach ($ids as $index => $id) {
-        DB::table('realisasi')
-            ->where('id', $id)
-            ->update([
-                'bulan_realisasi' => $bulanRealisasi[$index] ?? '',
-                'jumlah' => $jumlah[$index] ?? 0
-            ]);
+        foreach ($ids as $index => $id) {
+            DB::table('realisasi')
+                ->where('id', $id)
+                ->update([
+                    'bulan_realisasi' => $bulanRealisasi[$index] ?? '',
+                    'jumlah' => $jumlah[$index] ?? 0
+                ]);
+        }
+
+        return response()->json(['success' => 'Data realisasi berhasil diupdate']);
     }
-
-    return response()->json(['success' => 'Data realisasi berhasil diupdate']);
-}
 
     public function deleteRealisasi(Request $request)
     {

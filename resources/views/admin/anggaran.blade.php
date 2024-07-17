@@ -27,13 +27,6 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="card">
-            <div class="card-body">
-
-            </div>
-        </div>
-    </div>
 
     <!-- modal untuk menambahkan anggaran -->
     <div class="modal fade" id="anggaran-modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">

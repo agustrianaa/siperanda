@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Anggaran;
 use App\Models\DetailRencana;
+use App\Models\Realisasi;
 use App\Models\Rencana;
 use App\Models\Unit;
 use App\Models\User;
@@ -40,13 +42,17 @@ class HomeController extends Controller
         $totalAnggaran = DetailRencana::sum('total');
         $totalRKA = Rencana::count('id');
         $totalUnit = Unit::count('id');
-        return view('admin.dashboard', compact('totalAnggaran', 'totalRKA', 'totalUnit'));
+        $totalRealisasi = Realisasi::sum('jumlah');
+        $sisaAnggaran = $totalAnggaran - $totalRealisasi;
+        return view('admin.dashboard', compact('totalAnggaran', 'totalRKA', 'totalUnit', 'totalRealisasi', 'sisaAnggaran'));
     }
 
     public function direksiHome(){
         $totalAnggaran = DetailRencana::sum('total');
         $totalRKA = Rencana::count('id');
-        return view('direksi.dashboard', compact('totalAnggaran', 'totalRKA'));
+        $totalRealisasi = Realisasi::sum('jumlah');
+        $sisaAnggaran = $totalAnggaran - $totalRealisasi;
+        return view('direksi.dashboard', compact('totalAnggaran', 'totalRKA', 'totalRealisasi', 'sisaAnggaran'));
     }
 
     public function unitHome(){
@@ -58,8 +64,10 @@ class HomeController extends Controller
         })->sum('total');
         $totalRencana = Rencana::where('unit_id', $unitId)
         ->count();
-
-        return view('unit.dashboard', compact('totalAnggaran', 'totalRencana'));
+        $totalRealisasi = Realisasi::where('detail_rencana_id', $unitId)
+        ->sum('jumlah');
+        $sisaAnggaran = $totalAnggaran - $totalRealisasi;
+        return view('unit.dashboard', compact('totalAnggaran', 'totalRencana',  'totalRealisasi', 'sisaAnggaran'));
     }
 
 

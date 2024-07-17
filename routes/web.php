@@ -121,6 +121,8 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::post('/admin/simpan-realisasi', [AdminMonitoringController::class, 'store'])->name('admin.simpan_realisasi');
     Route::post('/admin/delete-realisasi', [AdminMonitoringController::class, 'deleteRealisasi'])->name('admin.deleteRealisasi');
     Route::get('/admin/show-realisasi', [AdminMonitoringController::class, 'getRealisasi'])->name('admin.getRealisasi');
+    Route::get('/admin/data-anggaran', [AdminMonitoringController::class, 'dataAnggaran'])->name('admin.dataAnggaran');
+    Route::get('/admin/detail-monitoring', [AdminMonitoringController::class, 'show'])->name('admin.show_monitoring');
 
 
     // PROFILE
@@ -162,7 +164,7 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     Route::get('/unit/search/code', [UnitUsulanController::class, 'searchByCode'])->name('unit.search_code');
     Route::post('/unit/hapus-usulan', [UnitUsulanController::class, 'destroy'])->name('unit.hapus_usulan');
     Route::get('/unit/check-anggaran', [UnitUsulanController::class, 'checkAnggaran'])->name('unit.checkAnggaran');
-
+    Route::get('/unit/check-status-rencana', [UnitUsulanController::class, 'checkStatus'])->name('unit.checkStatus');
     // Menu Histori
     Route::get('/unit/histori', [HistoriController::class, 'index'])->name('unit.histori');
     // CRUD RPD

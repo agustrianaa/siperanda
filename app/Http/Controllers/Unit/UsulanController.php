@@ -25,21 +25,21 @@ class UsulanController extends Controller
         $rencanaId = $this->getLatestRencana($unit_id);
 
         $is_rev = 0;
-        $noteRev ='';
-        $total='';
+        $noteRev = '';
+        $total = '0';
 
         if ($rencanaId) {
             $is_rev = DetailRencana::where('rencana_id', $rencanaId->id)->where('is_revised', true)->count();
         }
-        if($rencanaId){
+        if ($rencanaId) {
             $noteRev = RevisiNote::where('rencana_id', $rencanaId->id)->orderBy('created_at', 'desc')->first();
         }
-        if($rencanaId){
+        if ($rencanaId) {
             $total = DetailRencana::where('rencana_id', $rencanaId->id)->sum('total');
         }
 
 
-        return view('unit.rencana.usulan', compact('satuan','rencanaId', 'is_rev', 'noteRev', 'total'));
+        return view('unit.rencana.usulan', compact('satuan', 'rencanaId', 'is_rev', 'noteRev', 'total'));
     }
 
     public function tabel1(Request $request)
@@ -47,9 +47,7 @@ class UsulanController extends Controller
         $user = Auth::user();
         $satuan = Satuan::all();
         $unit_id = $user->unit->id;
-        // $latestRencana = Rencana::where('unit_id', $unit_id->id)->first();
         $rencanaId = $this->getLatestRencana($unit_id);
-        // $historiRencana = $this->getHistoriRencana($unit_id);
         if ($request->ajax()) {
             $unit = $user->unit;
 
@@ -75,13 +73,14 @@ class UsulanController extends Controller
                 ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
                 ->where('rencana.unit_id', $unit->id) // Tambahkan kondisi ini
-                ->where('rencana.id', $rencanaId->id)
-                ->get();
+                ->where('rencana.id', $rencanaId->id);
+
+            $dataRencana = $usulan->get();
 
             // Membangun data hierarki dengan nomor urut
-            $usulanData = $this->buildHierarchy($usulan);
+            $usulanData = $this->buildHierarchy($dataRencana);
 
-            return datatables()->of($usulanData)
+            return datatables()->of(collect($usulanData))
                 ->addColumn('action', function ($row) {
                     $id = $row->detail_rencana_id;
                     $action = '<a href="javascript:void(0)" onClick="tambahRencanaLain(' . $id . ')" class="add btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
@@ -130,14 +129,11 @@ class UsulanController extends Controller
                 ->where('rencana.id', $rencanaId->id)
                 ->get();
 
-            // Membangun data hierarki dengan nomor urut
-            // $usulanData = $this->buildHierarchy($usulan);
-
             return datatables()->of($usulan)
                 ->make(true);
         }
 
-        return view('unit.rencana.usulan', compact('satuan','rencanaId',));
+        return view('unit.rencana.usulan', compact('satuan', 'rencanaId',));
     }
 
     protected function getLatestRencana($unit_id)
@@ -148,14 +144,15 @@ class UsulanController extends Controller
         return $rencanaId;
     }
 
-    protected function getHistoriRencana($unit_id){
+    protected function getHistoriRencana($unit_id)
+    {
         $rencanaId = $this->getLatestRencana($unit_id);
 
-        if($rencanaId){
+        if ($rencanaId) {
             $historiRencana = Rencana::where('unit_id', $unit_id)
-            ->where('id', '!=', $rencanaId ? $rencanaId->id : 0)
-            ->orderBy('created_at', 'desc')
-            ->get();
+                ->where('id', '!=', $rencanaId ? $rencanaId->id : 0)
+                ->orderBy('created_at', 'desc')
+                ->get();
         } else {
             $historiRencana = Rencana::where('unit_id', $unit_id)->orderBy('created_at', 'desc')->get();
         }
@@ -182,69 +179,69 @@ class UsulanController extends Controller
     }
 
 
-public function store2(Request $request, $id = null)
-{
-    $request->validate([
-        'volume' => 'required|numeric',
-        'harga' => 'required|numeric',
-        'satuan_id' => 'required',
-    ]);
+    public function store2(Request $request, $id = null)
+    {
+        $request->validate([
+            'volume' => 'required|numeric',
+            'harga' => 'required|numeric',
+            'satuan_id' => 'required',
+        ]);
 
-    if ($request->kategori === 'detil') {
-        $request->validate([
-            'uraian' => 'required|string|max:255',
-        ]);
-    } else {
-        $request->validate([
-            'kode_komponen_id' => 'required|exists:kode_komponen,id',  // Pastikan kode_komponen_id tidak null dan ada di tabel kode_komponen
-        ]);
+        if ($request->kategori === 'detil') {
+            $request->validate([
+                'uraian' => 'required|string|max:255',
+            ]);
+        } else {
+            $request->validate([
+                'kode_komponen_id' => 'required|exists:kode_komponen,id',  // Pastikan kode_komponen_id tidak null dan ada di tabel kode_komponen
+            ]);
+        }
+
+        $usulan = Rencana::findOrFail($request->rencana_id);
+
+        $detailRencanaId = $request->input('id');
+        $kodeKomponenId = $request->input('kode_komponen_id');
+        $satuanId = $request->input('satuan_id');
+        $noparentId = $request->input('noparent_id');
+
+        $rencana = DetailRencana::updateOrCreate(
+            [
+                'id' => $detailRencanaId,
+            ],
+            [
+                'rencana_id' => $usulan->id,
+                'noparent_id' => $noparentId,
+                'satuan_id' => $satuanId,
+                'volume' => $request->input('volume'),
+                'harga' => $request->input('harga'),
+                'created_by' => $request->input('created_by'),
+                'total' => $request->input('harga') * $request->input('volume'),
+                'uraian' => $request->kategori === 'detil' ? $request->uraian : null, // Simpan uraian hanya jika kategori detil
+                'kode_komponen_id' => $request->kategori === 'detil' ? null : $request->kode_komponen_id, // Simpan kode_komponen_id hanya jika kategori bukan detil
+            ]
+        );
+
+        $jumlah = $rencana->harga * $rencana->volume;
+        $rencana->total = $jumlah;
+        $rencana->save();
+
+        return response()->json($rencana);
     }
 
-    $usulan = Rencana::findOrFail($request->rencana_id);
-
-    $detailRencanaId = $request->input('id');
-    $kodeKomponenId = $request->input('kode_komponen_id');
-    $satuanId = $request->input('satuan_id');
-    $noparentId = $request->input('noparent_id');
-
-    $rencana = DetailRencana::updateOrCreate(
-        [
-            'id' => $detailRencanaId,
-        ],
-        [
-            'rencana_id' => $usulan->id,
-            'noparent_id' => $noparentId,
-            'satuan_id' => $satuanId,
-            'volume' => $request->input('volume'),
-            'harga' => $request->input('harga'),
-            'created_by' => $request->input('created_by'),
-            'total' => $request->input('harga') * $request->input('volume'),
-            'uraian' => $request->kategori === 'detil' ? $request->uraian : null, // Simpan uraian hanya jika kategori detil
-            'kode_komponen_id' => $request->kategori === 'detil' ? null : $request->kode_komponen_id, // Simpan kode_komponen_id hanya jika kategori bukan detil
-        ]
-    );
-
-    $jumlah = $rencana->harga * $rencana->volume;
-    $rencana->total = $jumlah;
-    $rencana->save();
-
-    return response()->json($rencana);
-}
 
 
+    public function searchByCode(Request $request)
+    {
+        $search = $request->input('search');
 
-public function searchByCode(Request $request)
-{
-    $search = $request->input('search');
+        $results = KodeKomponen::leftJoin('kode_komponen as parents', 'kode_komponen.kode_parent', '=', 'parents.id')
+            ->select('kode_komponen.*', 'parents.kode as kode_parent')
+            ->where('kode_komponen.kode', 'LIKE', "%{$search}%")
+            ->orWhere('kode_komponen.uraian', 'LIKE', "%{$search}%")
+            ->get();
 
-    $results = KodeKomponen::leftJoin('kode_komponen as parents', 'kode_komponen.kode_parent', '=', 'parents.id')
-        ->select('kode_komponen.*', 'parents.kode as kode_parent')
-        ->where('kode_komponen.kode', 'LIKE', "%{$search}%")
-        ->orWhere('kode_komponen.uraian', 'LIKE', "%{$search}%")
-        ->get();
-
-    return response()->json($results);
-}
+        return response()->json($results);
+    }
 
 
 
@@ -267,32 +264,32 @@ public function searchByCode(Request $request)
     }
 
     public function edit(Request $request)
-{
-    $id = $request->id;
+    {
+        $id = $request->id;
 
-    $detailRencana = DetailRencana::with('kodeKomponen')->findOrFail($id);
+        $detailRencana = DetailRencana::with('kodeKomponen')->findOrFail($id);
 
-    $rencana = Rencana::findOrFail($detailRencana->rencana_id);
+        $rencana = Rencana::findOrFail($detailRencana->rencana_id);
 
-    if ($detailRencana->kodeKomponen) {
-        $detailRencana->kode_uraian = $detailRencana->kodeKomponen->kode . '.' . $detailRencana->kodeKomponen->kode_parent . ' - ' . $detailRencana->kodeKomponen->uraian;
-    } else {
-        $detailRencana->kode_uraian = '';
+        if ($detailRencana->kodeKomponen) {
+            $detailRencana->kode_uraian = $detailRencana->kodeKomponen->kode . '.' . $detailRencana->kodeKomponen->kode_parent . ' - ' . $detailRencana->kodeKomponen->uraian;
+        } else {
+            $detailRencana->kode_uraian = '';
+        }
+        $detailRencana->status = $rencana->status;
+
+        return response()->json($detailRencana);
     }
-    $detailRencana->status = $rencana->status;
-
-    return response()->json($detailRencana);
-}
 
 
 
     public function update(Request $request, $id)
     {
         $detailRencana = DetailRencana::with('rencana')->findOrFail($id);
-        if($detailRencana->rencana->status == 'revisi'){
+        if ($detailRencana->rencana->status == 'revisi') {
             Revisi::create([
                 'rencana_id' => $detailRencana->rencana_id,
-                'kode_komponen_id'  => $detailRencana->kode_komponen_id  ? : null,
+                'kode_komponen_id'  => $detailRencana->kode_komponen_id  ?: null,
                 'volume'    => $detailRencana->volume,
                 'satuan_id' => $detailRencana->satuan_id,
                 'harga' => $detailRencana->harga,
@@ -307,7 +304,7 @@ public function searchByCode(Request $request)
         }
 
         // Update DetailRencana
-        $detailRencana->kode_komponen_id = $request->kode_komponen_id ? : null;
+        $detailRencana->kode_komponen_id = $request->kode_komponen_id ?: null;
         $detailRencana->volume = $request->volume;
         $detailRencana->satuan_id = $request->satuan_id;
         $detailRencana->harga = $request->harga;
@@ -315,37 +312,53 @@ public function searchByCode(Request $request)
         $detailRencana->total =  $request->volume * $request->harga;
         $detailRencana->save();
 
-    return response()->json(['success' => 'Data berhasil diperbarui.']);
+        return response()->json(['success' => 'Data berhasil diperbarui.']);
     }
 
     public function destroy(Request $request)
     {
         // Temukan detail rencana berdasarkan ID
-        $detailRencana = DetailRencana::findOrFail($request->id);
+        $detailRencana = DetailRencana::with('rencana')->findOrFail($request->id);
 
-        // Hapus detail rencana
-        $detailRencana->delete();
+        $rencana = Rencana::findOrFail($detailRencana->rencana_id);
+        if ($rencana->status === 'approved') {
+            return response()->json([
+                'status' => 'approved',
+                'message' => 'Usulan sudah disetujui dan tidak bisa diubah'
+            ], 400);
+        } else {
+            $detailRencana->delete();
+        }
 
+        $detailRencana->status = $rencana->status;
         return response()->json($detailRencana);
     }
 
     public function checkAnggaran(Request $request)
-{
-    $detailRencanaId = $request->input('detail_rencana_id');
-    $detailRencana = DetailRencana::find($detailRencanaId);
+    {
+        $detailRencanaId = $request->input('detail_rencana_id');
+        $detailRencana = DetailRencana::find($detailRencanaId);
 
-    if ($detailRencana) {
-        $rencana = $detailRencana->rencana; // Mengambil tabel rencana dari detail rencana
-        $pagu = $rencana ? $rencana->anggaran : 0;
+        if ($detailRencana) {
+            $rencana = $detailRencana->rencana; // Mengambil tabel rencana dari detail rencana
+            $pagu = $rencana ? $rencana->anggaran : 0;
 
-        // Menghitung total anggaran berdasarkan detail_rencana_id
-        $totalAnggaran = DetailRencana::where('rencana_id', $rencana->id)->sum('total');
+            // Menghitung total anggaran berdasarkan detail_rencana_id
+            $totalAnggaran = DetailRencana::where('rencana_id', $rencana->id)->sum('total');
 
-        return response()->json(['pagu' => $pagu, 'total_anggaran' => $totalAnggaran]);
+            return response()->json(['pagu' => $pagu, 'total_anggaran' => $totalAnggaran]);
+        }
+
+        return response()->json(['pagu' => null, 'total_anggaran' => 0], 404);
     }
 
-    return response()->json(['pagu' => null, 'total_anggaran' => 0], 404);
-}
+    public function checkStatus(Request $request)
+    {
+        $id = $request->id;
+    $rencana = Rencana::findOrFail($id);
 
-
+    return response()->json([
+        'status' => $rencana->status
+    ]);
+    }
 }

@@ -31,7 +31,7 @@
         <div class="col">
         </div>
         <div class="col-auto">
-            <a href="javascript:void(0)" onclick="KompletRencana()" class="btn btn-info">Lengkapi Usulan</a>
+            <a href="javascript:void(0)" onclick="KompletRencana()" class="btn btn-info"><i class="ti ti-plus"></i>Usulan</a>
         </div>
     </div>
     <div class="row">
@@ -44,6 +44,7 @@
                             <input type="hidden" id="rencana_id" value="{{ $rencana->id }}">
                             <thead>
                                 <tr>
+                                <th>No</th>
                                     <th>Kode</th>
                                     <th>Uraian</th>
                                     <th>Volume</th>
@@ -55,7 +56,7 @@
                             </thead>
                             <tfoot>
                                 <tr>
-                                    <th colspan="5" style="text-align:right">Total:</th>
+                                    <th colspan="6" style="text-align:right">Total:</th>
                                     <th></th>
                                 </tr>
                             </tfoot>
@@ -67,9 +68,9 @@
         </div>
     </div>
 
-    <!-- modal untuk menambahkan keterangan usulan -->
+    <!-- modal untuk menambahkan usulan -->
     <div class="modal fade" id="lengkapiUsulan-modal" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Tambahkan Rencana</h5>
@@ -80,6 +81,26 @@
                         <input type="hidden" name="id" id="id">
                         <input type="hidden" name="noparent_id" id="noparent_id">
                         <input type="hidden" name="created_by" id="created_bye" value="admin">
+                        <div class="form-group mb-2">
+                        <div class="form-group mb-2">
+                            <label for="noparent_id">Parent</label>
+                            <select name="noparent_id" id="noparent_id" class="form-select" required="Harus diisi">
+                                <option disabled selected>- Pilih Parent -</option>
+                                @if($unit->isEmpty())
+                                <option disabled>Tidak ada Parent</option>
+                                @else
+                                @foreach ($parent as $data )
+                                <option value="{{$data->detail_rencana_id }}">{{$data->kode_parent}} . {{$data->kode}} . {{$data->uraian}}</option>
+                                @endforeach
+                                @endif
+                            </select>
+                        </div>
+                            <label for="kategori">Kategori</label>
+                            <select name="kategori" id="kategori" class="form-select">
+                                <option value="#" disabled selected>-Pilih jika tidak ada Kode nya-</option>
+                                <option value="detil">Detil</option>
+                            </select>
+                        </div>
                         <div class="form-group mb-2" id="uraian-group" style="display:none;">
                             <label for="uraian" class="col-sm-4 control-label">Uraian</label>
                             <div class="col-sm-12">
@@ -225,6 +246,39 @@
 </div>
 
 <script type="text/javascript">
+    // untuk form
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get elements
+        const kategoriSelect = document.getElementById('kategori');
+        const uraianGroup = document.getElementById('uraian-group');
+        const kodeInput = document.getElementById('kode');
+
+        // Function to toggle kode input based on kategori selection
+        function toggleKodeInput() {
+            if (kategoriSelect.value === 'detil') {
+                kodeInput.value = ''; // Clear the kode input value
+                kodeInput.disabled = true;
+                uraianGroup.style.display = 'block';
+                $('#uraian').prop('disabled', false).show();
+            } else {
+                kodeInput.disabled = false;
+                uraianGroup.style.display = 'none';
+                $('#uraian').prop('disabled', true).hide();
+            }
+        }
+
+        // Add event listener for kategori select
+        kategoriSelect.addEventListener('change', function() {
+            if (kategoriSelect.value === 'detil') {
+                uraianGroup.style.display = 'block';
+            } else {
+                uraianGroup.style.display = 'none';
+            }
+            toggleKodeInput(); // Call the function to toggle kode input
+        });
+        // Call the function initially to set kode input state based on initial kategori value
+        toggleKodeInput();
+    });
     $(document).ready(function() {
         $.ajaxSetup({
             headers: {
@@ -247,13 +301,23 @@
                     return json.data;
                 }
             },
-            columns: [{
+            columns: [
+                {
+                        data: 'numbering',
+                        name: 'numbering',
+                        className: 'text-center',
+                        orderable: false,
+                        render: function(data, type, row) {
+                            return data ? data : '';
+                        }
+                    },
+                {
                     data: 'allkode',
                     name: 'allkode',
                     render: function(data, type, row) {
                         return data ? data : '';
                     },
-                    orderable :false,
+                    orderable: false,
                 },
                 {
                     data: 'uraian',
@@ -265,7 +329,7 @@
                             return row.uraian_rencana;
                         }
                     },
-                    orderable :false,
+                    orderable: false,
                 },
                 {
                     data: 'volume',
@@ -314,7 +378,7 @@
 
                 // Total over all pages
                 total = api
-                    .column(5)
+                    .column(6)
                     .data()
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
@@ -322,7 +386,7 @@
 
                 // Total over this page
                 pageTotal = api
-                    .column(5, {
+                    .column(6, {
                         page: 'current'
                     })
                     .data()
@@ -331,7 +395,7 @@
                     }, 0);
 
                 // Update footer
-                $(api.column(5).footer()).html(
+                $(api.column(6).footer()).html(
                     'Rp ' + formatNumber(pageTotal, 0)
                 );
             }
@@ -354,8 +418,8 @@
                 }
             },
             columns: [{
-                    data: 'unit_id',
-                    name: 'unit_id',
+                    data: 'nama_unit',
+                    name: 'nama_unit',
                 },
                 {
                     data: 'anggaran',
@@ -445,29 +509,12 @@
 
     function KompletRencana() {
         var rencanaId = $('#rencana_id').val();
-        $.ajax({
-            type: "GET",
-            url: "{{ route('rencana.checkStatus') }}",
-            data: {
-                id: rencanaId
-            },
-            success: function(response) {
-                if (response.status === 'approved') {
-                    $('#lengkapiUsulan-modal').modal('show');
-                    console.log('id rencana adalah', rencanaId);
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: ' Data belum disetujui',
-                        text: 'Tidak dapat melengkapi.'
-                    });
-                }
-            },
-            error: function(error) {
-                alert('Error: Tidak dapat memeriksa status.');
-                console.error(error);
-            }
-        });
+        $('#lengkapiUsulan-modal').modal('show');
+        if ($('#kategori').val() === 'detil') {
+            $('#kode').prop('disabled', true);
+        } else {
+            $('#kode').prop('disabled', false);
+        }
     }
 
     // submit
@@ -519,50 +566,60 @@
                 $('#volume').val(res.volume);
                 $('#satuan_id').val(res.satuan_id); // Pilih satuan yang sesuai di dropdown
                 $('#harga').val(res.harga);
+                if (res.kode_komponen_id === null) {
+                        $('#kategori').val('detil').change();
+                        $('#uraian').val(res.uraian).prop('disabled', false).show();
+                        $('#kode').prop('disabled', true);
+                        $('#uraian-group').show();
+                    } else {
+                        $('#kategori').val('#').change();
+                        $('#kode').prop('disabled', false);
+                        $('#uraian-group').hide();
+                    }
             }
         });
     }
 
     function editParent(id) {
-    console.log(id);
-    $('#editParent').modal('show');
+        console.log(id);
+        $('#editParent').modal('show');
 
-    $('#editParentForm').off('submit').on('submit', function(e) {
-        e.preventDefault(); // Mencegah form submit default
+        $('#editParentForm').off('submit').on('submit', function(e) {
+            e.preventDefault(); // Mencegah form submit default
 
-        var formData = new FormData(this);
-        formData.append('id', id); // Menambahkan ID ke form data
+            var formData = new FormData(this);
+            formData.append('id', id); // Menambahkan ID ke form data
 
-        $.ajax({
-            type: "POST",
-            url: "{{ route('admin.simpan_parent') }}",
-            data: formData,
-            cache: false,
-            contentType: false,
-            processData: false,
-            success: function(data) {
-                $("#editParent").modal('hide');
-                var oTable = $('#editRencAwal').DataTable();
-                oTable.ajax.reload();
-                $("#btn-simpan").html('Submit');
-                $("#btn-simpan").attr("disabled", false);
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: data.success
-                });
-            },
-            error: function(data) {
-                console.log(data);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Terjadi kesalahan saat menyimpan data'
-                });
-            }
+            $.ajax({
+                type: "POST",
+                url: "{{ route('admin.simpan_parent') }}",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    $("#editParent").modal('hide');
+                    var oTable = $('#editRencAwal').DataTable();
+                    oTable.ajax.reload();
+                    $("#btn-simpan").html('Submit');
+                    $("#btn-simpan").attr("disabled", false);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.success
+                    });
+                },
+                error: function(data) {
+                    console.log(data);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan saat menyimpan data'
+                    });
+                }
+            });
         });
-    });
-}
+    }
 
     function editRencAwal(id) {
         $.ajax({

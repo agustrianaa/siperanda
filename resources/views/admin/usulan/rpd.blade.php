@@ -179,8 +179,8 @@
                             }
                         },
                         {
-                            data: 'bulan_rpd',
-                            name: 'bulan_rpd',
+                            data: 'total_rpd',
+                            name: 'total_rpd',
                         },
                         {
                             data: 'action',

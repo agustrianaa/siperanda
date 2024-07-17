@@ -73,7 +73,7 @@
                                 <th>Unit</th>
                                 <th>Pagu</th>
                                 <th>Realisasi</th>
-                                <th>Sisa Anggaran</th>
+                                <th>Sisa Anggaran/Unit</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
