@@ -6,7 +6,7 @@
 
 <!--  Row 1 -->
 <div class="row">
-    <div class="col-lg-4">
+    <div class="col-lg-4 mb-4">
         <div class="card  h-100">
             <div class="card-body">
                 <div class="row align-items-start">

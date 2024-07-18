@@ -165,7 +165,6 @@ class UsulanController extends Controller
     // untuk mencari kode/uraian dari db Kode Komponen
     public function searchByCode(Request $request)
     {
-        Log::info('searchByCode: ');
         $search = $request->input('search');
         Log::info('Search: ' . $search);
 

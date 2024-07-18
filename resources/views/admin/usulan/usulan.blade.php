@@ -41,7 +41,7 @@
                             <div class="col-lg-3 mb-2">
                                 <select name="ftahun" id="ftahun" class="form-select">
                                     <option value="#" disabled selected> - Pilih Tahun - </option>
-                                    @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
+                                    @for ($year = 2020; $year <= 9999; $year++) <option value="{{$year}}">{{$year}}</option>
                                         @endfor
                                 </select>
                             </div>

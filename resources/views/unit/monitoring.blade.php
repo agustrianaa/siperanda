@@ -49,16 +49,26 @@
                         <table class="table table-bordered" id="monitoringfromUnit" style="width: 100%;">
                             <thead>
                                 <tr>
-                                    <!-- <th width="5px">No</th> -->
+                                    <th width="5px">No</th>
                                     <th>Kode</th>
                                     <th>Program/Kegiatan/KRO/RO/dsb</th>
                                     <th>Volume</th>
                                     <th>Satuan</th>
                                     <th>Harga</th>
                                     <th>Jumlah</th>
+                                    <th>Realisasi</th>
+                                    <th>Sisa Anggaran</th>
                                     <th>Ket</th>
                                 </tr>
                             </thead>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="6" style="text-align:right">Total:</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -131,7 +141,17 @@
                         tahun: ftahun,
                     }
                 },
-                columns: [{
+                columns: [
+                    {
+                        data: 'numbering',
+                        name: 'numbering',
+                        className: 'text-center',
+                        orderable: false,
+                        render: function(data, type, row) {
+                            return data ? data : '';
+                        }
+                    },
+                    {
                         data: 'allkode',
                         name: 'allkode',
                         render: function(data, type, row) {
@@ -180,6 +200,26 @@
                         }
                     },
                     {
+                        data: 'total_realisasi',
+                        name: 'total_realisasi',
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                return new Intl.NumberFormat('id-ID').format(data);
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'sisa_anggaran',
+                        name: 'sisa_anggaran',
+                        render: function(data, type, row) {
+                            if (type === 'display') {
+                                return new Intl.NumberFormat('id-ID').format(data);
+                            }
+                            return data;
+                        }
+                    },
+                    {
                         data: 'ket',
                         name: 'ket',
                         className: 'text-center',
@@ -188,7 +228,54 @@
                 ],
                 order: [
                     [0, 'desc']
-                ]
+                ],
+                footerCallback: function(row, data, start, end, display) {
+                    var api = this.api();
+
+                    // Fungsi untuk menghapus format dari angka
+                    var intVal = function(i) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                            i : 0;
+                    };
+
+                    // Total untuk semua halaman
+                    var totalUsulan = api
+                        .column(6)
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    var totalRealisasi = api
+                        .column(7)
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    var totalSisaAnggaran = api
+                        .column(8)
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+
+
+                    // Update footer
+                    $(api.column(6).footer()).html(
+                        'Rp ' + new Intl.NumberFormat('id-ID').format(totalUsulan)
+                    );
+
+                    $(api.column(7).footer()).html(
+                        'Rp ' + new Intl.NumberFormat('id-ID').format(totalRealisasi)
+                    );
+                    $(api.column(8).footer()).html(
+                        'Rp ' + new Intl.NumberFormat('id-ID').format(totalSisaAnggaran)
+                    );
+                }
             });
         }
 

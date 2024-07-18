@@ -52,7 +52,7 @@
                         </div>
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Anggaran</label>
-                            <div class="col-sm-12">
+                            <div class="col-sm-12">logu
                                 <input type="text" class="form-control" id="all_anggaran" name="all_anggaran" placeholder="Masukkan Anggaran" maxlength="50" required="">
                             </div>
                         </div>
