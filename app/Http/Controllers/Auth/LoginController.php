@@ -56,7 +56,8 @@ class LoginController extends Controller
     ]);
 
     if (auth()->attempt(['email' => $input['email'], 'password' => $input['password']])) {
-        Alert::toast('Hello ' . auth()->user()->email . ', selamat datang kembali!', 'success')->position('top-end');
+        // Alert::toast('Hello ' . auth()->user()->email . ', selamat datang kembali!', 'success')->position('top-end');
+        alert()->success('success','berhasl');
         return redirect()->route('dashboard')->with('success', 'Hello ' . auth()->user()->email . ', selamat datang kembali!');
     } else {
         Alert::error('Error', 'Email atau Password Salah');

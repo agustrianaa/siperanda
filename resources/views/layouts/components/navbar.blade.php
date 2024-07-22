@@ -33,6 +33,8 @@
                                     {{ auth()->user()->unit->name }}
                                     @elseif (auth()->user()->role == 'direksi')
                                     {{ auth()->user()->direksi->name }}
+                                    @elseif (auth()->user()->role == 'super_admin')
+                                    {{ auth()->user()->super_admin->name }}
                                     @else
                                     {{ auth()->user()->name }}
                                     @endif

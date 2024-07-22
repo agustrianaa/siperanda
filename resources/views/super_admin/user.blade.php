@@ -236,7 +236,7 @@
     }
 
     function hapusUser(id) {
-        if (confirm("Delete Record?") == true) {
+        if (confirm("Delete Data User?") == true) {
             var id = id;
             // ajax
             $.ajax({
@@ -251,7 +251,7 @@
                     oTable.ajax.reload();
                     Swal.fire(
                         'Terhapus!',
-                        'Data berhasil dihapus.',
+                        'Data user berhasil dihapus.',
                         'success'
                     );
                 }
@@ -283,7 +283,7 @@
                 $("#btn-save-user").attr("disabled", false);
                 Swal.fire(
                     'Success!',
-                    'Data berhasil ditambahkan/diubah.',
+                    'Berhasil!!',
                     'success'
                 );
             },

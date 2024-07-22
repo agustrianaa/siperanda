@@ -422,8 +422,8 @@
 
     function hapusUsulan(id) {
         Swal.fire({
-            title: 'Delete Record?',
-            text: "Anda yakin ingin menghapus data ini?",
+            title: 'Delete Data?',
+            text: "Anda yakin ingin menghapus data anggaran ini?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',

@@ -47,6 +47,9 @@
                     <h5 class="modal-title">Rencana Penarikan Dana</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <div id="alert-warning" class="alert alert-warning d-none">
+                    Anggaran melebihi Pagu
+                </div>
                 <div class="modal-body">
                     <form action="javascript:void(0)" id="rpdForm" name="rpdForm" class="form-horizontal" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="detail_rencana_id" id="detail_rencana_id">

@@ -13,9 +13,9 @@
                     <form id="exportForm" method="GET" action="{{route('unit.export_rencana')}}">
                         @csrf
                         <div class="form-group">
-                            <select name="tahun" id="tahun" class="form-select">
+                            <select name="tahun" id="tahun" class="form-select" required="">
                                 <option value="#" disabled selected> - Pilih Tahun - </option>
-                                @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
+                                @for ($year = 2020; $year <= 9999; $year++) <option value="{{$year}}">{{$year}}</option>
                                     @endfor
                             </select>
                         </div>

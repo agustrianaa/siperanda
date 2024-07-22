@@ -106,7 +106,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Tambahkan Rencana</h5>
+                    <h5 class="modal-title">Rencana</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -477,11 +477,12 @@
             if (res.status === 'approved') {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
+                    title: 'Gagal',
                     text: 'Rencana sudah disetujui dan tidak bisa ditambahkan lagi'
                 });
             } else {
                 // Tampilkan modal jika status bukan 'approved'
+                $('#usulanLain-modal .modal-title').html("Tambahkan Rencana");
                 $('#rencana2Form').trigger("reset");
                 $('#usulanLain-modal').modal('show');
                 $('#parent_id').val('');
@@ -513,8 +514,8 @@
     function hapusUsulan(id) {
         console.log(id);
         Swal.fire({
-            title: 'Delete Record?',
-            text: "Anda yakin ingin menghapus data ini?",
+            title: 'Hapus Data?',
+            text: "Anda yakin ingin menghapus data rencana ini?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -543,7 +544,7 @@
                         var res = xhr.responseJSON;
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error',
+                            title: 'Gagal',
                             text: res.message || 'Terjadi kesalahan saat menghapus data'
                         });
                     }
@@ -600,6 +601,7 @@
     });
 
     function editUsulan(id) {
+
         $.ajax({
             type: "POST",
             url: "{{ route('unit.edit_usulan')}}",
@@ -617,7 +619,7 @@
                 } else if (res.status === 'approved') {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
+                        title: 'Gagal',
                         text: 'Usulan sudah disetujui dan tidak bisa diubah'
                     });
                 } else {
@@ -642,7 +644,6 @@
                         $('#uraian-group').hide();
                     }
                     $('#usulanLain-modal').modal('show');
-
                 }
             },
         });

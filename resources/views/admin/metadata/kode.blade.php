@@ -222,8 +222,8 @@
 
     function hapusKode(id) {
         Swal.fire({
-            title: 'Delete Record?',
-            text: "Anda yakin ingin menghapus data ini?",
+            title: 'Hapus Data?',
+            text: "Anda yakin ingin menghapus data kode komponen ini?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',

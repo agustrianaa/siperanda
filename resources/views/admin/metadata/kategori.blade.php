@@ -127,8 +127,8 @@
 
     function hapusKategori(id){
     Swal.fire({
-    title: 'Delete Record?',
-        text: "Anda yakin ingin menghapus data ini?",
+    title: 'Hapus Data?',
+        text: "Anda yakin ingin menghapus data kategori ini?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',

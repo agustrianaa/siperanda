@@ -362,7 +362,7 @@
                 // Tambahkan baris untuk sisa anggaran
                 $('#showModal tbody').append(
                     '<tr>' +
-                    '<td class="text-center fw-semibold">Sisa Anggaran</td>' +
+                    '<td class="text-center fw-semibold">Sisa</td>' +
                     '<td colspan="3" class="text-center font-weight-bold">' + sisaAnggaran.toLocaleString('id-ID') + '</td>' +
                     '</tr>'
                 );

@@ -324,7 +324,7 @@ class UsulanController extends Controller
         if ($rencana->status === 'approved') {
             return response()->json([
                 'status' => 'approved',
-                'message' => 'Usulan sudah disetujui dan tidak bisa diubah'
+                'message' => 'Usulan sudah disetujui dan tidak bisa dihapus'
             ], 400);
         } else {
             $detailRencana->delete();

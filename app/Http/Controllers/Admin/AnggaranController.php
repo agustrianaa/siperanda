@@ -28,6 +28,7 @@ class AnggaranController extends Controller
             ->addColumn('action', function ($row) {
                 $id = $row->id; // Ambil ID dari baris data
                 $action =  '<a href="javascript:void(0)" onClick="editAnggaran(' . $id . ')" class="edit btn btn-success btn-sm"><i class="fas fa-edit"></i></a>';
+                $action .=  '<a href="javascript:void(0)" onClick="hapusAnggaran(' . $id . ')" class="edit btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
                 return $action;
             })
             ->rawColumns(['action'])
