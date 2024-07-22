@@ -14,7 +14,13 @@
                         <h5 class="card-title fw-semibold mb-3">Filter</h5>
                         <div class="row">
                             <div class="col-lg-3 mb-2">
-                                <!-- <label for="unit">Pilih Unit </label> -->
+                                <select name="ftahun" id="ftahun" class="form-select">
+                                    <option value="#" disabled selected> - Pilih Tahun - </option>
+                                    @for ($year = 2020; $year <= 9999; $year++) <option value="{{$year}}">{{$year}}</option>
+                                        @endfor
+                                </select>
+                            </div>
+                            <div class="col-lg-3 mb-2">
                                 <select name="funit" id="funit" class="form-select">
                                     <option value="#" disabled selected>- Pilih Unit -</option>
                                     @if($unit->isEmpty())
@@ -26,6 +32,7 @@
                                     @endif
                                 </select>
                             </div>
+
                             <div class="col-lg-3 mb-2">
                                 <select name="fkategori" id="fkategori" class="form-select">
                                     <option value="#" disabled selected> - Pilih Kategori - </option>
@@ -36,13 +43,6 @@
                                     <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
                                     @endforeach
                                     @endif
-                                </select>
-                            </div>
-                            <div class="col-lg-3 mb-2">
-                                <select name="ftahun" id="ftahun" class="form-select">
-                                    <option value="#" disabled selected> - Pilih Tahun - </option>
-                                    @for ($year = 2020; $year <= 9999; $year++) <option value="{{$year}}">{{$year}}</option>
-                                        @endfor
                                 </select>
                             </div>
                             <div class="col-lg-1 mb-1">
@@ -75,6 +75,7 @@
                 <div class="card-body">
                     <h5 class="card-title fw-semibold mb-3">Rencana Awal</h5>
                     <div class="row">
+                        <div class="table-responsive">
                         <table class="table table-bordered" id="rencanaAwalTabel" style="width:100%">
                             <thead>
                                 <tr>
@@ -86,6 +87,8 @@
                                 </tr>
                             </thead>
                         </table>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -97,6 +100,7 @@
                 <div class="card-body">
                     <h5 class="card-title fw-semibold mb-3">Detail Rencana</h5>
                     <div class="row">
+                        <div class="table-responsive">
                         <table class="table table-bordered" id="rencanaTabel" style="width:100%">
                             <thead>
                                 <tr>
@@ -111,6 +115,8 @@
                                 </tr>
                             </thead>
                         </table>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -265,6 +271,7 @@
                 processing: true,
                 serverSide: true,
                 destroy: true,
+                pageLength: 5,
                 ajax: {
                     url: "{{ route('admin.tabelRencanaAwal') }}",
                     type: 'GET',

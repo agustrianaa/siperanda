@@ -60,4 +60,11 @@ class AnggaranController extends Controller
         }
         return Response()->json($anggaran);
     }
+
+    public function destroy(Request $request)
+    {
+        $anggaran = Anggaran::where('id',$request->id)->delete();
+
+        return Response()->json($anggaran);
+    }
 }

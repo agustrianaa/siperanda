@@ -88,6 +88,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::get('/admin/anggaran',  [AdminAnggaranController::class, 'index'])->name('admin.anggaran');
     Route::post('/admin/simpan-anggaran', [AdminAnggaranController::class, 'store'])->name('admin.simpan_anggaran');
     Route::post('/admin/edit-anggaran', [AdminAnggaranController::class, 'edit'])->name('admin.edit_anggaran');
+    Route::post('/admin/hapus-anggaran', [AdminAnggaranController::class, 'destroy'])->name('admin.hapus_anggaran');
     // Usulan di admin
     Route::get('/admin/usulan',  [AdminUsulanController::class, 'index'])->name('admin.usulan');
     Route::get('/admin/datatabell',  [AdminUsulanController::class, 'tabelAwalRencana'])->name('admin.tabelRencanaAwal');
@@ -169,6 +170,8 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     Route::get('/unit/histori', [HistoriController::class, 'index'])->name('unit.histori');
     // CRUD RPD
     Route::get('/unit/rpd', [UnitRencanaPenarikanDanaController::class, 'index'])->name('unit.rpd');
+    Route::get('/get-detail-rencana', [UnitRencanaPenarikanDanaController::class, 'getDetailRencana'])->name('unit.getDetailRencana');
+
     Route::post('/unit/simpan-skedul', [UnitRencanaPenarikanDanaController::class, 'storeRPD'])->name('unit.simpan_skedul');
     Route::post('/unit/update-realisasi', [UnitRencanaPenarikanDanaController::class, 'updateRPD'])->name('unit.updateRPD');
     Route::get('/unit/edit-realisasi', [UnitRencanaPenarikanDanaController::class, 'edit'])->name('unit.editRPD');

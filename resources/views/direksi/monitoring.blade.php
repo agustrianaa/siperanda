@@ -103,6 +103,7 @@
                 processing: true,
                 serverSide: true,
                 destroy: true,
+                pageLength: 5,
                 ajax: {
                     url: "{{route('direksi.dataAnggaran')}}",
                     type: 'GET',
@@ -160,6 +161,7 @@
                 processing: true,
                 serverSide: true,
                 destroy: true,
+                pageLength: 5,
                 ajax: {
                     url: "{{route('direksi.allAnggaran')}}",
                     type: 'GET',

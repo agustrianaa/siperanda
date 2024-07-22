@@ -16,18 +16,20 @@
         <div class="card">
             <div class="card-body">
                 <div class="row">
-                    <table class="table table-bordered" id="tabelKode" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th width="5px">No</th>
-                                <th>Kode</th>
-                                <th>Kode Parent</th>
-                                <th>Kategori</th>
-                                <th class="text-center">Uraian</th>
-                                <th width="15%">Action</th>
-                            </tr>
-                        </thead>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="tabelKode" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th width="5px">No</th>
+                                    <th>Kode</th>
+                                    <th>Kode Parent</th>
+                                    <th>Kategori</th>
+                                    <th class="text-center">Uraian</th>
+                                    <th width="15%">Action</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,8 +55,8 @@
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Kode Parent</label>
                             <div class="col-sm-12">
-                                <input type="text" class="form-control" id="kode_parent_display" placeholder="Cari Kode Parent" maxlength="50" >
-                                <input type="hidden" id="kode_parent" name="kode_parent" >
+                                <input type="text" class="form-control" id="kode_parent_display" placeholder="Cari Kode Parent" maxlength="50">
+                                <input type="hidden" id="kode_parent" name="kode_parent">
                                 <div id="kode-results" class="dropdown-menu" style="display: none; position: absolute; width: 100%;"></div>
                             </div>
                         </div>
@@ -99,8 +101,7 @@
             processing: true,
             serverSide: true,
             ajax: "{{route('admin.kode')}}",
-            columns: [
-                {
+            columns: [{
                     data: null,
                     name: 'DT_RowIndex',
                     className: 'text-center',

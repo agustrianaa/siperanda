@@ -213,14 +213,14 @@
     function formatNumber(num) {
         // Ubah ke tipe number jika num bukan number
         if (typeof num !== 'number') {
-                num = parseFloat(num);
-            }
-            // Format angka dengan pemisah ribuan
-            return num.toLocaleString('id-ID', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
+            num = parseFloat(num);
+        }
+        // Format angka dengan pemisah ribuan
+        return num.toLocaleString('id-ID', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
 
-            });
+        });
     }
 
     function calculateTotal() {
@@ -232,10 +232,19 @@
             }
         });
         $('#totalJumlah').text(total);
+
+        let anggaranMax = $('#rpd-modal').data('anggaran-max');
+        if (total > anggaranMax) {
+            $('#alert-warning').removeClass('d-none').html('Anggaran melebihi Pagu');
+        } else {
+            $('#alert-warning').addClass('d-none');
+        }
     }
+
     $(document).on('input', '.jumlah-input', function() {
         calculateTotal();
     });
+
 
     var id;
 
@@ -245,6 +254,14 @@
         $('#rpd-modal').modal('show');
         $('#rpdForm').trigger("reset");
         $('#detail_rencana_id').val(id);
+        $.ajax({
+        type: "GET",
+        url: "{{ route('unit.getDetailRencana') }}", // Pastikan endpoint ini benar
+        data: { id: id },
+        success: function(data) {
+            $('#rpd-modal').data('anggaran-max', data.anggaran_max);
+        }
+    });
     }
 
     $('#rpdForm').off('submit').on('submit', function(e) {
@@ -294,33 +311,11 @@
                     });
                     $('#jumlah_' + month).val(data.jumlah[monthName] || '');
                 }
+                $('#rpd-modal').data('anggaran-max', data.anggaran_max)
                 calculateTotal();
             }
         });
     }
-
-    $('#editForm').submit(function(e) {
-        e.preventDefault();
-        $.ajax({
-            type: "POST",
-            url: "{{ route('unit.updateRPD') }}",
-            data: $(this).serialize(),
-            success: function(response) {
-                $('#editModal').modal('hide');
-                var oTable = $('#RPD').DataTable();
-                oTable.ajax.reload(null, false);
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: 'Data RPD berhasil di update'
-                });
-            },
-            error: function(error) {
-                console.error(error);
-                alert('Terjadi kesalahan saat mengupdate data RPD');
-            }
-        });
-    });
 
     function showRPD(id) {
         console.log(id);

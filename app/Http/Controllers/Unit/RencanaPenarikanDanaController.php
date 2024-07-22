@@ -70,6 +70,7 @@ class RencanaPenarikanDanaController extends Controller
         return view('unit.rencana.rpd');
     }
 
+
     /**
      * Show the form for creating a new resource.
      */
@@ -129,21 +130,24 @@ class RencanaPenarikanDanaController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(Request $request)
-    {
-        $detailRencanaId = $request->id;
-        $rpdData = Rpd::where('detail_rencana_id', $detailRencanaId)->get();
+{
+    $detailRencanaId = $request->id;
+    $rpdData = Rpd::where('detail_rencana_id', $detailRencanaId)->get();
+    $detailRencana = DetailRencana::findOrFail($detailRencanaId);
 
-        $data = [
-            'detail_rencana_id' => $detailRencanaId,
-            'jumlah' => []
-        ];
+    $data = [
+        'detail_rencana_id' => $detailRencanaId,
+        'jumlah' => [],
+        'anggaran_max' => $detailRencana->total, // Anggaran maksimum yang diizinkan
+    ];
 
-        foreach ($rpdData as $rpd) {
-            $data['jumlah'][$rpd->bulan_rpd] = $rpd->jumlah;
-        }
-
-        return response()->json($data);
+    foreach ($rpdData as $rpd) {
+        $data['jumlah'][$rpd->bulan_rpd] = $rpd->jumlah;
     }
+
+    return response()->json($data);
+}
+
 
     /**
      * Update the specified resource in storage.
@@ -173,4 +177,15 @@ class RencanaPenarikanDanaController extends Controller
     {
         //
     }
+
+    public function getDetailRencana(Request $request)
+{
+    $detailRencana = DetailRencana::findOrFail($request->id);
+    $anggaran_max = $detailRencana->total; // Anggaran maksimum yang diizinkan
+
+    return response()->json([
+        'anggaran_max' => $anggaran_max
+    ]);
+}
+
 }

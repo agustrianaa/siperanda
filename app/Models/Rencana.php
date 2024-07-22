@@ -25,4 +25,9 @@ class Rencana extends Model
     {
         return \Carbon\Carbon::parse($this->attributes['tahun'])->format('Y');
     }
+    public function detailRencana()
+{
+    return $this->hasMany(DetailRencana::class);
+}
+
 }

@@ -1,6 +1,8 @@
 @extends('template')
+@section('page-title')
+<h4 class="fw-semibold">Dashboard</h4>
+@endsection
 @section('content')
-
 <!--  Row 1 -->
 <div class="row">
     <div class="col-lg-4 mb-4">
@@ -10,6 +12,7 @@
                     <div class="col-8">
                         <h6 class="card-title mb-9 fw-semibold">Jumlah Unit</h6>
                         <h5 class="fw-semibold mb-3"> {{$totalUnit}}</h5>
+                        
                     </div>
                     <div class="col-4">
                         <div class="d-flex justify-content-end">

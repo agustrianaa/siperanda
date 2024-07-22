@@ -224,8 +224,14 @@ class UsulanController extends Controller
         $jumlah = $rencana->harga * $rencana->volume;
         $rencana->total = $jumlah;
         $rencana->save();
+        $totalRencana = DetailRencana::where('rencana_id', $usulan->id)->sum('total');
+        $exceeds_budget = $totalRencana > $usulan->anggaran;
 
-        return response()->json($rencana);
+        return response()->json([
+            'success' => 'Data berhasil diperbarui.',
+            'exceeds_budget' => $exceeds_budget,
+            'total' => $totalRencana
+        ]);
     }
 
 
@@ -286,6 +292,7 @@ class UsulanController extends Controller
     public function update(Request $request, $id)
     {
         $detailRencana = DetailRencana::with('rencana')->findOrFail($id);
+        $usulan = $detailRencana->rencana;
         if ($detailRencana->rencana->status == 'revisi') {
             Revisi::create([
                 'rencana_id' => $detailRencana->rencana_id,
@@ -312,7 +319,14 @@ class UsulanController extends Controller
         $detailRencana->total =  $request->volume * $request->harga;
         $detailRencana->save();
 
-        return response()->json(['success' => 'Data berhasil diperbarui.']);
+        $totalRencana = DetailRencana::where('rencana_id', $usulan->id)->sum('total');
+        $exceeds_budget = $totalRencana > $usulan->anggaran;
+
+        return response()->json([
+            'success' => 'Data berhasil diperbarui.',
+            'exceeds_budget' => $exceeds_budget,
+            'total' => $totalRencana
+        ]);
     }
 
     public function destroy(Request $request)
@@ -321,18 +335,28 @@ class UsulanController extends Controller
         $detailRencana = DetailRencana::with('rencana')->findOrFail($request->id);
 
         $rencana = Rencana::findOrFail($detailRencana->rencana_id);
+
         if ($rencana->status === 'approved') {
             return response()->json([
                 'status' => 'approved',
                 'message' => 'Usulan sudah disetujui dan tidak bisa dihapus'
             ], 400);
         } else {
+            // Hapus detail rencana
             $detailRencana->delete();
-        }
 
-        $detailRencana->status = $rencana->status;
-        return response()->json($detailRencana);
+            // Hitung total anggaran setelah penghapusan
+            $totalRencana = DetailRencana::where('rencana_id', $rencana->id)->sum('total');
+            $exceeds_budget = $totalRencana > $rencana->anggaran;
+
+            return response()->json([
+                'success' => 'Data berhasil dihapus.',
+                'exceeds_budget' => $exceeds_budget,
+                'total' => $totalRencana
+            ]);
+        }
     }
+
 
     public function checkAnggaran(Request $request)
     {
@@ -355,10 +379,10 @@ class UsulanController extends Controller
     public function checkStatus(Request $request)
     {
         $id = $request->id;
-    $rencana = Rencana::findOrFail($id);
+        $rencana = Rencana::findOrFail($id);
 
-    return response()->json([
-        'status' => $rencana->status
-    ]);
+        return response()->json([
+            'status' => $rencana->status
+        ]);
     }
 }

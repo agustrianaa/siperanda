@@ -32,13 +32,13 @@
                     <a class="btn btn-success m-1" onclick="tambahRencana()" href="javascript:void(0)"><i class="ti ti-plus"></i> Rencana</a>
                 </div>
             </div>
-            @if($total > $rencanaId->anggaran)
+            <!-- @if($total > $rencanaId->anggaran) -->
             <div class="row">
-                <div id="alert-warning d-none" class="alert alert-warning">
+                <div id="alert-warning" class="alert alert-warning d-none">
                     Anggaran melebihi Pagu
                 </div>
             </div>
-            @endif
+            <!-- @endif -->
         </div>
         <div class="card">
             <div class="card-body">
@@ -103,7 +103,7 @@
 
     <!-- modal -->
     <div class="modal fade" id="usulanLain-modal" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Rencana</h5>
@@ -120,7 +120,9 @@
                             <select name="kategori" id="kategori" class="form-select">
                                 <option value="#" disabled selected>-Pilih jika tidak ada Kode nya-</option>
                                 <option value="detil">Detil</option>
+                                <option value="#">Memiliki Kode</option>
                             </select>
+                            <div class="invalid-feedback">Pilih satu</div>
                         </div>
                         <div class="form-group mb-2" id="uraian-group" style="display:none;">
                             <label for="uraian" class="col-sm-4 control-label">Uraian</label>
@@ -140,6 +142,7 @@
                             <label for="name" class="col-sm-4 control-label">Volume</label>
                             <div class="col-sm-12">
                                 <input type="text" class="form-control" id="volume" name="volume" placeholder="Masukkan volume" maxlength="50" required="">
+                                <div class="invalid-feedback">Harus diisi</div>
                             </div>
                         </div>
                         <div class="form-group mb-2">
@@ -190,7 +193,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Understood</button>
                 </div>
             </div>
         </div>
@@ -252,6 +254,7 @@
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+
         $('#usulan').DataTable({
             processing: true,
             serverSide: true,
@@ -464,51 +467,87 @@
 
     // untuk menambahkan detail usulan
     function tambahRencana() {
-    var rencanaId = $('#rencana_id').val(); // Ambil ID rencana dari hidden input
+        $('#rencana2Form').trigger("reset");
+        var rencanaId = $('#rencana_id').val(); // Ambil ID rencana dari hidden input
+        $.ajax({
+            type: "GET",
+            url: "{{ route('unit.checkStatus') }}", // Sesuaikan dengan URL endpoint Anda untuk memeriksa status
+            data: {
+                id: rencanaId
+            },
+            dataType: 'json',
+            success: function(res) {
+                if (res.status === 'approved') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: 'Rencana sudah disetujui dan tidak bisa ditambahkan lagi'
+                    });
+                } else {
+                    // Tampilkan modal jika status bukan 'approved'
+                    $('#usulanLain-modal .modal-title').html("Tambahkan Rencana");
+                    $('#rencana2Form').trigger("reset");
+                    $('#usulanLain-modal').modal('show');
+                    $('#parent_id').val('');
+                    $('#id').val('');
 
-    $.ajax({
-        type: "GET",
-        url: "{{ route('unit.checkStatus') }}", // Sesuaikan dengan URL endpoint Anda untuk memeriksa status
-        data: {
-            id: rencanaId
-        },
-        dataType: 'json',
-        success: function(res) {
-            if (res.status === 'approved') {
+                    if ($('#kategori').val() === 'detil') {
+                        $('#kode').prop('disabled', true);
+                    } else {
+                        $('#kode').prop('disabled', false);
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Gagal',
-                    text: 'Rencana sudah disetujui dan tidak bisa ditambahkan lagi'
+                    title: 'Error',
+                    text: 'Terjadi kesalahan saat memeriksa status rencana'
                 });
-            } else {
-                // Tampilkan modal jika status bukan 'approved'
-                $('#usulanLain-modal .modal-title').html("Tambahkan Rencana");
-                $('#rencana2Form').trigger("reset");
-                $('#usulanLain-modal').modal('show');
-                $('#parent_id').val('');
-                $('#id').val('');
-
-                if ($('#kategori').val() === 'detil') {
-                    $('#kode').prop('disabled', true);
-                } else {
-                    $('#kode').prop('disabled', false);
-                }
             }
-        },
-        error: function(xhr, status, error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Terjadi kesalahan saat memeriksa status rencana'
-            });
-        }
-    });
-}
+        });
+    }
 
     function tambahRencanaLain(parentId) {
-        $('#rencana2Form').trigger("reset");
-        $('#noparent_id').val(parentId);
-        $('#usulanLain-modal').modal('show');
+        var rencanaId = $('#rencana_id').val();
+        $.ajax({
+            type: "GET",
+            url: "{{ route('unit.checkStatus') }}", // Sesuaikan dengan URL endpoint Anda untuk memeriksa status
+            data: {
+                id: rencanaId
+            },
+            dataType: 'json',
+            success: function(res) {
+                if (res.status === 'approved') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: 'Rencana sudah disetujui dan tidak bisa ditambahkan lagi'
+                    });
+                } else {
+                    // Tampilkan modal jika status bukan 'approved'
+                    $('#usulanLain-modal .modal-title').html("Tambahkan Rencana");
+                    $('#rencana2Form').trigger("reset");
+                    $('#noparent_id').val(parentId);
+                    $('#usulanLain-modal').modal('show');
+                    $('#parent_id').val('');
+                    $('#id').val('');
+
+                    if ($('#kategori').val() === 'detil') {
+                        $('#kode').prop('disabled', true);
+                    } else {
+                        $('#kode').prop('disabled', false);
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Terjadi kesalahan saat memeriksa status rencana'
+                });
+            }
+        });
     }
 
     function hapusUsulan(id) {
@@ -532,13 +571,21 @@
                     },
                     dataType: 'json',
                     success: function(res) {
+
                         var oTable = $('#usulan').DataTable();
                         oTable.ajax.reload();
-                        Swal.fire(
-                            'Terhapus!',
-                            'Data berhasil dihapus.',
-                            'success'
-                        );
+                        if (res.exceeds_budget) {
+                            $('#alert-warning').removeClass('d-none').html('Anggaran melebihi Pagu');
+                            localStorage.setItem('alert-warning', 'visible');
+                        } else {
+                            $('#alert-warning').addClass('d-none');
+                            localStorage.removeItem('alert-warning');
+                        }
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: res.success
+                        });
                     },
                     error: function(xhr, status, error) {
                         var res = xhr.responseJSON;
@@ -554,6 +601,12 @@
         });
     }
 
+     // Cek status dari localStorage saat halaman dimuat
+     if (localStorage.getItem('alert-warning') === 'visible') {
+        $('#alert-warning').removeClass('d-none').html('Anggaran melebihi Pagu');
+    } else {
+        $('#alert-warning').addClass('d-none');
+    }
     // Menyimpan detail rencana
     $('#rencana2Form').submit(function(e) {
         e.preventDefault();
@@ -573,6 +626,7 @@
             contentType: false,
             processData: false,
             success: (data) => {
+                console.log(data);
                 $("#usulanLain-modal").modal('hide');
                 var usulanTable = $('#usulan').DataTable();
                 usulanTable.ajax.reload();
@@ -580,18 +634,22 @@
                 lastTable.ajax.reload();
                 $("#btn-simpan").html('Submit');
                 $("#btn-simpan").attr("disabled", false);
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success',
-                    text: data.success
-                });
                 if (data.status === 'revisi') {
                     $('#last-div').removeClass('d-none');
                     var lastTable = $('#last').DataTable();
                     lastTable.ajax.reload();
                 };
-                if (data.total > data.paguAnggaran){
-                    $('#alert-warning').removeClass('d-none');
+                if (data.exceeds_budget) {
+                    $('#alert-warning').removeClass('d-none').html('Anggaran melebihi Pagu');
+                    localStorage.setItem('alert-warning', 'visible');
+                } else {
+                    $('#alert-warning').addClass('d-none');
+                    localStorage.removeItem('alert-warning');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: data.success
+                    });
                 }
             },
             error: function(data) {

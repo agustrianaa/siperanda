@@ -52,7 +52,7 @@
                         </div>
                         <div class="form-group">
                             <label for="name" class="col-sm-4 control-label">Anggaran</label>
-                            <div class="col-sm-12">logu
+                            <div class="col-sm-12">
                                 <input type="text" class="form-control" id="all_anggaran" name="all_anggaran" placeholder="Masukkan Anggaran" maxlength="50" required="">
                             </div>
                         </div>
@@ -189,5 +189,38 @@
             }
         })
     });
+
+    function hapusAnggaran(id){
+    Swal.fire({
+    title: 'Hapus Data?',
+        text: "Anda yakin ingin menghapus data kategori ini?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Ajax request
+            $.ajax({
+                type: "POST",
+                url: "{{ route('admin.hapus_anggaran')}}",
+                data: {
+                    id: id
+                },
+                dataType: 'json',
+                success: function(res) {
+                    var oTable = $('#anggaran').DataTable();
+                oTable.ajax.reload();
+                    Swal.fire(
+                        'Terhapus!',
+                        'Data berhasil dihapus.',
+                        'success'
+                    );
+                }
+            });
+        }
+    });
+}
 </script>
 @endsection
