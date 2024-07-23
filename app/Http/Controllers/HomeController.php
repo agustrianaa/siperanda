@@ -68,7 +68,7 @@ class HomeController extends Controller
         })->sum('jumlah');
         $sisaAnggaran = $totalAnggaran - $totalRealisasi;
 
-        return view('admin.dashboard', compact('totalAnggaran', 'totalRKA', 'totalUnit', 'totalRealisasi', 'sisaAnggaran'));
+        return view('admin.dashboard', compact('totalAnggaran', 'totalRKA', 'totalUnit', 'totalRealisasi', 'sisaAnggaran', 'latestYear'));
     }
 
     public function direksiHome()

@@ -3,6 +3,12 @@
 <h4 class="fw-semibold">Dashboard</h4>
 @endsection
 @section('content')
+<!-- <div class="alert alert-info text-center">
+    @php
+    $year = \Carbon\Carbon::parse($latestYear)->year;
+    @endphp
+    <h5 class="fw-semibold">{{ $year }}</h5>
+</div> -->
 <!--  Row 1 -->
 <div class="row">
     <div class="col-lg-4 mb-4">
@@ -12,12 +18,13 @@
                     <div class="col-8">
                         <h6 class="card-title mb-9 fw-semibold">Jumlah Unit</h6>
                         <h5 class="fw-semibold mb-3"> {{$totalUnit}}</h5>
-                        
                     </div>
                     <div class="col-4">
-                        <div class="d-flex justify-content-end">
-                            <div class="text-white bg-secondary rounded-circle p-3 d-flex align-items-center justify-content-center">
-                                <i class="fa fa-users fs-6"></i>
+                        <div class="row mb-9">
+                            <div class="d-flex justify-content-end">
+                                <div class="text-white bg-secondary rounded-circle p-3 d-flex align-items-center justify-content-center">
+                                    <i class="fa fa-users fs-6"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -30,8 +37,8 @@
             <div class="card-body">
                 <div class="row align-items-start">
                     <div class="col-8">
-                        <h5 class="card-title mb-3 fw-semibold">Jumlah Usulan RKA</h5>
-                        <h4 class="fw-semibold mb-3">{{$totalRKA}}</h4>
+                        <h6 class="card-title mb-3 fw-semibold">Jumlah Rencana Anggaran</h6>
+                        <h5 class="fw-semibold mb-3">{{$totalRKA}}</h5>
                     </div>
                     <div class="col-4">
                         <div class="d-flex justify-content-end">
@@ -44,6 +51,7 @@
             </div>
         </div>
     </div>
+
     <div class="col-lg-4 mb-4">
         <div class="card h-100">
             <div class="card-body">

@@ -108,7 +108,7 @@
         $('#id').val('');
     }
 
-    function editKategori(id){
+    function editKategori(id) {
         $.ajax({
             type: "POST",
             url: "{{ route('admin.edit_kategori')}}",
@@ -125,38 +125,45 @@
         });
     }
 
-    function hapusKategori(id){
-    Swal.fire({
-    title: 'Hapus Data?',
-        text: "Anda yakin ingin menghapus data kategori ini?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Ajax request
-            $.ajax({
-                type: "POST",
-                url: "{{ route('admin.hapus_kategori')}}",
-                data: {
-                    id: id
-                },
-                dataType: 'json',
-                success: function(res) {
-                    var oTable = $('#kategori').DataTable();
-                oTable.ajax.reload();
-                    Swal.fire(
-                        'Terhapus!',
-                        'Data berhasil dihapus.',
-                        'success'
-                    );
-                }
-            });
-        }
-    });
-}
+    function hapusKategori(id) {
+        Swal.fire({
+            title: 'Hapus Data?',
+            text: "Anda yakin ingin menghapus data kategori ini?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Ajax request
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('admin.hapus_kategori')}}",
+                    data: {
+                        id: id
+                    },
+                    dataType: 'json',
+                    success: function(res) {
+                        var oTable = $('#kategori').DataTable();
+                        oTable.ajax.reload();
+                        Swal.fire(
+                            'Terhapus!',
+                            'Data berhasil dihapus.',
+                            'success'
+                        );
+                    },
+                    error: function(data) {
+                        Swal.fire(
+                            'Gagal!',
+                            'Data ini tidak bisa dihapus karena masih digunakan oleh data lain.',
+                            'warning'
+                        );
+            }
+                });
+            }
+        });
+    }
 
     $('#kategoriForm').submit(function(e) {
         e.preventDefault();
@@ -175,10 +182,10 @@
                 $("#btn-save").html('Submit');
                 $("#btn-save").attr("disabled", false);
                 Swal.fire({
-                icon: 'success',
-                title: 'Success',
-                text: data.success
-            });
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.success
+                });
             },
             error: function(data) {
                 console.log(data);

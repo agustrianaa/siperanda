@@ -31,7 +31,7 @@ class UserSeeder extends Seeder
         }
 
         $user = User::create([
-            'email' => 'a@gmail.com',
+            'email' => 'admin@gmail.com',
             'password' => bcrypt('12345678'),
             'role' =>'admin'
         ]);
@@ -43,7 +43,7 @@ class UserSeeder extends Seeder
         }
 
         $user = User::create([
-            'email' => 'b@gmail.com',
+            'email' => 'direksi@gmail.com',
             'password' => bcrypt('12345678'),
             'role' =>'direksi'
         ]);
@@ -55,7 +55,7 @@ class UserSeeder extends Seeder
         }
 
         $user = User::create([
-            'email' => 'ca@gmail.com',
+            'email' => 'teknikinformatika@gmail.com',
             'password' => bcrypt('12345678'),
             'role' =>'unit'
         ]);
