@@ -30,4 +30,8 @@ class Rencana extends Model
     return $this->hasMany(DetailRencana::class);
 }
 
+public function revisi(){
+    return $this->hasMany(Revisi::class);
+}
+
 }

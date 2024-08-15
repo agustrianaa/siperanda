@@ -73,16 +73,26 @@
                         </tfoot>
                     </table>
                 </div>
-
             </div>
         </div>
     </div>
     <div class="row {{ $is_rev ? '' : 'd-none'}}" id="last-div">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title fw-semibold mb-3">Usulan Lama</h5>
+                <h5 class="card-title fw-semibold mb-3">List Revision</h5>
+                <div class="row mb-2">
+                    <div class="form-group">
+                        <select class="form-control" id="revision" name="'revision">
+                            <option value="" selected disabled>Pilih Revisi...</option>
+                            @foreach ($dataRevisi as $item )
+                            <option value="{{$item}}">Revisi {{$item}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="last">
+                    <table class="table table-bordered" id="last" style="width:100%">
                         <thead>
                             <tr>
                                 <!-- <th width="3px">No</th> -->
@@ -354,55 +364,71 @@
             }
         });
 
-        $('#last').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: "{{route('unit.last')}}",
-            columns: [{
-                    data: 'allkode',
-                    name: 'allkode',
-                    render: function(data, type, row) {
-                        return data ? data : '';
+        dataRevisi();
+
+        function dataRevisi() {
+            var revision = $('#revision').val();
+            $('#last').DataTable({
+                "dom": 't',
+                processing: true,
+                serverSide: true,
+                destroy: true,
+                ajax: {
+                    url: "{{route('unit.last')}}",
+                    type: 'GET',
+                    data: {
+                        revision: revision,
                     }
                 },
-                {
-                    data: 'uraian',
-                    name: 'uraian',
-                    render: function(data, type, row) {
-                        // Logika untuk menampilkan uraian dari kode komponen atau uraian rencana
-                        if (row.uraian_kode_komponen) {
-                            return row.uraian_kode_komponen;
-                        } else {
-                            return row.uraian_rencana;
+                columns: [{
+                        data: 'allkode',
+                        name: 'allkode',
+                        render: function(data, type, row) {
+                            return data ? data : '';
                         }
-                    }
-                },
-                {
-                    data: 'volume',
-                    name: 'volume',
-                },
-                {
-                    data: 'satuan',
-                    name: 'satuan',
-                },
-                {
-                    data: 'harga',
-                    name: 'harga',
-                    render: function(data, type, row) {
-                        return formatNumber(data);
-                    }
-                },
-                {
-                    data: 'total',
-                    name: 'total',
-                    render: function(data, type, row) {
-                        return formatNumber(data);
-                    }
-                },
-            ],
-            order: [
-                [0, 'desc']
-            ]
+                    },
+                    {
+                        data: 'uraian',
+                        name: 'uraian',
+                        render: function(data, type, row) {
+                            // Logika untuk menampilkan uraian dari kode komponen atau uraian rencana
+                            if (row.uraian_kode_komponen) {
+                                return row.uraian_kode_komponen;
+                            } else {
+                                return row.uraian_rencana;
+                            }
+                        }
+                    },
+                    {
+                        data: 'volume',
+                        name: 'volume',
+                    },
+                    {
+                        data: 'satuan',
+                        name: 'satuan',
+                    },
+                    {
+                        data: 'harga',
+                        name: 'harga',
+                        render: function(data, type, row) {
+                            return formatNumber(data);
+                        }
+                    },
+                    {
+                        data: 'total',
+                        name: 'total',
+                        render: function(data, type, row) {
+                            return formatNumber(data);
+                        }
+                    },
+                ],
+                order: [
+                    [0, 'desc']
+                ]
+            });
+        }
+        $('#revision').on('change', function() {
+            dataRevisi();
         });
 
         $('#kode').on('input', function() {
@@ -601,8 +627,8 @@
         });
     }
 
-     // Cek status dari localStorage saat halaman dimuat
-     if (localStorage.getItem('alert-warning') === 'visible') {
+    // Cek status dari localStorage saat halaman dimuat
+    if (localStorage.getItem('alert-warning') === 'visible') {
         $('#alert-warning').removeClass('d-none').html('Anggaran melebihi Pagu');
     } else {
         $('#alert-warning').addClass('d-none');
@@ -612,7 +638,7 @@
         e.preventDefault();
         var formData = new FormData(this);
         var id = $('#id').val();
-        var url = id ? "/unit/update-usulan/" + id : "/unit/simpan-rencana2/";
+        var url = id ? "/unit/update-usulan/" + id : "/unit/simpan-rencana2";
         var method = id ? "POST" : "POST"; // Menggunakan POST untuk metode spoofing PUT atau PATCH
         if (id) {
             formData.append('_method', 'PUT'); // Menambahkan spoofing metode PUT jika ID ada
@@ -630,8 +656,8 @@
                 $("#usulanLain-modal").modal('hide');
                 var usulanTable = $('#usulan').DataTable();
                 usulanTable.ajax.reload();
-                var lastTable = $('#last').DataTable();
-                lastTable.ajax.reload();
+                // var lastTable = $('#last').DataTable();
+                // lastTable.ajax.reload();
                 $("#btn-simpan").html('Submit');
                 $("#btn-simpan").attr("disabled", false);
                 if (data.status === 'revisi') {
@@ -654,6 +680,11 @@
             },
             error: function(data) {
                 console.log(data);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Data tidak berhasil di simpan'
+                });
             }
         });
     });

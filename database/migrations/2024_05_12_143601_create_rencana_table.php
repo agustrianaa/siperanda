@@ -18,6 +18,7 @@ return new class extends Migration
             $table->decimal('jumlah', 15,2)->nullable(); //untuk jumlah seluruh RKA per Unit
             $table->decimal('anggaran', 15,2)->nullable();
             $table->enum('status', ['draft', 'submitted', 'approved', 'rejected', 'revisi']);
+            $table->integer('revision')->default(0);
             $table->timestamps();
         });
     }

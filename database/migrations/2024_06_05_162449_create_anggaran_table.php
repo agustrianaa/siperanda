@@ -16,6 +16,7 @@ return new class extends Migration
             $table->decimal('all_anggaran', 20,2)->nullable(); //untuk anggaran per lembaga
             $table->foreignId('unit_id')->references('id')->on('unit')->onDelete('cascade')->nullable();
             $table->decimal('anggaran_perunit',15,2)->nullable();
+            $table->date('tahun');
             $table->timestamps();
         });
     }

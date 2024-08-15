@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('satuan_id')->references('id')->on('satuan')->onDelete('cascade');
             $table->string('volume');
             $table->decimal('harga', 15,2)->nullable();
-            $table->decimal('total', 15,2)->nullable();;
+            $table->decimal('total', 15,2)->nullable();
             $table->text('uraian')->nullable();
             $table->boolean('is_revised')->nullable();
             $table->boolean('is_revised2')->nullable();

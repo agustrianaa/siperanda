@@ -7,7 +7,7 @@
     <div class="row mb-2">
         <div class="col">
             @if ($rencana->status == 'revisi')
-            <div class="btn btn-danger">Revisi</div>
+            <div class="btn btn-danger">Revisi {{$rencana->revision}}</div>
             @elseif ($rencana->status == 'approved')
             <div class="btn btn-success">Disetujui</div>
             @elseif ($rencana->status == 'rejected')
@@ -25,7 +25,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col"></div>
-                <div class="col-auto">
+                    <div class="col-auto">
                         <h5 class="card-title fw-semibold mb-3">Pagu : Rp. {{number_format($rencana->anggaran, 0, ',', '.')}}</h5>
                     </div>
                     <table class="table table-bordered" id="detail" style="width:100%">
@@ -145,15 +145,15 @@
                     data: 'harga',
                     name: 'harga',
                     render: function(data, type, row) {
-                            return formatNumber(data);
-                        }
+                        return formatNumber(data);
+                    }
                 },
                 {
                     data: 'total',
                     name: 'total',
                     render: function(data, type, row) {
-                            return formatNumber(data);
-                        }
+                        return formatNumber(data);
+                    }
                 },
             ],
             order: [
@@ -195,9 +195,10 @@
             }
 
         });
+
         function formatNumber(num) {
             // Ubah ke tipe number jika num bukan number
-        if (typeof num !== 'number') {
+            if (typeof num !== 'number') {
                 num = parseFloat(num);
             }
             // Format angka dengan pemisah ribuan
@@ -236,8 +237,13 @@
                         text: data.success
                     });
                 },
-                error: function(xhr, status, error) {
-                    console.error('Error:', error);
+                error: function(data) {
+                    console.log(data);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: 'Data tidak berhasil di simpan'
+                    });
                 }
             });
         });

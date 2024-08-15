@@ -16,7 +16,7 @@ class ReportController extends Controller
         $units = Unit::all();
         return view('admin.report', compact('units'));
     }
-    
+
     public function exportRencana(Request $request){
         $request->validate([
             'tahun' => 'required|digits:4',

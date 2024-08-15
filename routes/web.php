@@ -113,7 +113,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::post('/admin/hapus-RA', [AdminUsulanController::class, 'destroyRA'])->name('admin.hapus_RA');
     Route::post('/admin/simpan-ket', [AdminUsulanController::class, 'storeKet'])->name('admin.simpan_ketUsulan');
     // REALISASI
-    Route::get('/admin/realisasi',  [RPDanaController::class, 'rpd'])->name('admin.realisasi');
+    Route::get('/admin/RPD',  [RPDanaController::class, 'rpd'])->name('admin.realisasi');
     Route::post('/admin/simpan-validasi', [RPDanaController::class, 'storevalidasi'])->name('admin.simpan_validasiRPD');
 
     //MONITORING
@@ -168,6 +168,8 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     Route::get('/unit/check-status-rencana', [UnitUsulanController::class, 'checkStatus'])->name('unit.checkStatus');
     // Menu Histori
     Route::get('/unit/histori', [HistoriController::class, 'index'])->name('unit.histori');
+    Route::get('/unit/detail-histori', [HistoriController::class, 'showHistori'])->name('unit.show_histori');
+    Route::get('/unit/tabel-histori', [HistoriController::class, 'detailHistori'])->name('unit.detailHistori');
     // CRUD RPD
     Route::get('/unit/rpd', [UnitRencanaPenarikanDanaController::class, 'index'])->name('unit.rpd');
     Route::get('/get-detail-rencana', [UnitRencanaPenarikanDanaController::class, 'getDetailRencana'])->name('unit.getDetailRencana');

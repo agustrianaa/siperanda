@@ -99,7 +99,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("admin.monitoring")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-typography"></i>
+                            <i class="ti ti-article"></i>
                         </span>
                         <span class="hide-menu">Monitoring</span>
                     </a>
@@ -172,7 +172,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("direksi.monitoring")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-typography"></i>
+                            <i class="ti ti-article"></i>
                         </span>
                         <span class="hide-menu">Monitoring</span>
                     </a>
@@ -241,7 +241,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("unit.monitoring")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-typography"></i>
+                            <i class="ti ti-article"></i>
                         </span>
                         <span class="hide-menu">Monitoring</span>
                     </a>

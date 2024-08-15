@@ -44,20 +44,16 @@
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="histori">
+                    <table class="table table-bordered" id="dataHistori" style="width: 100%;">
                         <thead>
                             <tr>
-                                <th>Kode</th>
-                                <th width="30%">Uraian</th>
-                                <th>Volume</th>
-                                <th>Satuan</th>
-                                <th>Harga</th>
-                                <th width="15%">Jumlah</th>
+                                <th>Tahun</th>
+                                <th>Anggaran</th>
+                                <th width="15%">Ket</th>
                             </tr>
                         </thead>
                     </table>
                 </div>
-
             </div>
         </div>
     </div>
@@ -78,7 +74,7 @@
         function dataRencana() {
             var fkategori = $('#fkategori').val();
             var ftahun = $('#ftahun').val();
-            $('#histori').DataTable({
+            $('#dataHistori').DataTable({
                 processing: true,
                 serverSide: true,
                 destroy: true,
@@ -91,56 +87,32 @@
                     }
                 },
                 columns: [{
-                        data: 'allkode',
-                        name: 'allkode',
+                        data: 'tahun',
+                        name: 'tahun',
                         className: 'text-center',
                         render: function(data, type, row) {
                             return data ? data : '';
                         }
                     },
                     {
-                        data: 'uraian',
-                        name: 'uraian',
-                        render: function(data, type, row) {
-                            // Logika untuk menampilkan uraian dari kode komponen atau uraian rencana
-                            if (row.uraian_kode_komponen) {
-                                return row.uraian_kode_komponen;
-                            } else {
-                                return row.uraian_rencana;
-                            }
-                        }
-                    },
-                    {
-                        data: 'volume',
-                        name: 'volume',
+                        data: 'anggaran',
+                        name: 'anggaran',
                         className: 'text-center',
-                    },
-                    {
-                        data: 'satuan',
-                        name: 'satuan',
-                    },
-                    {
-                        data: 'harga',
-                        name: 'harga',
                         render: function(data, type, row) {
-                            return formatNumber(data);
+                            return data ? data : '';
                         }
                     },
                     {
-                        data: 'total',
-                        name: 'total',
+                        data: 'ket',
+                        name: 'ket',
+                        className: 'text-center',
                         render: function(data, type, row) {
-                            return formatNumber(data);
+                            return data ? data : '';
                         }
-                    },
+                    }
                 ]
             });
-
         }
-
-        $('#funit').on('change', function() {
-            dataRencana();
-        });
 
         $('#fkategori').on('change', function() {
             dataRencana();
@@ -158,6 +130,10 @@
         })
 
     });
+
+    function showHistori(idRencana){
+        window.location.href = '{{ route("unit.show_histori") }}' + '?id=' + idRencana;
+    }
 </script>
 
 @endsection

@@ -13,6 +13,7 @@ use App\Models\RPD;
 use App\Models\Satuan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class UsulanController extends Controller
@@ -23,7 +24,11 @@ class UsulanController extends Controller
         $satuan = Satuan::all();
         $unit_id = $user->unit->id;
         $rencanaId = $this->getLatestRencana($unit_id);
-
+        $dataRevisi = Revisi::where('rencana_id', $rencanaId->id)
+            ->pluck('revision')
+            ->unique()
+            ->sort()
+            ->toArray();
         $is_rev = 0;
         $noteRev = '';
         $total = '0';
@@ -39,7 +44,7 @@ class UsulanController extends Controller
         }
 
 
-        return view('unit.rencana.usulan', compact('satuan', 'rencanaId', 'is_rev', 'noteRev', 'total'));
+        return view('unit.rencana.usulan', compact('satuan', 'rencanaId', 'is_rev', 'noteRev', 'total', 'dataRevisi'));
     }
 
     public function tabel1(Request $request)
@@ -94,47 +99,56 @@ class UsulanController extends Controller
     }
 
     public function tabel2(Request $request)
-    {
-        $user = Auth::user();
-        $satuan = Satuan::all();
-        $unit_id = $user->unit->id;
-        // $latestRencana = Rencana::where('unit_id', $unit_id->id)->first();
-        $rencanaId = $this->getLatestRencana($unit_id);
-        // $historiRencana = $this->getHistoriRencana($unit_id);
-        if ($request->ajax()) {
-            $unit = $user->unit;
+{
+    $user = Auth::user();
+    $unit_id = $user->unit->id;
+    $rencanaId = $this->getLatestRencana($unit_id);
+    $revision = $request->revision;
 
-            // Pastikan unit ditemukan
-            if (!$unit) {
-                return response()->json(['data' => []]);
-            }
+    if ($request->ajax()) {
+        $unit = $user->unit;
 
-            // Sesuaikan query untuk hanya mengambil data terkait dengan unit pengguna
-            $usulan = Revisi::select(
-                'revisi.*',
-                'revisi.id as revisi_id',
-                'rencana.*',
-                'revisi.uraian as uraian_rencana',
-                'kode_komponen.uraian as uraian_kode_komponen',
-                'rencana.tahun as tahun',
-                'kode_komponen.*',
-                'satuan.*',
-                KodeKomponen::raw("CONCAT(parent.kode, '.', COALESCE(kode_komponen.kode, '')) as allkode")
-            )
-                ->join('rencana', 'revisi.rencana_id', '=', 'rencana.id')
-                ->leftJoin('kode_komponen', 'revisi.kode_komponen_id', '=', 'kode_komponen.id')
-                ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
-                ->join('satuan', 'revisi.satuan_id', '=', 'satuan.id')
-                ->where('rencana.unit_id', $unit->id) // Tambahkan kondisi ini
-                ->where('rencana.id', $rencanaId->id)
-                ->get();
-
-            return datatables()->of($usulan)
-                ->make(true);
+        if (!$unit) {
+            return response()->json(['data' => []]);
         }
 
-        return view('unit.rencana.usulan', compact('satuan', 'rencanaId',));
+        // Query utama untuk mendapatkan data usulan
+        $usulan = Revisi::select(
+            'revisi.*',
+            'revisi.id as revisi_id',
+            'rencana.*',
+            'revisi.uraian as uraian_rencana',
+            'kode_komponen.uraian as uraian_kode_komponen',
+            'rencana.tahun as tahun',
+            'kode_komponen.*',
+            'satuan.*',
+            KodeKomponen::raw("CONCAT(parent.kode, '.', COALESCE(kode_komponen.kode, '')) as allkode")
+        )
+            ->join('rencana', 'revisi.rencana_id', '=', 'rencana.id')
+            ->leftJoin('kode_komponen', 'revisi.kode_komponen_id', '=', 'kode_komponen.id')
+            ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
+            ->join('satuan', 'revisi.satuan_id', '=', 'satuan.id')
+            ->where('rencana.unit_id', $unit->id)
+            ->where('rencana.id', $rencanaId->id);
+
+        if ($revision) {
+            $usulan->where('revisi.revision', $revision);
+        } else {
+            $latestRevision = Revisi::where('rencana_id', $rencanaId->id)
+                ->max('revision');
+            $usulan->where('revisi.revision', $latestRevision);
+        }
+
+        $dataRevisi = $usulan->get();
+
+        return datatables()->of($dataRevisi)
+            ->make(true);
     }
+
+    return view('unit.rencana.usulan', compact('satuan', 'rencanaId'));
+}
+
+
 
     protected function getLatestRencana($unit_id)
     {
@@ -193,7 +207,7 @@ class UsulanController extends Controller
             ]);
         } else {
             $request->validate([
-                'kode_komponen_id' => 'required|exists:kode_komponen,id',  // Pastikan kode_komponen_id tidak null dan ada di tabel kode_komponen
+                'kode_komponen_id' => 'required|exists:kode_komponen,id',
             ]);
         }
 
@@ -293,22 +307,21 @@ class UsulanController extends Controller
     {
         $detailRencana = DetailRencana::with('rencana')->findOrFail($id);
         $usulan = $detailRencana->rencana;
-        if ($detailRencana->rencana->status == 'revisi') {
-            Revisi::create([
-                'rencana_id' => $detailRencana->rencana_id,
-                'kode_komponen_id'  => $detailRencana->kode_komponen_id  ?: null,
-                'volume'    => $detailRencana->volume,
-                'satuan_id' => $detailRencana->satuan_id,
-                'harga' => $detailRencana->harga,
-                'total' => $detailRencana->total = $detailRencana->volume * $detailRencana->harga,
-                'uraian' => $detailRencana->uraian,
-                'revision' => ($detailRencana->is_revised + $detailRencana->is_revised2 + $detailRencana->is_revised3) + 1,
-            ]);
 
-            $detailRencana->is_revised3 = $detailRencana->is_revised2 ? 1 : 0;
-            $detailRencana->is_revised2 = $detailRencana->is_revised ? 1 : 0;
-            $detailRencana->is_revised = 1;
-        }
+        // if ($detailRencana->rencana->status == 'revisi') {
+        //     Revisi::create([
+        //         'rencana_id' => $detailRencana->rencana_id,
+        //         'kode_komponen_id' => $detailRencana->kode_komponen_id ?: null,
+        //         'volume' => $detailRencana->volume,
+        //         'satuan_id' => $detailRencana->satuan_id,
+        //         'harga' => $detailRencana->harga,
+        //         'total' => $detailRencana->volume * $detailRencana->harga,
+        //         'uraian' => $detailRencana->uraian,
+        //         'revision' => ($detailRencana->is_revised ?? 0) + 1,
+        //     ]);
+
+        //     $detailRencana->is_revised = ($detailRencana->is_revised ?? 0) + 1;
+        // }
 
         // Update DetailRencana
         $detailRencana->kode_komponen_id = $request->kode_komponen_id ?: null;
@@ -316,7 +329,7 @@ class UsulanController extends Controller
         $detailRencana->satuan_id = $request->satuan_id;
         $detailRencana->harga = $request->harga;
         $detailRencana->uraian = $request->uraian;
-        $detailRencana->total =  $request->volume * $request->harga;
+        $detailRencana->total = $request->volume * $request->harga;
         $detailRencana->save();
 
         $totalRencana = DetailRencana::where('rencana_id', $usulan->id)->sum('total');
@@ -328,6 +341,7 @@ class UsulanController extends Controller
             'total' => $totalRencana
         ]);
     }
+
 
     public function destroy(Request $request)
     {

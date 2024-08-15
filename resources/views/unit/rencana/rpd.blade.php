@@ -46,7 +46,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">Rencana Penarikan Dana</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+                </div> 
                 <div id="alert-warning" class="alert alert-warning d-none">
                     Anggaran melebihi Pagu
                 </div>

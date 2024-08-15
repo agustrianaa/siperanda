@@ -8,6 +8,7 @@ use App\Models\Kategori;
 use App\Models\KodeKomponen;
 use App\Models\Realisasi;
 use App\Models\Rencana;
+use App\Models\Revisi;
 use App\Models\RevisiNote;
 use App\Models\Satuan;
 use App\Models\Unit;
@@ -23,7 +24,8 @@ class UsulanController extends Controller
         return view('admin.usulan.usulan', compact('unit', 'kategoris'));
     }
 
-    public function tabelAwalRencana(Request $request){
+    public function tabelAwalRencana(Request $request)
+    {
         if ($request->ajax()) {
             $funit = $request->unit_id;
             $ftahun = $request->tahun;
@@ -35,7 +37,7 @@ class UsulanController extends Controller
                 'unit.*',
                 'unit.name as nama_unit'
             )
-            ->leftJoin('unit', 'rencana.unit_id', '=', 'unit.id');
+                ->leftJoin('unit', 'rencana.unit_id', '=', 'unit.id');
 
             if ($funit) {
                 $rencana->where('rencana.unit_id', $funit);
@@ -47,15 +49,15 @@ class UsulanController extends Controller
 
             $usulan = $rencana->get();
             return datatables()->of($usulan)
-            ->addColumn('action', function ($row) {
-                $id = $row->idRencana1;
-                $action =  '<a href="javascript:void(0)" onClick="showUsulan(' . $id . ')" class="add btn btn-warning btn-sm mr-2">Validasi</i></a>';
-                $action .=  '<a href="javascript:void(0)" onClick="editUsulan(' . $id . ')" class="add btn btn-success btn-sm mr-2"><i class="fas fa-edit"></i></a>';
-                $action .= '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm mr-2"><i class="fas fa-trash"></i></a>';
-                return $action;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+                ->addColumn('action', function ($row) {
+                    $id = $row->idRencana1;
+                    $action =  '<a href="javascript:void(0)" onClick="showUsulan(' . $id . ')" class="add btn btn-warning btn-sm mr-2">Validasi</i></a>';
+                    $action .=  '<a href="javascript:void(0)" onClick="editUsulan(' . $id . ')" class="add btn btn-success btn-sm mr-2"><i class="fas fa-edit"></i></a>';
+                    $action .= '<a href="javascript:void(0)" onClick="hapusUsulan(' . $id . ')" class="delete btn btn-danger btn-sm mr-2"><i class="fas fa-trash"></i></a>';
+                    return $action;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
     }
 
@@ -105,25 +107,52 @@ class UsulanController extends Controller
 
 
     public function storeKet(Request $request)
-{
+    {
+        // Ambil ID dari request
+        $id = $request->id;
 
-    $id = $request->id;
-    Log::info('ID received in request: ' . $request->id);
-    Log::info('ID received: ' . $id);
-    $rencana = Rencana::findOrFail($id);
+        // Cari rencana berdasarkan ID
+        $rencana = Rencana::findOrFail($id);
 
-    if ($rencana) {
-        $rencana->status = $request->input('status');
-        $rencana->save();
+        if ($rencana) {
+            // Update status rencana
+            $rencana->status = $request->input('status');
+            $rencana->save();
+        }
+
+        // Simpan catatan revisi jika ada
+        if (!empty($request->note)) {
+            RevisiNote::create([
+                'rencana_id' => $rencana->id,
+                'note' => $request->note,
+            ]);
+        }
+
+        // Periksa apakah rencana berada dalam status revisi
+        if ($rencana->status == 'revisi') {
+            // Ambil semua detail rencana yang terkait dengan rencana ini
+            $detailRencanaList = DetailRencana::where('rencana_id', $rencana->id)->get();
+
+            foreach ($detailRencanaList as $detailRencana) {
+                // Simpan data revisi
+                Revisi::create([
+                    'rencana_id' => $detailRencana->rencana_id,
+                    'kode_komponen_id' => $detailRencana->kode_komponen_id ?: null,
+                    'volume' => $detailRencana->volume,
+                    'satuan_id' => $detailRencana->satuan_id,
+                    'harga' => $detailRencana->harga,
+                    'total' => $detailRencana->volume * $detailRencana->harga,
+                    'uraian' => $detailRencana->uraian,
+                    'revision' => $rencana->revision,
+                ]);
+            }
+            $rencana->revision = ($rencana->revision ?? 0) + 1;
+                $rencana->save();
+        }
+
+        return response()->json($rencana);
     }
-    if (!empty($request->note)) {
-        RevisiNote::create([
-            'rencana_id' => $rencana->id,
-            'note' => $request->note,
-        ]);
-    }
-    return response()->json($rencana);
-}
+
 
     // untuk menyimpan rencanan awal
     public function store(Request $request)
@@ -144,21 +173,23 @@ class UsulanController extends Controller
         return response()->json($rencana);
     }
 
-    public function show(Request $request){
+    public function show(Request $request)
+    {
         $id = $request->query('id');
         $rencana = Rencana::findorFail($id);
         return view('admin.usulan.validasi', compact('rencana'));
     }
 
-    public function edit(Request $request){
+    public function edit(Request $request)
+    {
         $id = $request->query('id');
         $rencana = Rencana::findorFail($id);
         $satuan = Satuan::all();
         $unit = Unit::all();
         $parent = DetailRencana::select('kode_komponen.*', 'detail_rencana.id as detail_rencana_id')
-        ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
-        ->where('detail_rencana.rencana_id', $id)
-        ->get();
+            ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+            ->where('detail_rencana.rencana_id', $id)
+            ->get();
         return view('admin.usulan.edit_rencana', compact('rencana', 'satuan', 'unit', 'parent'));
     }
 
@@ -177,11 +208,10 @@ class UsulanController extends Controller
     }
 
     // untuk menghapus rencana awal
-    public function destroyRA(Request $request){
-        $rencanaAwal = Rencana::where('id',$request->id)->delete();
+    public function destroyRA(Request $request)
+    {
+        $rencanaAwal = Rencana::where('id', $request->id)->delete();
 
         return Response()->json($rencanaAwal);
     }
-
-
 }
