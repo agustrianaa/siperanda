@@ -95,7 +95,7 @@
                     <table class="table table-bordered" id="last" style="width:100%">
                         <thead>
                             <tr>
-                                <!-- <th width="3px">No</th> -->
+                                <th width="3px">No</th>
                                 <th>Kode</th>
                                 <th width="30%">Uraian</th>
                                 <th>Volume</th>
@@ -104,6 +104,12 @@
                                 <th width="15%">Jumlah</th>
                             </tr>
                         </thead>
+                        <tfoot>
+                            <tr>
+                                <th colspan="6" style="text-align:right">Total:</th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
 
@@ -380,7 +386,14 @@
                         revision: revision,
                     }
                 },
-                columns: [{
+                columns: [
+                    {
+                        data: 'number',
+                        name: 'number',
+                        className: 'text-center',
+                        orderable: false,
+                    },
+                    {
                         data: 'allkode',
                         name: 'allkode',
                         render: function(data, type, row) {
@@ -424,7 +437,41 @@
                 ],
                 order: [
                     [0, 'desc']
-                ]
+                ],
+                footerCallback: function(row, data, start, end, display) {
+                    var api = this.api();
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function(i) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                            i : 0;
+                    };
+
+                    // Total over all pages
+                    total = api
+                        .column(6)
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Total over this page
+                    pageTotal = api
+                        .column(6, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Update footer
+                    $(api.column(6).footer()).html(
+                        'Rp ' + formatNumber(pageTotal, 0)
+                    );
+                }
             });
         }
         $('#revision').on('change', function() {

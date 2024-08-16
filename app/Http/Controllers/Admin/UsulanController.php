@@ -137,6 +137,7 @@ class UsulanController extends Controller
                 // Simpan data revisi
                 Revisi::create([
                     'rencana_id' => $detailRencana->rencana_id,
+                    'noparent_id' =>$detailRencana->noparent_id,
                     'kode_komponen_id' => $detailRencana->kode_komponen_id ?: null,
                     'volume' => $detailRencana->volume,
                     'satuan_id' => $detailRencana->satuan_id,
@@ -154,7 +155,7 @@ class UsulanController extends Controller
     }
 
 
-    // untuk menyimpan rencanan awal
+    // untuk menyimpan rencana awal
     public function store(Request $request)
     {
         $request->validate([

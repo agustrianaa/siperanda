@@ -90,12 +90,30 @@ class HistoriController extends Controller
                 ->where('rencana.unit_id', $unit->id)
                 ->where('rencana.id', $id); // Tambahkan kondisi ini
             $dataRencana = $usulan->get();
+            // Membangun data hierarki dengan nomor urut
+            $usulanData = $this->buildHierarchy($dataRencana);
 
-            return datatables()->of($dataRencana)
+            return datatables()->of(collect($usulanData))
                 ->make(true);
         }
     }
+    private function buildHierarchy($usulan, $parentId = null, $prefix = '')
+    {
+        $result = [];
+        $index = 1;
 
+        foreach ($usulan as $item) {
+            if ($item->noparent_id == $parentId) {
+                $item->number = $prefix ? "{$prefix}.{$index}" : (string)$index;
+                $result[] = $item;
+                $children = $this->buildHierarchy($usulan, $item->detail_rencana_id, $item->number);
+                $result = array_merge($result, $children);
+                $index++;
+            }
+        }
+
+        return $result;
+    }
     public function showHistori(Request $request)
     {
         $id = $request->query('id');

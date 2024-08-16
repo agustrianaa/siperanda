@@ -12,7 +12,7 @@
                 <div class="card-body">
                     <h5 class="card-title fw-semibold">Filter</h5>
                     <div class="row">
-                        <div class="col-lg-3 mb-2">
+                        <!-- <div class="col-lg-3 mb-2">
                             <select name="fkategori" id="fkategori" class="form-select">
                                 <option value="#" disabled selected> - Pilih Kategori - </option>
                                 @if($kategoris->isEmpty())
@@ -23,7 +23,7 @@
                                 @endforeach
                                 @endif
                             </select>
-                        </div>
+                        </div> -->
                         <div class="col-lg-3 mb-2">
                             <select name="fkategori" id="ftahun" class="form-select">
                                 <option value="#" disabled selected> - Pilih Tahun - </option>

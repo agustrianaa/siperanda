@@ -75,7 +75,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("admin.anggaran")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-cash"></i>
                         </span>
                         <span class="hide-menu">Anggaran</span>
                     </a>
@@ -83,7 +83,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("admin.usulan")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-clipboard-text"></i>
                         </span>
                         <span class="hide-menu">Usulan</span>
                     </a>
@@ -91,7 +91,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("admin.realisasi")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-calendar-plus"></i>
                         </span>
                         <span class="hide-menu">RPD</span>
                     </a>
@@ -99,7 +99,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("admin.monitoring")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-device-desktop-analytics"></i>
                         </span>
                         <span class="hide-menu">Monitoring</span>
                     </a>
@@ -139,7 +139,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("admin.report")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-report"></i>
                         </span>
                         <span class="hide-menu">Report</span>
                     </a>
@@ -172,7 +172,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("direksi.monitoring")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-device-desktop-analytics"></i>
                         </span>
                         <span class="hide-menu">Monitoring</span>
                     </a>
@@ -184,7 +184,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("direksi.report")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-report"></i>
                         </span>
                         <span class="hide-menu">Report</span>
                     </a>
@@ -217,7 +217,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("unit.usulan")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-file-pencil"></i>
                         </span>
                         <span class="hide-menu">Pengajuan</span>
                     </a>
@@ -225,7 +225,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("unit.histori")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-clock"></i>
                         </span>
                         <span class="hide-menu">Histori</span>
                     </a>
@@ -233,7 +233,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("unit.rpd")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-calendar-plus"></i>
                         </span>
                         <span class="hide-menu">RPD</span>
                     </a>
@@ -241,7 +241,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("unit.monitoring")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-device-desktop-analytics"></i>
                         </span>
                         <span class="hide-menu">Monitoring</span>
                     </a>
@@ -253,7 +253,7 @@
                 <li class="sidebar-item">
                     <a class="sidebar-link" href="{{route("unit.report")}}" aria-expanded="false">
                         <span>
-                            <i class="ti ti-article"></i>
+                            <i class="ti ti-report"></i>
                         </span>
                         <span class="hide-menu">Report</span>
                     </a>

@@ -140,12 +140,11 @@ class UsulanController extends Controller
         }
 
         $dataRevisi = $usulan->get();
+        $revData = $this->buildHierarchy2($dataRevisi);
 
-        return datatables()->of($dataRevisi)
+        return datatables()->of(collect($revData))
             ->make(true);
     }
-
-    return view('unit.rencana.usulan', compact('satuan', 'rencanaId'));
 }
 
 
@@ -275,6 +274,24 @@ class UsulanController extends Controller
                 $item->number = $prefix ? "{$prefix}.{$index}" : (string)$index;
                 $result[] = $item;
                 $children = $this->buildHierarchy($usulan, $item->detail_rencana_id, $item->number);
+                $result = array_merge($result, $children);
+                $index++;
+            }
+        }
+
+        return $result;
+    }
+
+    private function buildHierarchy2($usulan, $parentId = null, $prefix = '')
+    {
+        $result = [];
+        $index = 1;
+
+        foreach ($usulan as $item) {
+            if ($item->noparent_id == $parentId) {
+                $item->number = $prefix ? "{$prefix}.{$index}" : (string)$index;
+                $result[] = $item;
+                $children = $this->buildHierarchy($usulan, $item->revisi_id, $item->number);
                 $result = array_merge($result, $children);
                 $index++;
             }
