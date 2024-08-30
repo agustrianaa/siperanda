@@ -105,6 +105,8 @@ class UsulanController extends Controller
         }
     }
 
+    
+
 
     public function storeKet(Request $request)
     {
@@ -117,6 +119,7 @@ class UsulanController extends Controller
         if ($rencana) {
             // Update status rencana
             $rencana->status = $request->input('status');
+            $rencana->anggaran = $request->input('anggaran');
             $rencana->save();
         }
 
@@ -137,7 +140,7 @@ class UsulanController extends Controller
                 // Simpan data revisi
                 Revisi::create([
                     'rencana_id' => $detailRencana->rencana_id,
-                    'noparent_id' =>$detailRencana->noparent_id,
+                    'noparent_id' => $detailRencana->noparent_id,
                     'kode_komponen_id' => $detailRencana->kode_komponen_id ?: null,
                     'volume' => $detailRencana->volume,
                     'satuan_id' => $detailRencana->satuan_id,
@@ -148,7 +151,7 @@ class UsulanController extends Controller
                 ]);
             }
             $rencana->revision = ($rencana->revision ?? 0) + 1;
-                $rencana->save();
+            $rencana->save();
         }
 
         return response()->json($rencana);
@@ -178,7 +181,12 @@ class UsulanController extends Controller
     {
         $id = $request->query('id');
         $rencana = Rencana::findorFail($id);
-        return view('admin.usulan.validasi', compact('rencana'));
+        $dataRevisi = Revisi::where('rencana_id', $rencana->id)
+            ->pluck('revision')
+            ->unique()
+            ->sort()
+            ->toArray();
+        return view('admin.usulan.validasi', compact('rencana', 'dataRevisi'));
     }
 
     public function edit(Request $request)
@@ -191,7 +199,12 @@ class UsulanController extends Controller
             ->join('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
             ->where('detail_rencana.rencana_id', $id)
             ->get();
-        return view('admin.usulan.edit_rencana', compact('rencana', 'satuan', 'unit', 'parent'));
+        $dataRevisi = Revisi::where('rencana_id', $rencana->id)
+            ->pluck('revision')
+            ->unique()
+            ->sort()
+            ->toArray();
+        return view('admin.usulan.edit_rencana', compact('rencana', 'satuan', 'unit', 'parent', 'dataRevisi'));
     }
 
     // untuk mencari kode/uraian dari db Kode Komponen

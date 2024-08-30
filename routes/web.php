@@ -99,6 +99,7 @@ Route::middleware(['auth', 'user-access:admin'])->group(function () {
     Route::get('/admin/search/code', [AdminUsulanController::class, 'searchByCode'])->name('admin.search_code');
     Route::get('/admin/tabeldetail', [DetailRencanaController::class, 'tabelDetail'])->name('admin.tabeldetail');
     Route::get('/admin/tabeleditRA', [DetailRencanaController::class, 'tabeleditRA'])->name('admin.tabeleditRA');
+    Route::get('/admin/tabelRevisi', [DetailRencanaController::class, 'tabelRevisi'])->name('admin.tabelRevisi');
     Route::get('/admin/editRA', [DetailRencanaController::class, 'editRencAwal'])->name('admin.editRencAwal');
 
     // LENGKAPI RENCANA NYA UNIT

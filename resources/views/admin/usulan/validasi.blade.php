@@ -7,7 +7,9 @@
     <div class="row mb-2">
         <div class="col">
             @if ($rencana->status == 'revisi')
-            <div class="btn btn-danger">Revisi {{$rencana->revision}}</div>
+            <div class="btn btn-danger">Revisi ke {{$rencana->revision}}</div>
+            @elseif ($rencana->status == 'top_up')
+            <div class="btn btn-warning">Top Up</div>
             @elseif ($rencana->status == 'approved')
             <div class="btn btn-success">Disetujui</div>
             @elseif ($rencana->status == 'rejected')
@@ -68,9 +70,16 @@
                             <select name="status" id="status" class="form-select">
                                 <option disabled selected>- Pilih Validasi -</option>
                                 <option value="revisi"> Revisi</option>
+                                <option value="top_up">Top Up</option>
                                 <option value="approved"> Disetujui</option>
                                 <option value="rejected">Tidak Disetujui</option>
                             </select>
+                        </div>
+                        <div class="form-group mb-2" id="anggaran-group" style="display:none;">
+                            <label for="anggaran" class="col-sm-4 control-label">Pagu</label>
+                            <div class="col-sm-12">
+                                <input type="number" name="anggaran" id="anggaran" class="form-control" placeholder="Masukkan pagu baru" maxlength="255">
+                            </div>
                         </div>
                         <div class="form-group mb-2">
                             <label for="note">Catatan Usulan</label>
@@ -93,6 +102,30 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        //untuk membuka form mengupdate data anggaran setiap unit
+        const statusSelect = document.getElementById('status');
+        const anggaranGroup = document.getElementById('anggaran-group');
+
+        function toggleStatusInput() {
+            if (statusSelect.value === 'top_up'  || statusSelect.value === 'revisi') {
+                anggaranGroup.style.display = 'block';
+                $('#anggaran').prop('disabled', false).show();
+            } else {
+                anggaranGroup.style.display = 'none';
+                $('anggaran').prop('disabled', false).hide();
+            }
+        }
+
+        statusSelect.addEventListener('change', function() {
+            if (statusSelect.value == 'top_up' || statusSelect.value == 'revisi') {
+                anggaranGroup.style.display = 'block';
+            } else {
+                anggaranGroup.style.display = 'none';
+            }
+            toggleStatusInput();
+        });
+        toggleStatusInput();
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

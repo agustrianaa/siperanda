@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DetailRencana;
 use App\Models\KodeKomponen;
 use App\Models\Rencana;
+use App\Models\Revisi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,6 +24,7 @@ class DetailRencanaController extends Controller
                 'rencana.*',
                 'rencana.unit_id as unit_id',
                 'rencana.jumlah as jumlahUsulan',
+                'rencana.status as statusRencana',
                 'kode_komponen.*',
                 'kode_komponen.uraian as uraian_kode_komponen',
                 'satuan.*',
@@ -38,10 +40,14 @@ class DetailRencanaController extends Controller
 
                 return datatables()->of(collect($usulanData))
                 ->addColumn('action', function ($row) {
-                        $id = $row->idRencana;
-                        $action = '<a href="javascript:void(0)" onClick="editRenc(' . $id . ')" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>';
+                    $id = $row->idRencana;
+                    $status = $row->statusRencana;  // Pastikan bahwa 'statusRencana' adalah nama kolom yang benar
+                    $action = '';
+                    if ($status === 'revisi' || $status === 'disetujui') {
+                        $action .= '<a href="javascript:void(0)" onClick="editRenc(' . $id . ')" class="edit btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>';
                         $action .= '<a href="javascript:void(0)" onClick="hapusRenc(' . $id . ')" class="edit btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
-                        return $action;
+                    }
+                    return $action;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -67,6 +73,46 @@ class DetailRencanaController extends Controller
                 ->make(true);
         }
     }
+
+    public function tabelRevisi(Request $request)
+{
+    $revision = $request->id;
+
+    if ($request->ajax()) {
+        $id = $request->query('id');
+        // Query utama untuk mendapatkan data usulan
+        $usulan = Revisi::select(
+            'revisi.*',
+            'revisi.id as revisi_id',
+            'rencana.*',
+            'revisi.uraian as uraian_rencana',
+            'kode_komponen.uraian as uraian_kode_komponen',
+            'rencana.tahun as tahun',
+            'kode_komponen.*',
+            'satuan.*',
+            KodeKomponen::raw("CONCAT(parent.kode, '.', COALESCE(kode_komponen.kode, '')) as allkode")
+        )
+            ->join('rencana', 'revisi.rencana_id', '=', 'rencana.id')
+            ->leftJoin('kode_komponen', 'revisi.kode_komponen_id', '=', 'kode_komponen.id')
+            ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
+            ->join('satuan', 'revisi.satuan_id', '=', 'satuan.id')
+            ->where('rencana.id', $id);
+
+        if ($revision) {
+            $usulan->where('revisi.revision', $revision);
+        } else {
+            $latestRevision = Revisi::where('rencana_id', $id)
+                ->max('revision');
+            $usulan->where('revisi.revision', $latestRevision);
+        }
+
+        $dataRevisi = $usulan->get();
+        $revData = $this->buildHierarchy($dataRevisi);
+
+        return datatables()->of(collect($revData))
+            ->make(true);
+    }
+}
 
     private function buildHierarchy($data, $parentId = null, $prefix = '')
     {
