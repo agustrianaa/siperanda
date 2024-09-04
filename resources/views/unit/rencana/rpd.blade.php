@@ -241,8 +241,16 @@
                     .reduce(function(a, b) {
                         return intVal(a) + intVal(b);
                     }, 0);
+
+                    totalRPD = api
+                    .column(6)
+                    .data()
+                    .reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
                 // Update footer
                 $(api.column(5).footer()).html(formatNumber(totalUsulan));
+                $(api.column(6).footer()).html(formatNumber(totalRPD));
             }
         });
     });
