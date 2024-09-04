@@ -24,14 +24,11 @@ class UsulanController extends Controller
         $satuan = Satuan::all();
         $unit_id = $user->unit->id;
         $rencanaId = $this->getLatestRencana($unit_id);
-        $dataRevisi = Revisi::where('rencana_id', $rencanaId->id)
-            ->pluck('revision')
-            ->unique()
-            ->sort()
-            ->toArray();
+
         $is_rev = 0;
         $noteRev = '';
         $total = '0';
+        $dataRevisi = '';
 
         if ($rencanaId) {
             $is_rev = DetailRencana::where('rencana_id', $rencanaId->id)->where('is_revised', true)->count();
@@ -41,6 +38,13 @@ class UsulanController extends Controller
         }
         if ($rencanaId) {
             $total = DetailRencana::where('rencana_id', $rencanaId->id)->sum('total');
+        }
+        if ($rencanaId){
+            $dataRevisi = Revisi::where('rencana_id', $rencanaId->id)
+            ->pluck('revision')
+            ->unique()
+            ->sort()
+            ->toArray();
         }
 
 

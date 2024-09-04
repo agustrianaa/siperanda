@@ -84,9 +84,10 @@ class HomeController extends Controller
                 $subQuery->where('tahun', $latestYear);
             });
         })->sum('jumlah');
+        $totalAnggaranGlobal = Anggaran::orderBy('tahun', 'desc')->first();
         $sisaAnggaran = $totalAnggaran - $totalRealisasi;
 
-        return view('direksi.dashboard', compact('totalAnggaran', 'totalRKA', 'totalRealisasi', 'sisaAnggaran', 'latestYear'));
+        return view('direksi.dashboard', compact('totalAnggaran', 'totalRKA', 'totalRealisasi', 'sisaAnggaran', 'latestYear', 'totalAnggaranGlobal'));
     }
 
     public function unitHome()
