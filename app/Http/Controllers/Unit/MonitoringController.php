@@ -23,7 +23,6 @@ class MonitoringController extends Controller
         $kategoris = Kategori::all();
         $fkategori = $request->kategori_id;
         $unit = Unit::all();
-        $funit = $request->unit_id;
         $ftahun = $request->tahun;
         if (request()->ajax()) {
             $unit = $user->unit;
@@ -48,20 +47,24 @@ class MonitoringController extends Controller
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-                ->where('rencana.status', '=', 'approved')
+                ->whereIn('rencana.status', ['approved', 'top_up'])
                 ->where('rencana.unit_id', $unit->id);
-
-            if ($funit) {
-                $rencana->where('rencana.unit_id', $funit);
-            }
 
             if ($fkategori) {
                 $rencana->where('kode_komponen.kategori_id', $fkategori);
             }
+
+            $tahunTerbaru = Rencana::max('tahun');
+
             if ($ftahun) {
+                // Jika tahun difilter, tampilkan data sesuai tahun filter
                 $ftahunFormat = $ftahun . '-01-01';
                 $rencana->where('rencana.tahun', $ftahunFormat);
+            } else {
+                // Jika tidak ada filter tahun, tampilkan data dari tahun terbaru
+                $rencana->where('rencana.tahun', $tahunTerbaru);
             }
+
 
             $dataRencana = $rencana->get();
 
@@ -86,28 +89,29 @@ class MonitoringController extends Controller
         return view('unit.monitoring', compact('kategoris', 'unit'));
     }
 
-    public function allAnggaran(Request $request){
+    public function allAnggaran(Request $request)
+    {
         $ftahun = $request->tahun;
-        if(request()->ajax()){
+        if (request()->ajax()) {
             $anggaran = DB::table('anggaran')
-            ->leftJoin('rencana', 'anggaran.tahun', '=', 'rencana.tahun')
-            ->leftJoin('detail_rencana', 'rencana.id', '=', 'detail_rencana.rencana_id')
-            ->leftJoin('realisasi', 'detail_rencana.id', '=', 'realisasi.detail_rencana_id')
-            ->select(
-                'anggaran.id',
-                'anggaran.tahun',
-                'anggaran.all_anggaran',
-                DB::raw('SUM(realisasi.jumlah) as jumlahRealisasi'),
-                DB::raw('anggaran.all_anggaran - COALESCE(SUM(realisasi.jumlah), 0) as sisaAnggaran')
-            )
-            ->groupBy('anggaran.id', 'anggaran.tahun', 'anggaran.all_anggaran');
+                ->leftJoin('rencana', 'anggaran.tahun', '=', 'rencana.tahun')
+                ->leftJoin('detail_rencana', 'rencana.id', '=', 'detail_rencana.rencana_id')
+                ->leftJoin('realisasi', 'detail_rencana.id', '=', 'realisasi.detail_rencana_id')
+                ->select(
+                    'anggaran.id',
+                    'anggaran.tahun',
+                    'anggaran.all_anggaran',
+                    DB::raw('SUM(realisasi.jumlah) as jumlahRealisasi'),
+                    DB::raw('anggaran.all_anggaran - COALESCE(SUM(realisasi.jumlah), 0) as sisaAnggaran')
+                )
+                ->groupBy('anggaran.id', 'anggaran.tahun', 'anggaran.all_anggaran');
             if ($ftahun) {
                 $ftahunFormat = $ftahun . '-01-01';
                 $anggaran->where('rencana.tahun', $ftahunFormat);
             }
             $dataAnggaran = $anggaran->get();
             return datatables()->of($dataAnggaran)
-            ->make(true);
+                ->make(true);
         }
     }
 
@@ -132,22 +136,23 @@ class MonitoringController extends Controller
     }
 
     private function buildHierarchy($data, $parentId = null, $prefix = '')
-{
-    $result = [];
-    $counter = 1;
-    foreach ($data as $item) {
-        if ($item->noparent_id == $parentId) {
-            $item->numbering = $prefix ? "{$prefix}.{$counter}" : (string)$counter;
-            $result[] = $item;
-            $children = $this->buildHierarchy($data, $item->idRencana, $item->numbering . '.');
-            $result = array_merge($result, $children);
-            $counter++;
+    {
+        $result = [];
+        $counter = 1;
+        foreach ($data as $item) {
+            if ($item->noparent_id == $parentId) {
+                $item->numbering = $prefix ? "{$prefix}.{$counter}" : (string)$counter;
+                $result[] = $item;
+                $children = $this->buildHierarchy($data, $item->idRencana, $item->numbering . '.');
+                $result = array_merge($result, $children);
+                $counter++;
+            }
         }
+        return $result;
     }
-    return $result;
-}
 
-    public function show(Request $request){
+    public function show(Request $request)
+    {
         $id = $request->query('id');
         $rencana = Rencana::findorFail($id);
         return view('unit.detail_monitoring', compact('rencana'));

@@ -47,7 +47,7 @@ class UsulanController extends Controller
         return view('unit.rencana.usulan', compact('satuan', 'rencanaId', 'is_rev', 'noteRev', 'total', 'dataRevisi'));
     }
 
-    public function tabel1(Request $request)
+    public function tabelRencana(Request $request)
     {
         $user = Auth::user();
         $satuan = Satuan::all();
@@ -98,7 +98,7 @@ class UsulanController extends Controller
         }
     }
 
-    public function tabel2(Request $request)
+    public function tabelRevisi(Request $request)
 {
     $user = Auth::user();
     $unit_id = $user->unit->id;
@@ -114,15 +114,15 @@ class UsulanController extends Controller
 
         // Query utama untuk mendapatkan data usulan
         $usulan = Revisi::select(
-            'revisi.*',
-            'revisi.id as revisi_id',
-            'rencana.*',
-            'revisi.uraian as uraian_rencana',
-            'kode_komponen.uraian as uraian_kode_komponen',
-            'rencana.tahun as tahun',
-            'kode_komponen.*',
-            'satuan.*',
-            KodeKomponen::raw("CONCAT(parent.kode, '.', COALESCE(kode_komponen.kode, '')) as allkode")
+            'revisi.id as detail_rencana_id',
+                'rencana.tahun',
+                'revisi.uraian as uraian_rencana',
+                'kode_komponen.uraian as uraian_kode_komponen',
+                'satuan.satuan as satuan',
+                KodeKomponen::raw("CONCAT(parent.kode, '.', COALESCE(kode_komponen.kode, '')) as allkode"),
+                'revisi.volume',
+                'revisi.harga',
+                KodeKomponen::raw("revisi.volume * revisi.harga as total")
         )
             ->join('rencana', 'revisi.rencana_id', '=', 'rencana.id')
             ->leftJoin('kode_komponen', 'revisi.kode_komponen_id', '=', 'kode_komponen.id')
@@ -140,7 +140,7 @@ class UsulanController extends Controller
         }
 
         $dataRevisi = $usulan->get();
-        $revData = $this->buildHierarchy2($dataRevisi);
+        $revData = $this->buildHierarchy($dataRevisi);
 
         return datatables()->of(collect($revData))
             ->make(true);
@@ -157,39 +157,6 @@ class UsulanController extends Controller
         return $rencanaId;
     }
 
-    protected function getHistoriRencana($unit_id)
-    {
-        $rencanaId = $this->getLatestRencana($unit_id);
-
-        if ($rencanaId) {
-            $historiRencana = Rencana::where('unit_id', $unit_id)
-                ->where('id', '!=', $rencanaId ? $rencanaId->id : 0)
-                ->orderBy('created_at', 'desc')
-                ->get();
-        } else {
-            $historiRencana = Rencana::where('unit_id', $unit_id)->orderBy('created_at', 'desc')->get();
-        }
-
-        return $historiRencana;
-    }
-    public function store(Request $request)
-    {
-        $user = Auth::user();
-        $unitId = $user->unit->id;
-        $rencanaId = $request->id;
-
-        $rencana = Rencana::updateOrCreate(
-            [
-                'id' => $rencanaId,
-            ],
-            [
-                'tahun' => $request->input('tahun') . '-01-01',
-                'unit_id' => $unitId,
-            ]
-        );
-
-        return response()->json($rencana);
-    }
 
 
     public function store2(Request $request, $id = null)
@@ -274,24 +241,6 @@ class UsulanController extends Controller
                 $item->number = $prefix ? "{$prefix}.{$index}" : (string)$index;
                 $result[] = $item;
                 $children = $this->buildHierarchy($usulan, $item->detail_rencana_id, $item->number);
-                $result = array_merge($result, $children);
-                $index++;
-            }
-        }
-
-        return $result;
-    }
-
-    private function buildHierarchy2($usulan, $parentId = null, $prefix = '')
-    {
-        $result = [];
-        $index = 1;
-
-        foreach ($usulan as $item) {
-            if ($item->noparent_id == $parentId) {
-                $item->number = $prefix ? "{$prefix}.{$index}" : (string)$index;
-                $result[] = $item;
-                $children = $this->buildHierarchy($usulan, $item->revisi_id, $item->number);
                 $result = array_merge($result, $children);
                 $index++;
             }

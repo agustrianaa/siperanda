@@ -5,6 +5,9 @@
 @section('content')
 
 <div class="container-fluid">
+<div class="alert alert-warning fs-2">
+        Rencana Penarikan Dana Wajib DiIsi
+    </div>
     <div class="row">
         <div class="card">
             <div class="card-body">
@@ -21,7 +24,7 @@
                                     <th>Harga/sat</th>
                                     <th>Jumlah</th>
                                     <th width="5%">RPD</th>
-                                    <th width="10%">Action</th>
+                                    <th width="12%">Action</th>
                                 </tr>
                             </thead>
                             <tfoot>
@@ -46,7 +49,7 @@
                 <div class="modal-header">
                     <h5 class="modal-title">Rencana Penarikan Dana</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div> 
+                </div>
                 <div id="alert-warning" class="alert alert-warning d-none">
                     Anggaran melebihi Pagu
                 </div>
@@ -113,6 +116,38 @@
 </div>
 <!-- end modal show -->
 
+<!-- modal untuk hapus realisasi menggunakan checkbox -->
+<div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Hapus RPD</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- <div class="row"> -->
+                    <table class="table table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th class="text-center"><input type="checkbox" id="selectAll"></th>
+                                <th class="text-center">Bulan RPD</th>
+                                <th class="text-center">Anggaran</th>
+                            </tr>
+                        </thead>
+                        <tbody id="RPDTableBody">
+                            <!-- dari js -->
+                        </tbody>
+                    </table>
+                    <!-- </div> -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="deleteSelectedRPD">Hapus Terpilih</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end modal hapus -->
 
 
 </div>
@@ -173,7 +208,9 @@
                 {
                     data: 'rpd',
                     name: 'rpd',
-                    className: 'text-center',
+                    render: function(data, type, row) {
+                        return formatNumber(data);
+                    }
                 },
                 {
                     data: 'action',
@@ -317,11 +354,94 @@
         });
     }
 
+    function hapusRPD(id) {
+        $.ajax({
+            type: "GET",
+            url: "{{ route('unit.getRPD')}}",
+            data: {
+                id: id
+            },
+            dataType: 'json',
+            success: function(data) {
+                $('#RPDTableBody').empty();
+                const rpdData = data.rpd;
+                if (rpdData.length > 0) {
+                    rpdData.forEach(function(item) {
+                        $('#RPDTableBody').append(
+                            '<tr>' +
+                            '<td class="text-center"><input type="checkbox" class="RPDCheckbox" value="' + item.id + '"></td>' +
+                            '<td class="text-center">' + item.bulan_rpd + '</td>' +
+                            '<td class="text-center">' + item.jumlah + '</td>' +
+                            '</tr>'
+                        );
+                    });
+                } else {
+                    $('#RPDTableBody').append(
+                        '<tr>' +
+                        '<td colspan="3" class="text-center">Tidak ada data realisasi</td>' +
+                        '</tr>'
+                    );
+                }
+                $('#deleteModal').modal('show');
+            },
+            error: function(error) {
+                console.error(error);
+                alert('Terjadi kesalahan saat mengambil data RPD');
+            }
+        });
+    }
+
+    $('#selectAll').on('change', function() {
+        $('.RPDCheckbox').prop('checked', $(this).prop('checked'));
+    });
+
+    // untuk menghapus data sesuai dengan select di checkbox
+    $('#deleteSelectedRPD').on('click', function() {
+        var selectedIds = [];
+        $('.RPDCheckbox:checked').each(function() {
+            selectedIds.push($(this).val());
+        });
+
+        if (selectedIds.length > 0) {
+            $.ajax({
+                type: "POST",
+                url: "{{ route('unit.deleteRPD') }}",
+                data: {
+                    ids: selectedIds,
+                },
+                success: function(response) {
+
+                    $('#deleteModal').modal('hide');
+                    var oTable = $('#RPD').DataTable();
+                    oTable.ajax.reload(null, false);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Data realisasi berhasil dihapus'
+                    });
+                },
+                error: function(error) {
+                    console.error(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'error',
+                        text: 'Terjadi kesalahan saat menghapus data rpd'
+                    });
+                }
+            });
+        } else {
+            alert('Pilih setidaknya satu realisasi untuk dihapus');
+        }
+    });
+
+
+
+
     function showRPD(id) {
         console.log(id);
         $.ajax({
             type: "GET",
-            url: "{{ route('unit.getRealisasi',) }}",
+            url: "{{ route('unit.getRPD',) }}",
             data: {
                 id: id
             },

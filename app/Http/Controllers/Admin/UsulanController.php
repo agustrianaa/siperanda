@@ -85,6 +85,16 @@ class UsulanController extends Controller
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id');
 
+            $tahunTerbaru = Rencana::max('tahun');
+            if ($ftahun) {
+                // Jika tahun difilter, tampilkan data sesuai tahun filter
+                $ftahunFormat = $ftahun . '-01-01';
+                $rencanaQuery->where('rencana.tahun', $ftahunFormat);
+            } else {
+                // Jika tidak ada filter tahun, tampilkan data dari tahun terbaru
+                $rencanaQuery->where('rencana.tahun', $tahunTerbaru);
+            }
+
             // Filter by unit_id if provided
             if ($funit) {
                 $rencanaQuery->where('rencana.unit_id', $funit);
@@ -93,10 +103,7 @@ class UsulanController extends Controller
             if ($fkategori) {
                 $rencanaQuery->where('kode_komponen.kategori_id', $fkategori);
             }
-            if ($ftahun) {
-                $ftahunFormat = $ftahun . '-01-01';
-                $rencanaQuery->where('rencana.tahun', $ftahunFormat);
-            }
+
 
             $rencana = $rencanaQuery->get();
 
@@ -105,7 +112,7 @@ class UsulanController extends Controller
         }
     }
 
-    
+
 
 
     public function storeKet(Request $request)

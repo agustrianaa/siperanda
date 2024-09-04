@@ -69,13 +69,13 @@
     </div>
 
     <!-- data revisi -->
-    <div class="row " id="last-div">
+    <div class="row ">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title fw-semibold mb-3">List Revision</h5>
                 <div class="row mb-2">
                     <div class="form-group">
-                        <select class="form-control" id="revision" name="'revision">
+                        <select class="form-control" id="revision" name="revision">
                             <option value="" selected disabled>Pilih Revisi...</option>
                             @foreach ($dataRevisi as $item )
                             <option value="{{$item}}">Revisi {{$item}}</option>
@@ -456,6 +456,8 @@
         function dataRevisi() {
             var revision = $('#revision').val();
             var rencanaId = $('#rencana_id').val();
+            console.log('Sending ID:', rencanaId);
+            console.log('Sending Revision:', revision);
             $('#last').DataTable({
                 "dom": 't',
                 processing: true,
@@ -466,12 +468,12 @@
                     type: 'GET',
                     data: {
                         revision: revision,
-                        id: rencanaId
+                        id: rencanaId,
                     }
                 },
                 columns: [{
-                        data: 'number',
-                        name: 'number',
+                        data: 'numbering',
+                        name: 'numbering',
                         className: 'text-center',
                         orderable: false,
                     },

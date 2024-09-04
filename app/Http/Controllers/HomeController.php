@@ -86,7 +86,7 @@ class HomeController extends Controller
         })->sum('jumlah');
         $sisaAnggaran = $totalAnggaran - $totalRealisasi;
 
-        return view('direksi.dashboard', compact('totalAnggaran', 'totalRKA', 'totalRealisasi', 'sisaAnggaran'));
+        return view('direksi.dashboard', compact('totalAnggaran', 'totalRKA', 'totalRealisasi', 'sisaAnggaran', 'latestYear'));
     }
 
     public function unitHome()
@@ -114,6 +114,6 @@ class HomeController extends Controller
 
         $sisaAnggaran = $totalAnggaran - $totalRealisasi;
 
-        return view('unit.dashboard', compact('totalAnggaran', 'totalRencana', 'totalRealisasi', 'sisaAnggaran'));
+        return view('unit.dashboard', compact('totalAnggaran', 'totalRencana', 'totalRealisasi', 'sisaAnggaran', 'latestYear'));
     }
 }

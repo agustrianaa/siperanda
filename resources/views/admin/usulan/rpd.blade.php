@@ -12,6 +12,13 @@
                 <div class="card-body">
                     <h5 class="card-title fw-semibold">Filter</h5>
                     <div class="row">
+                    <div class="col-lg-3 mb-2">
+                            <select name="fkategori" id="ftahun" class="form-select">
+                                <option value="#" disabled selected> - Pilih Tahun - </option>
+                                @for ($year = 2010; $year <= 9999; $year++) <option value="{{$year}}">{{$year}}</option>
+                                    @endfor
+                            </select>
+                        </div>
                         <div class="col-lg-3 mb-2">
                             <!-- <label for="unit">Pilih Unit </label> -->
                             <select name="funit" id="funit" class="form-select">
@@ -37,13 +44,7 @@
                                 @endif
                             </select>
                         </div>
-                        <div class="col-lg-3 mb-2">
-                            <select name="fkategori" id="ftahun" class="form-select">
-                                <option value="#" disabled selected> - Pilih Tahun - </option>
-                                @for ($year = 2020; $year <= date('Y'); $year++) <option value="{{$year}}">{{$year}}</option>
-                                    @endfor
-                            </select>
-                        </div>
+
                         <div class="col-lg-1 mb-1">
                             <button class="btn btn-dark" id="resetFilter">Reset</button>
                         </div>

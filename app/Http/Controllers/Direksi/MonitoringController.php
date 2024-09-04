@@ -38,7 +38,7 @@ class MonitoringController extends Controller
                 ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
                 ->where('rencana.id', $id)
-                ->where('rencana.status', '=', 'approved');
+                ->whereIn('rencana.status', ['approved', 'top_up']);
 
                 $dataRencana = $rencana->get();
 

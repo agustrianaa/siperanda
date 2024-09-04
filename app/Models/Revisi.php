@@ -36,6 +36,6 @@ class Revisi extends Model
 
     public function rencana()
     {
-        return $this->belongsTo(Rencana::class);
+        return $this->belongsTo(Rencana::class, 'rencana_id');
     }
 }

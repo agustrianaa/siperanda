@@ -18,57 +18,59 @@ class RencanaPenarikanDanaController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $user = Auth::user();
-        if (request()->ajax()) {
-            $unit = $user->unit;
+{
+    $user = Auth::user();
+    if (request()->ajax()) {
+        $unit = $user->unit;
 
-            // Pastikan unit ditemukan
-            if (!$unit) {
-                return response()->json(['data' => []]);
-            }
-            $rpd = DetailRencana::select(
-                'detail_rencana.id as idRencana',
-                'detail_rencana.volume',
-                'detail_rencana.harga',
-                'kode_komponen.uraian as uraian_kode_komponen',
-                'satuan.satuan',
-                'detail_rencana.total as jumlahUsulan',
-                'detail_rencana.uraian as uraian_rencana',
-                KodeKomponen::raw("CONCAT(parent.kode, '.', COALESCE(kode_komponen.kode, '')) as allkode")
-            )
-                ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
-                ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
-                ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
-                ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
-                ->where('rencana.unit_id', $unit->id)
-                ->whereIn('rencana.tahun', function ($query) use ($unit) {
-                    $query->select(DB::raw('MAX(tahun)'))
-                        ->from('rencana')
-                        ->where('unit_id', $unit->id);
-                })
-                ->orderBy('rencana.tahun', 'desc')
-                ->get();
-
-            return datatables()->of($rpd)
-                ->addColumn('rpd', function ($row) {
-                    $id = $row->idRencana;
-                    $hasRpd = RPD::where('detail_rencana_id', $id)->exists();
-                $icon = $hasRpd ? 'fa-eye' : 'fa-eye-slash';
-                $rpd = '<a href="javascript:void(0)" onClick="showRPD(' . $id . ')" class="tambah btn btn-warning btn-sm"><i class="fas ' . $icon . '"></i></a>';
-                    return $rpd;
-                })
-                ->addColumn('action', function ($row) {
-                    $id = $row->idRencana;
-                    $action = '<a href="javascript:void(0)" onClick="tambahRPD(' . $id . ')" class="tambah btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
-                    $action .= '<a href="javascript:void(0)" onClick="editRPD(' . $id . ')" class="edit btn btn-info btn-sm"><i class="fas fa-edit"></i></a>';
-                    return $action;
-                })
-                ->rawColumns(['rpd', 'action'])
-                ->make(true);
+        // Pastikan unit ditemukan
+        if (!$unit) {
+            return response()->json(['data' => []]);
         }
-        return view('unit.rencana.rpd');
+        $rpd = DetailRencana::select(
+            'detail_rencana.id as idRencana',
+            'detail_rencana.volume',
+            'detail_rencana.harga',
+            'kode_komponen.uraian as uraian_kode_komponen',
+            'satuan.satuan',
+            'detail_rencana.total as jumlahUsulan',
+            'detail_rencana.uraian as uraian_rencana',
+            KodeKomponen::raw("CONCAT(parent.kode, '.', COALESCE(kode_komponen.kode, '')) as allkode")
+        )
+            ->join('rencana', 'detail_rencana.rencana_id', '=', 'rencana.id')
+            ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
+            ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
+            ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
+            ->where('rencana.unit_id', $unit->id)
+            ->whereIn('rencana.tahun', function ($query) use ($unit) {
+                $query->select(DB::raw('MAX(tahun)'))
+                    ->from('rencana')
+                    ->where('unit_id', $unit->id);
+            })
+            ->orderBy('rencana.tahun', 'desc')
+            ->get();
+
+        foreach ($rpd as $data) {
+            $rpdDetail = RPD::where('detail_rencana_id', $data->idRencana)->get();
+            $totalRPD = $rpdDetail->sum('jumlah');
+            $data->rpd = $totalRPD;
+        }
+
+        return datatables()->of($rpd)
+            ->addColumn('action', function ($row) {
+                $id = $row->idRencana;
+                // $action = '<a href="javascript:void(0)" onClick="tambahRPD(' . $id . ')" class="tambah btn btn-success btn-sm"><i class="fas fa-plus"></i></a>';
+                $action = '<a href="javascript:void(0)" onClick="editRPD(' . $id . ')" class="edit btn btn-info btn-sm"><i class="fas fa-edit"></i></a>';
+                $action .=  '<a href="javascript:void(0)" onClick="hapusRPD(' . $id . ')" class="realisasi btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>';
+                $action .= '<a href="javascript:void(0)" onClick="showRPD(' . $id . ')" class="tambah btn btn-warning btn-sm"><i class="fas fa-eye"></i></a>';
+                return $action;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
+    return view('unit.rencana.rpd');
+}
+
 
 
     /**
@@ -82,19 +84,6 @@ class RencanaPenarikanDanaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $user = Auth::user();
-        $unitId = $user->unit->id;
-
-        // Lakukan update pada semua entri dalam tabel Realisasi
-        $rpd = RPD::query()->update([
-            'bulan_rpd' => $request->bulan_rpd,
-            'jumlah' => $request->jumlah,
-        ]);
-
-        return response()->json($rpd);
-    }
 
     public function storeRPD(Request $request)
     {
@@ -173,9 +162,15 @@ class RencanaPenarikanDanaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function deleteRPD(Request $request)
     {
-        //
+        $ids = $request->input('ids');
+        if (is_array($ids) && count($ids) > 0) {
+            RPD::whereIn('id', $ids)->delete();
+            return response()->json(['message' => 'Data realisasi berhasil dihapus'], 200);
+        } else {
+            return response()->json(['message' => 'Tidak ada data yang dipilih'], 400);
+        }
     }
 
     public function getDetailRencana(Request $request)

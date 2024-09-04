@@ -39,7 +39,7 @@ class MonitoringController extends Controller
                 ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
                 ->where('rencana.id', $id)
-                ->where('rencana.status', '=', 'approved');
+                ->whereIn('rencana.status', ['approved', 'top_up']);
             $dataRencana = $rencana->get();
 
             foreach ($dataRencana as $data) {
@@ -118,20 +118,20 @@ class MonitoringController extends Controller
         }
     }
     private function buildHierarchy($data, $parentId = null, $prefix = '')
-{
-    $result = [];
-    $counter = 1;
-    foreach ($data as $item) {
-        if ($item->noparent_id == $parentId) {
-            $item->numbering = $prefix ? "{$prefix}.{$counter}" : (string)$counter;
-            $result[] = $item;
-            $children = $this->buildHierarchy($data, $item->idRencana, $item->numbering . '.');
-            $result = array_merge($result, $children);
-            $counter++;
+    {
+        $result = [];
+        $counter = 1;
+        foreach ($data as $item) {
+            if ($item->noparent_id == $parentId) {
+                $item->numbering = $prefix ? "{$prefix}.{$counter}" : (string)$counter;
+                $result[] = $item;
+                $children = $this->buildHierarchy($data, $item->idRencana, $item->numbering . '.');
+                $result = array_merge($result, $children);
+                $counter++;
+            }
         }
+        return $result;
     }
-    return $result;
-}
 
     public function show(Request $request)
     {

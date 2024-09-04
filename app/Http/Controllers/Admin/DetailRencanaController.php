@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -35,10 +36,10 @@ class DetailRencanaController extends Controller
                 ->leftJoin('kode_komponen', 'detail_rencana.kode_komponen_id', '=', 'kode_komponen.id')
                 ->join('satuan', 'detail_rencana.satuan_id', '=', 'satuan.id')
                 ->where('rencana.id', $id);
-                $dataRencana = $rencana->get();
-                $usulanData = $this->buildHierarchy($dataRencana);
+            $dataRencana = $rencana->get();
+            $usulanData = $this->buildHierarchy($dataRencana);
 
-                return datatables()->of(collect($usulanData))
+            return datatables()->of(collect($usulanData))
                 ->addColumn('action', function ($row) {
                     $id = $row->idRencana;
                     $status = $row->statusRencana;  // Pastikan bahwa 'statusRencana' adalah nama kolom yang benar
@@ -54,12 +55,13 @@ class DetailRencanaController extends Controller
         }
     }
 
+    // tabel untuk rencana awal untuk menampilkan anggaran
     public function tabeleditRA(Request $request)
     {
         if ($request->ajax()) {
             $id = $request->query('id');
             $rencana = Rencana::select('rencana.*', 'unit.name as nama_unit')
-            ->leftJoin('unit', 'rencana.unit_id', '=', 'unit.id')
+                ->leftJoin('unit', 'rencana.unit_id', '=', 'unit.id')
                 ->where('rencana.id', $id)
                 ->get();
 
@@ -75,44 +77,53 @@ class DetailRencanaController extends Controller
     }
 
     public function tabelRevisi(Request $request)
-{
-    $revision = $request->id;
-
-    if ($request->ajax()) {
+    {
+        $revision = $request->revision;
         $id = $request->query('id');
-        // Query utama untuk mendapatkan data usulan
-        $usulan = Revisi::select(
-            'revisi.*',
-            'revisi.id as revisi_id',
-            'rencana.*',
-            'revisi.uraian as uraian_rencana',
-            'kode_komponen.uraian as uraian_kode_komponen',
-            'rencana.tahun as tahun',
-            'kode_komponen.*',
-            'satuan.*',
-            KodeKomponen::raw("CONCAT(parent.kode, '.', COALESCE(kode_komponen.kode, '')) as allkode")
-        )
-            ->join('rencana', 'revisi.rencana_id', '=', 'rencana.id')
-            ->leftJoin('kode_komponen', 'revisi.kode_komponen_id', '=', 'kode_komponen.id')
-            ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
-            ->join('satuan', 'revisi.satuan_id', '=', 'satuan.id')
-            ->where('rencana.id', $id);
 
-        if ($revision) {
-            $usulan->where('revisi.revision', $revision);
-        } else {
-            $latestRevision = Revisi::where('rencana_id', $id)
-                ->max('revision');
-            $usulan->where('revisi.revision', $latestRevision);
+        if ($request->ajax()) {
+            // Cek apakah id dan revision tersedia
+            if (!$id) {
+                return response()->json(['error' => 'ID is required'], 400);
+            }
+
+            // Query utama untuk mendapatkan data usulan
+            $usulan = Revisi::select(
+                'revisi.id as idRencana',
+                'rencana.tahun',
+                'revisi.uraian as uraian_rencana',
+                'kode_komponen.uraian as uraian_kode_komponen',
+                'satuan.satuan as satuan',
+                KodeKomponen::raw("CONCAT(parent.kode, '.', COALESCE(kode_komponen.kode, '')) as allkode"),
+                'revisi.volume',
+                'revisi.harga',
+                KodeKomponen::raw("revisi.volume * revisi.harga as total")
+            )
+                ->join('rencana', 'revisi.rencana_id', '=', 'rencana.id')
+                ->leftJoin('kode_komponen', 'revisi.kode_komponen_id', '=', 'kode_komponen.id')
+                ->leftJoin('kode_komponen as parent', 'kode_komponen.kode_parent', '=', 'parent.id')
+                ->join('satuan', 'revisi.satuan_id', '=', 'satuan.id')
+                ->where('revisi.rencana_id', $id);
+
+            // Jika revisi dipilih, filter data berdasarkan revisi
+            if ($revision) {
+                $usulan->where('revisi.revision', $revision);
+            } else {
+                // Jika tidak ada revisi yang dipilih, gunakan revisi terbaru
+                $latestRevision = Revisi::where('rencana_id', $id)
+                    ->max('revision');
+                $usulan->where('revisi.revision', $latestRevision);
+            }
+
+            $dataRevisi = $usulan->get();
+            $revData = $this->buildHierarchy($dataRevisi);
+
+            return datatables()->of(collect($revData))
+                ->make(true);
         }
 
-        $dataRevisi = $usulan->get();
-        $revData = $this->buildHierarchy($dataRevisi);
-
-        return datatables()->of(collect($revData))
-            ->make(true);
+        return response()->json(['error' => 'Invalid request'], 400);
     }
-}
 
     private function buildHierarchy($data, $parentId = null, $prefix = '')
     {
@@ -251,7 +262,8 @@ class DetailRencanaController extends Controller
         return response()->json($rencana);
     }
 
-    public function storeParent(Request $request) {
+    public function storeParent(Request $request)
+    {
         // Validasi input
         $request->validate([
             'noparent_id' => 'required|exists:detail_rencana,id',
@@ -272,5 +284,4 @@ class DetailRencanaController extends Controller
             return response()->json(['error' => 'Data tidak ditemukan'], 404);
         }
     }
-
 }

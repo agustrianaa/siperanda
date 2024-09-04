@@ -13,6 +13,7 @@
     <div class="row">
         <div class="card">
             <div class="card-body">
+                <div class="table-responsive">
                 <table class="table table-bordered" id="anggaran" style="width: 100%;">
                     <thead>
                         <tr>
@@ -24,6 +25,8 @@
                         </tr>
                     </thead>
                 </table>
+                </div>
+
             </div>
         </div>
     </div>

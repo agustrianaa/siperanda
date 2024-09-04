@@ -300,6 +300,9 @@
                 order: [
                     [0, 'desc']
                 ],
+                language: {
+                    emptyTable: "Data belum di setujui" // Ganti teks di sini
+                },
                 footerCallback: function(row, data, start, end, display) {
                     var api = this.api();
 

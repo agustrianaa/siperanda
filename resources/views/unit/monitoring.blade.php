@@ -12,7 +12,14 @@
                 <div class="card-body">
                     <h5 class="card-title fw-semibold">Filter</h5>
                     <div class="row">
-                    <div class="col-lg-3 mb-2">
+                        <div class="col-lg-3 mb-2">
+                            <select name="ftahun" id="ftahun" class="form-select">
+                                <option value="#" disabled selected> - Pilih Tahun - </option>
+                                @for ($year = 2020; $year <= 9999; $year++) <option value="{{$year}}">{{$year}}</option>
+                                    @endfor
+                            </select>
+                        </div>
+                        <div class="col-lg-3 mb-2">
                             <select name="fkategori" id="fkategori" class="form-select">
                                 <option value="#" disabled selected> - Pilih Kategori - </option>
                                 @if($kategoris->isEmpty())
@@ -24,13 +31,7 @@
                                 @endif
                             </select>
                         </div>
-                        <div class="col-lg-3 mb-2">
-                            <select name="ftahun" id="ftahun" class="form-select">
-                                <option value="#" disabled selected> - Pilih Tahun - </option>
-                                @for ($year = 2020; $year <= 9999; $year++) <option value="{{$year}}">{{$year}}</option>
-                                    @endfor
-                            </select>
-                        </div>
+
                         <div class="col-lg-1 mb-1">
                             <button class="btn btn-dark" id="resetFilter">Reset</button>
                         </div>
@@ -141,8 +142,7 @@
                         tahun: ftahun,
                     }
                 },
-                columns: [
-                    {
+                columns: [{
                         data: 'numbering',
                         name: 'numbering',
                         className: 'text-center',

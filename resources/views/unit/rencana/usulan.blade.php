@@ -16,7 +16,9 @@
                 <div class="col">
                     @if (isset($rencanaId) && $rencanaId)
                     @if ($rencanaId->status == 'revisi')
-                    <div class="btn btn-danger status-btn">Revisi</div>
+                    <div class="btn btn-danger status-btn">Revisi ke {{$rencanaId->revision}}</div>
+                    @elseif ($rencanaId->status == 'top_up')
+                    <div class="btn btn-warning">Top Up</div>
                     @elseif ($rencanaId->status == 'approved')
                     <div class="btn btn-success status-btn">Disetujui</div>
                     @elseif ($rencanaId->status == 'rejected')
@@ -386,8 +388,7 @@
                         revision: revision,
                     }
                 },
-                columns: [
-                    {
+                columns: [{
                         data: 'number',
                         name: 'number',
                         className: 'text-center',

@@ -157,9 +157,9 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     Route::get('/unit/dashboard', [HomeController::class, 'unitHome'])->name('unit.dashboard');
     // CRUD rencana
     Route::get('/unit/usulan', [UnitUsulanController::class, 'index'])->name('unit.usulan');
-    Route::get('/unit/tabel1', [UnitUsulanController::class, 'tabel1'])->name('unit.new');
-    Route::get('/unit/tabel2', [UnitUsulanController::class, 'tabel2'])->name('unit.last');
-    Route::post('/unit/simpan-rencana', [UnitUsulanController::class, 'store'])->name('unit.simpan_tahun');
+    Route::get('/unit/tabel1', [UnitUsulanController::class, 'tabelRencana'])->name('unit.new');
+    Route::get('/unit/tabel2', [UnitUsulanController::class, 'tabelRevisi'])->name('unit.last');
+    // Route::post('/unit/simpan-rencana', [UnitUsulanController::class, 'store'])->name('unit.simpan_tahun');
     Route::post('/unit/simpan-rencana2', [UnitUsulanController::class, 'store2'])->name('unit.simpan_rencana2');
     Route::post('/unit/edit-usulan/', [UnitUsulanController::class, 'edit'])->name('unit.edit_usulan');
     Route::put('/unit/update-usulan/{id}', [UnitUsulanController::class, 'update'])->name('unit.update_usulan');
@@ -174,10 +174,11 @@ Route::middleware(['auth', 'user-access:unit'])->group(function () {
     // CRUD RPD
     Route::get('/unit/rpd', [UnitRencanaPenarikanDanaController::class, 'index'])->name('unit.rpd');
     Route::get('/get-detail-rencana', [UnitRencanaPenarikanDanaController::class, 'getDetailRencana'])->name('unit.getDetailRencana');
-
     Route::post('/unit/simpan-skedul', [UnitRencanaPenarikanDanaController::class, 'storeRPD'])->name('unit.simpan_skedul');
-    Route::post('/unit/update-realisasi', [UnitRencanaPenarikanDanaController::class, 'updateRPD'])->name('unit.updateRPD');
+    // Route::post('/unit/update-realisasi', [UnitRencanaPenarikanDanaController::class, 'updateRPD'])->name('unit.updateRPD');
     Route::get('/unit/edit-realisasi', [UnitRencanaPenarikanDanaController::class, 'edit'])->name('unit.editRPD');
+    Route::post('/unit/delete-rpd', [UnitRencanaPenarikanDanaController::class, 'deleteRPD'])->name('unit.deleteRPD');
+    Route::get('/unit/show-rpd', [UnitMonitoringController::class, 'getRealisasi'])->name('unit.getRPD');
     // MONITORING RPD
     Route::get('/unit/monitoring', [UnitMonitoringController::class, 'index'])->name('unit.monitoring');
     Route::get('/unit/show-realisasi', [UnitMonitoringController::class, 'getRealisasi'])->name('unit.getRealisasi');
